@@ -24,7 +24,7 @@ namespace Medical.PL
             builder.Services.AddMvc().AddNToastNotifyToastr(new ToastrOptions()
             {
                 ProgressBar = true,
-                PositionClass = ToastPositions.TopRight,
+                PositionClass = ToastPositions.TopLeft,
                 PreventDuplicates = true,
                 CloseButton = true
             });

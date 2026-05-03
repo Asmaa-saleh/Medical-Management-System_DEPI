@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Medical.PL.Data.Models.Medicine>
+﻿@* @model IEnumerable<Medical.PL.Data.Models.Medicine>
 
 @{
     ViewData["Title"] = "Medicines";
@@ -94,6 +94,126 @@
                     </div>
                 }
             </div>
+        </div>
+    }
+</div> *@
+@model IEnumerable<Medical.PL.Data.Models.Medicine>
+
+@{
+    ViewData["Title"] = "الأدوية";
+    ViewData["ActivePage"] = "Medicines";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/doctor-schedule-index.css" asp-append-version="true" />
+
+    <style>
+        /* فقط أيقونة الدواء بدل الدكتور */
+        .doc-avatar {
+            background: #eef2ff;
+            color: #0d6efd;
+        }
+    </style>
+}
+
+<div class="pg-header">
+    <h1><i class="bi bi-capsule"></i> الأدوية</h1>
+
+    <a asp-action="Create" class="btn-add">
+        <i class="fas fa-plus"></i> إضافة دواء جديد
+    </a>
+</div>
+
+<div class="tbl-card">
+    @if (Model.Any())
+    {
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>النوع</th>
+                    <th>الشكل</th>
+                    <th>القوة</th>
+                    <th>الاسم العلمي</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+
+                        <!-- الاسم -->
+                        <td>
+                            <div class="doc-cell">
+                                <div class="doc-avatar">
+                                    <i class="bi bi-capsule"></i>
+                                </div>
+
+                                <div class="doc-name">
+                                    @item.Name
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- النوع -->
+                        <td>
+                            <span class="badge-day">@item.Category</span>
+                        </td>
+
+                        <!-- الشكل -->
+                        <td>
+                            <span class="badge-time">@item.Form</span>
+                        </td>
+
+                        <!-- القوة -->
+                        <td>
+                            <span class="badge-count">@item.Strength</span>
+                        </td>
+
+                        <!-- الاسم العلمي -->
+                        <td>
+                            <span class="badge-online">@item.GenericName</span>
+                        </td>
+
+                        <!-- الإجراءات -->
+                        <td>
+                            <div class="act-btns">
+
+                                <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="act-btn ab-view" title="عرض">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="act-btn ab-edit" title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                       class="act-btn ab-delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty">
+            <i class="bi bi-capsule" style="font-size:40px;"></i>
+            <h3>لا يوجد أدوية حالياً</h3>
+            <p>ابدأ بإضافة دواء جديد للنظام</p>
+
+            <a asp-action="Create" class="btn-add mt-3 d-inline-block">
+                <i class="fas fa-plus"></i> إضافة دواء
+            </a>
         </div>
     }
 </div>

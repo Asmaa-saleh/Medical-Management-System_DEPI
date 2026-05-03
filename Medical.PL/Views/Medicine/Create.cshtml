@@ -1,4 +1,4 @@
-﻿@using Medical.PL.Data.Enum
+﻿@* @using Medical.PL.Data.Enum
 @model Medical.PL.Data.Models.Medicine
 
 @{
@@ -94,6 +94,116 @@
             </form>
 
         </div>
+    </div>
+
+</div> *@
+
+
+
+
+
+
+
+@using Medical.PL.Data.Enum
+@model Medical.PL.Data.Models.Medicine
+
+@{
+    ViewData["Title"] = "إضافة دواء";
+    ViewData["ActivePage"] = "Medicines";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/doctor-schedule-index.css" asp-append-version="true" />
+
+    <style>
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: none;
+        }
+    </style>
+}
+
+<!-- Header -->
+<div class="pg-header">
+    <h1><i class="bi bi-capsule"></i> إضافة دواء جديد</h1>
+
+    <a asp-action="Index" class="btn-add" style="background:#6c757d;">
+        <i class="fas fa-arrow-left"></i> رجوع
+    </a>
+</div>
+
+<!-- Card -->
+<div class="tbl-card">
+
+    <div class="p-4">
+
+        <form asp-action="Create">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row">
+
+                <!-- Name -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Name" class="form-label fw-semibold">اسم الدواء</label>
+                    <input asp-for="Name" class="form-control" placeholder="أدخل اسم الدواء" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Generic -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="GenericName" class="form-label fw-semibold">الاسم العلمي</label>
+                    <input asp-for="GenericName" class="form-control" placeholder="أدخل الاسم العلمي" />
+                    <span asp-validation-for="GenericName" class="text-danger"></span>
+                </div>
+
+                <!-- Category -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Category" class="form-label fw-semibold">التصنيف</label>
+                    <select asp-for="Category"
+                            class="form-select"
+                            asp-items="Html.GetEnumSelectList<MedicineCategory>()">
+                        <option value="">-- اختر التصنيف --</option>
+                    </select>
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+
+                <!-- Form -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Form" class="form-label fw-semibold">الشكل الدوائي</label>
+                    <select asp-for="Form"
+                            class="form-select"
+                            asp-items="Html.GetEnumSelectList<MedicineForm>()">
+                        <option value="">-- اختر الشكل --</option>
+                    </select>
+                    <span asp-validation-for="Form" class="text-danger"></span>
+                </div>
+
+                <!-- Strength -->
+                <div class="col-md-12 mb-3">
+                    <label asp-for="Strength" class="form-label fw-semibold">القوة</label>
+                    <input asp-for="Strength" class="form-control" placeholder="مثال: 500mg" />
+                    <span asp-validation-for="Strength" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end gap-2 mt-3">
+
+                <a asp-action="Index" class="btn-add" style="background:#6c757d;">
+                    إلغاء
+                </a>
+
+                <button type="submit" class="btn-add">
+                    <i class="fas fa-plus"></i> إضافة الدواء
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
 
 </div>

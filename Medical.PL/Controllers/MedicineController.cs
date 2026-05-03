@@ -9,7 +9,7 @@ namespace Medical.PL.Controllers
     {
         private readonly IMedicineService _service;
         private readonly IToastNotification _toast;
-        public MedicineController(IMedicineService service,IToastNotification toast)
+        public MedicineController(IMedicineService service, IToastNotification toast)
         {
             _service = service;
             _toast = toast;
@@ -32,7 +32,7 @@ namespace Medical.PL.Controllers
             {
                 await _service.AddAsync(medicine);
                 //TempData["SuccessMessage"] = "Medicine created successfully!";
-                _toast.AddSuccessToastMessage("Medicine created successfully!");
+                _toast.AddSuccessToastMessage("تم إضافة الدواء بنجاح");
                 return RedirectToAction("Index");
             }
             return View(medicine);
@@ -53,10 +53,12 @@ namespace Medical.PL.Controllers
             if (ModelState.IsValid)
             {
                 await _service.UpdateAsync(medicine);
+                _toast.AddInfoToastMessage("تم تحديث بيانات الدواء بنجاح");
                 return RedirectToAction("Index");
             }
             return View(medicine);
         }
+
 
         public async Task<IActionResult> Details(int id)
         {
@@ -68,12 +70,15 @@ namespace Medical.PL.Controllers
             return View(medicine);
         }
 
+        
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
             await _service.DeleteAsync(id);
+            _toast.AddErrorToastMessage("تم حذف الدواء بنجاح");
             return RedirectToAction("Index");
         }
+
 
     }
 }

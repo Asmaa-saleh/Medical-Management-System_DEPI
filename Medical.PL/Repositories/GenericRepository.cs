@@ -51,7 +51,7 @@ namespace Medical.PL.Repositories
             return await query.ToListAsync();
         }
 
-        
+
         public async Task DeleteAsync(int id)
         {
             //_dbSet.Remove(entity);
@@ -86,11 +86,13 @@ namespace Medical.PL.Repositories
         {
             
             _dbSet.Update(entity);
+            
         }
 
         public void Delete(T entity)
         {
             _dbSet.Remove(entity);
+            
         }
     }
 }
