@@ -1,0 +1,99 @@
+﻿@model IEnumerable<Medical.PL.Data.Models.Medicine>
+
+@{
+    ViewData["Title"] = "Medicines";
+}
+
+<style>
+    .medicine-row {
+        transition: all 0.2s ease;
+        border-radius: 10px;
+        background: #FEFEFD;
+    }
+
+        .medicine-row:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.005);
+        }
+    /* Prevents badges and text from wrapping */
+    .nowrap {
+        white-space: nowrap;
+    }
+
+    .btn-action {
+        padding: 5px 12px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus"></i> Add Medicine
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted py-5 border rounded-3 bg-light">
+            <h5>No medicines found 😢</h5>
+        </div>
+    }
+    else
+    {
+        <div class="card  border-0">
+            <div class="card-body p-0">
+                @foreach (var item in Model)
+                {
+                    <div class="medicine-row shadow-sm border-bottom p-3 mb-1">
+                        <!-- Use row class to unlock the grid, align-items-center for vertical middle -->
+                        <div class="row align-items-center flex-nowrap g-0">
+                            
+                            <!-- 1. Left Section: Name & Generic (Aligned Left) -->
+                            <div class="col-4 d-flex flex-column justify-content-center">
+                                <h6 class="fw-bold text-primary mb-1">
+                                    @item.Name
+                                </h6>
+    
+                                <small class="text-muted">
+                                    @item.GenericName
+                                </small>
+                            </div>
+
+                            <!-- 2. Middle Section: Badges (Perfectly Centered) -->
+                            <div class="col-4 d-flex justify-content-center">
+                                <div class="nowrap d-flex gap-1">
+                                    <span class="badge rounded-pill bg-info text-dark">@item.Category</span>
+                                    <span class="badge rounded-pill bg-light text-secondary border">@item.Form</span>
+                                    <span class="badge rounded-pill bg-secondary">@item.Strength</span>
+                                </div>
+                            </div>
+
+                            <!-- 3. Right Section: Actions (Aligned Right) -->
+                            <div class="col-4 d-flex justify-content-end">
+                                <div class="nowrap d-flex gap-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-action btn-outline-info">
+                                        View
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-action btn-outline-warning">
+                                        Edit
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                           class="btn btn-action btn-outline-danger"
+                                           onclick="return confirm('Are you sure?')">
+                                        Delete
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

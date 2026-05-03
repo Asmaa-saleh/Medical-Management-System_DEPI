@@ -17,11 +17,21 @@ namespace Medical.PL.Data.Configurations
             builder.Property(m => m.GenericName)
                 .HasMaxLength(150);
 
+            //builder.Property(m => m.Category)
+            //    .HasMaxLength(100);
+
+            //builder.Property(m => m.Form)
+            //    .HasMaxLength(50);
             builder.Property(m => m.Category)
-                .HasMaxLength(100);
+                .HasConversion<string>()
+                .HasMaxLength(100)
+                .IsRequired();
 
             builder.Property(m => m.Form)
-                .HasMaxLength(50);
+                .HasConversion<string>()
+                .HasMaxLength(50)
+                .IsRequired();
+
 
             builder.Property(m => m.Strength)
                 .HasMaxLength(50);

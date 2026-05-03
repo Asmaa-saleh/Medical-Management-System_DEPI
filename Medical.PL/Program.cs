@@ -1,7 +1,9 @@
 using Medical.PL.Data.Context;
 using Medical.PL.Interfaces;
 using Medical.PL.Repositories;
+using Medical.PL.Services;
 using Microsoft.EntityFrameworkCore;
+using NToastNotify;
 
 namespace Medical.PL
 {
@@ -18,6 +20,14 @@ namespace Medical.PL
                 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IMedicineService, MedicineService>();
+            builder.Services.AddMvc().AddNToastNotifyToastr(new ToastrOptions()
+            {
+                ProgressBar = true,
+                PositionClass = ToastPositions.TopRight,
+                PreventDuplicates = true,
+                CloseButton = true
+            });
 
             var app = builder.Build();
 

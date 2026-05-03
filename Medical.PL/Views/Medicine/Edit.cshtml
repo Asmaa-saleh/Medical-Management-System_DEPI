@@ -1,0 +1,158 @@
+﻿@* @using Medical.PL.Data.Enum
+@model Medical.PL.Data.Models.Medicine
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Medicine</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GenericName" class="control-label"></label>
+                <input asp-for="GenericName" class="form-control" />
+                <span asp-validation-for="GenericName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Category" class="control-label"></label>
+                <select asp-for="Category" class="form-control" 
+                       asp-items="Html.GetEnumSelectList<MedicineCategory>()"></select>
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Form" class="control-label"></label>
+                <select asp-for="Form" class="form-control" 
+                       asp-items="Html.GetEnumSelectList<MedicineForm>()"></select>
+                <span asp-validation-for="Form" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Strength" class="control-label"></label>
+                <input asp-for="Strength" class="form-control" />
+                <span asp-validation-for="Strength" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@
+
+
+@using Medical.PL.Data.Enum
+@model Medical.PL.Data.Models.Medicine
+
+@{
+    ViewData["Title"] = "Edit Medicine";
+}
+
+<style>
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: none;
+        border-color: #ffc107;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-warning">Edit Medicine</h2>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            ← Back
+        </a>
+    </div>
+
+    <!-- Card -->
+    <div class="card shadow-lg border-0">
+        <div class="card-body p-4">
+
+            <form asp-action="Edit">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row">
+
+                    <!-- Name -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <!-- Generic -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="GenericName" class="form-label fw-semibold"></label>
+                        <input asp-for="GenericName" class="form-control" />
+                        <span asp-validation-for="GenericName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Category" class="form-label fw-semibold"></label>
+                        <select asp-for="Category"
+                                class="form-select"
+                                asp-items="Html.GetEnumSelectList<MedicineCategory>()">
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+
+                    <!-- Form -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Form" class="form-label fw-semibold"></label>
+                        <select asp-for="Form"
+                                class="form-select"
+                                asp-items="Html.GetEnumSelectList<MedicineForm>()">
+                        </select>
+                        <span asp-validation-for="Form" class="text-danger"></span>
+                    </div>
+
+                    <!-- Strength -->
+                    <div class="col-md-12 mb-3">
+                        <label asp-for="Strength" class="form-label fw-semibold"></label>
+                        <input asp-for="Strength" class="form-control" />
+                        <span asp-validation-for="Strength" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-2 mt-3">
+
+                    <a asp-action="Index" class="btn btn-light">
+                        Cancel
+                    </a>
+
+                    <input type="submit" value="Save Changes"
+                           class="btn btn-warning px-4" />
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
