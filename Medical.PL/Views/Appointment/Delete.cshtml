@@ -1,0 +1,56 @@
+@model Appointment
+
+@{
+    ViewData["Title"] = "حذف الحجز";
+    ViewData["ActivePage"] = "Appointments";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/appointment-delete.css" asp-append-version="true" />
+}
+
+<div class="del-wrap">
+    <div class="del-card">
+        <div class="del-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2>تأكيد الحذف</h2>
+        <p>هل أنت متأكد من حذف الحجز التالي؟ لا يمكن التراجع عن هذا الإجراء.</p>
+
+        <div class="del-info">
+            <div class="del-info-row">
+                <span class="del-info-label">المريض</span>
+                <span class="del-info-val">@Model.Patient.User.Name</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">الطبيب</span>
+                <span class="del-info-val">د. @Model.Doctor.User.Name</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">الخدمة</span>
+                <span class="del-info-val">@Model.Service.Name</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">الموعد</span>
+                <span class="del-info-val del-ltr">@Model.AppointmentDate.ToString("yyyy/MM/dd") - @Model.AppointmentTime.ToString(@"hh\:mm")</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">رقم الدور</span>
+                <span class="del-info-val">#@Model.QueueNumber</span>
+            </div>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div class="del-actions">
+                <button type="submit" class="btn-del-yes">
+                    <i class="fas fa-trash"></i> نعم، احذف
+                </button>
+                <a asp-action="Index" class="btn-del-no">
+                    <i class="fas fa-times"></i> إلغاء
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

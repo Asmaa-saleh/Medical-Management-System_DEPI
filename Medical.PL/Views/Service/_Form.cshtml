@@ -1,0 +1,29 @@
+@model ServiceFormViewModel
+
+<div class="fg">
+    <div class="fg-item">
+        <label><i class="fas fa-concierge-bell"></i> اسم الخدمة</label>
+        <input asp-for="Name" class="fc" placeholder="مثال: كشف باطنة" />
+        <span asp-validation-for="Name" class="validation-msg"></span>
+    </div>
+
+    <div class="fg-item">
+        <label><i class="fas fa-hospital"></i> القسم</label>
+        <select asp-for="DepartmentId" asp-items="@ViewBag.Departments" class="fc">
+            <option value="">-- اختر القسم --</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="validation-msg"></span>
+    </div>
+
+    <div class="fg-item">
+        <label><i class="fas fa-money-bill-wave"></i> السعر</label>
+        <input asp-for="Price" type="number" step="0.01" min="0.01" class="fc" placeholder="مثال: 250" />
+        <span asp-validation-for="Price" class="validation-msg"></span>
+    </div>
+
+    <div class="fg-item fg-full">
+        <label><i class="fas fa-align-right"></i> الوصف</label>
+        <textarea asp-for="Description" class="fc fc-textarea" rows="4" placeholder="وصف مختصر للخدمة"></textarea>
+        <span asp-validation-for="Description" class="validation-msg"></span>
+    </div>
+</div>

@@ -1,0 +1,92 @@
+@model Appointment
+
+@{
+    ViewData["Title"] = "تفاصيل الحجز";
+    ViewData["ActivePage"] = "Appointments";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/appointment-details.css" asp-append-version="true" />
+}
+
+@functions {
+    string StatusText(string status) => status switch
+    {
+        "Booked" => "محجوز",
+        "Completed" => "تم الكشف",
+        "Cancelled" => "ملغي",
+        _ => status
+    };
+
+    string SourceText(string source) => source switch
+    {
+        "Clinic" => "داخل العيادة",
+        "Online" => "أونلاين",
+        _ => source
+    };
+}
+
+<div class="det-header">
+    <h1><i class="fas fa-info-circle"></i> تفاصيل الحجز</h1>
+</div>
+
+<div class="det-card">
+    <div class="det-top">
+        <div class="det-avatar"><i class="fas fa-calendar-check"></i></div>
+        <div>
+            <div class="det-name">@Model.Patient.User.Name</div>
+            <div class="det-sub">@Model.Patient.User.Phone</div>
+        </div>
+    </div>
+
+    <div class="det-body">
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-user-md"></i> الطبيب</span>
+            <span class="det-val">د. @Model.Doctor.User.Name</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-stethoscope"></i> الخدمة</span>
+            <span class="det-val">@Model.Service.Name</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-calendar-day"></i> التاريخ</span>
+            <span class="det-badge db-blue">@Model.AppointmentDate.ToString("yyyy/MM/dd")</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-clock"></i> الوقت</span>
+            <span class="det-badge db-blue">@Model.AppointmentTime.ToString(@"hh\:mm")</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-calendar-week"></i> جدول الطبيب</span>
+            <span class="det-badge db-teal">@Model.DoctorSchedules.DayOfWeek (@Model.DoctorSchedules.StartTime.ToString(@"hh\:mm") - @Model.DoctorSchedules.EndTime.ToString(@"hh\:mm"))</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-list-ol"></i> رقم الدور</span>
+            <span class="det-badge db-purple">#@Model.QueueNumber</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-globe"></i> مصدر الحجز</span>
+            <span class="det-badge db-teal">@SourceText(Model.BookingSource)</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-flag"></i> الحالة</span>
+            <span class="det-badge db-amber">@StatusText(Model.Status)</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-note-sticky"></i> ملاحظات</span>
+            <span class="det-val">@(string.IsNullOrWhiteSpace(Model.Notes) ? "لا توجد" : Model.Notes)</span>
+        </div>
+    </div>
+
+    <div class="det-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-det-edit">
+            <i class="fas fa-edit"></i> تعديل
+        </a>
+        <a asp-action="Index" class="btn-det-back">
+            <i class="fas fa-arrow-right"></i> رجوع
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn-det-del">
+            <i class="fas fa-trash"></i> حذف
+        </a>
+    </div>
+</div>

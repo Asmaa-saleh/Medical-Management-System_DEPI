@@ -1,0 +1,155 @@
+@model AppointmentFormViewModel
+
+@{
+    var patients = ViewBag.Patients as List<Patient> ?? new List<Patient>();
+}
+
+<div class="form-card">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="validation-msg"></div>
+
+        <div class="mode-tabs fg-full">
+            <input type="radio" asp-for="PatientMode" id="patient-existing" value="Existing" />
+            <label for="patient-existing"><i class="fas fa-user-check"></i> مريض سابق</label>
+            <input type="radio" asp-for="PatientMode" id="patient-new" value="New" />
+            <label for="patient-new"><i class="fas fa-user-plus"></i> مريض جديد</label>
+        </div>
+
+        <div class="fg">
+            <div id="existingPatientPanel" class="patient-panel">
+                <div class="fg-item fg-full">
+                    <label><i class="fas fa-search"></i> البحث عن المريض</label>
+                    <input type="search" id="patientSearch" class="fc" placeholder="ابحث بالاسم أو رقم التليفون" autocomplete="off" />
+                </div>
+                <div class="fg-item fg-full">
+                    <label><i class="fas fa-user"></i> المريض</label>
+                    <select asp-for="ExistingPatientId" class="fc" id="patientSelect">
+                        <option value="">-- اختر المريض --</option>
+                        @foreach (var patient in patients)
+                        {
+                            var searchText = $"{patient.User.Name} {patient.User.Phone}";
+                            <option value="@patient.Id" data-search="@searchText" selected="@(Model.ExistingPatientId == patient.Id)">
+                                @patient.User.Name - @patient.User.Phone
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="ExistingPatientId" class="validation-msg"></span>
+                </div>
+            </div>
+
+            <div id="newPatientPanel" class="patient-panel is-hidden">
+                <div class="panel-title"><i class="fas fa-id-card"></i> بيانات المريض الجديد</div>
+                <div class="fg-item">
+                    <label><i class="fas fa-user"></i> الاسم</label>
+                    <input asp-for="NewPatientName" class="fc" />
+                    <span asp-validation-for="NewPatientName" class="validation-msg"></span>
+                </div>
+                <div class="fg-item">
+                    <label><i class="fas fa-phone"></i> رقم التليفون</label>
+                    <input asp-for="NewPatientPhone" class="fc" />
+                    <span asp-validation-for="NewPatientPhone" class="validation-msg"></span>
+                </div>
+                <div class="fg-item">
+                    <label><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+                    <input asp-for="NewPatientEmail" type="email" class="fc" />
+                    <span asp-validation-for="NewPatientEmail" class="validation-msg"></span>
+                </div>
+                <div class="fg-item">
+                    <label><i class="fas fa-calendar"></i> تاريخ الميلاد</label>
+                    <input asp-for="NewPatientDateOfBirth" type="date" class="fc" />
+                    <span asp-validation-for="NewPatientDateOfBirth" class="validation-msg"></span>
+                </div>
+                <div class="fg-item fg-full">
+                    <label><i class="fas fa-venus-mars"></i> النوع</label>
+                    <select asp-for="NewPatientGender" class="fc">
+                        <option value="">-- اختر النوع --</option>
+                        <option value="Male">ذكر</option>
+                        <option value="Female">أنثى</option>
+                    </select>
+                    <span asp-validation-for="NewPatientGender" class="validation-msg"></span>
+                </div>
+            </div>
+
+            <div class="panel-title"><i class="fas fa-calendar-check"></i> بيانات الحجز</div>
+            <div class="fg-item fg-full">
+                <label><i class="fas fa-user-md"></i> موعد الطبيب</label>
+                <select asp-for="ScheduleId" asp-items="@ViewBag.Schedules" class="fc">
+                    <option value="">-- اختر موعد الطبيب --</option>
+                </select>
+                <span asp-validation-for="ScheduleId" class="validation-msg"></span>
+            </div>
+            <div class="fg-item">
+                <label><i class="fas fa-stethoscope"></i> الخدمة</label>
+                <select asp-for="ServiceId" asp-items="@ViewBag.Services" class="fc">
+                    <option value="">-- اختر الخدمة --</option>
+                </select>
+                <span asp-validation-for="ServiceId" class="validation-msg"></span>
+            </div>
+            <div class="fg-item">
+                <label><i class="fas fa-calendar-day"></i> تاريخ الحجز</label>
+                <input asp-for="AppointmentDate" type="date" class="fc" />
+                <span asp-validation-for="AppointmentDate" class="validation-msg"></span>
+            </div>
+            <div class="fg-item">
+                <label><i class="fas fa-clock"></i> وقت الحجز</label>
+                <input asp-for="AppointmentTime" type="time" class="fc" />
+                <span asp-validation-for="AppointmentTime" class="validation-msg"></span>
+            </div>
+            <div class="fg-item">
+                <label><i class="fas fa-globe"></i> مصدر الحجز</label>
+                <select asp-for="BookingSource" asp-items="@ViewBag.BookingSources" class="fc"></select>
+                <span asp-validation-for="BookingSource" class="validation-msg"></span>
+            </div>
+            <div class="fg-item">
+                <label><i class="fas fa-flag"></i> الحالة</label>
+                <select asp-for="Status" asp-items="@ViewBag.Statuses" class="fc"></select>
+                <span asp-validation-for="Status" class="validation-msg"></span>
+            </div>
+            <div class="fg-item fg-full">
+                <label><i class="fas fa-note-sticky"></i> ملاحظات</label>
+                <textarea asp-for="Notes" class="fc"></textarea>
+                <span asp-validation-for="Notes" class="validation-msg"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-save">
+                <i class="fas fa-check"></i> حفظ
+            </button>
+            <a asp-action="Index" class="btn-back">
+                <i class="fas fa-arrow-right"></i> رجوع
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    const existingRadio = document.getElementById('patient-existing');
+    const newRadio = document.getElementById('patient-new');
+    const existingPanel = document.getElementById('existingPatientPanel');
+    const newPanel = document.getElementById('newPatientPanel');
+    const patientSearch = document.getElementById('patientSearch');
+    const patientSelect = document.getElementById('patientSelect');
+
+    function syncPatientMode() {
+        const isNew = newRadio.checked;
+        existingPanel.classList.toggle('is-hidden', isNew);
+        newPanel.classList.toggle('is-hidden', !isNew);
+    }
+
+    function filterPatients() {
+        const term = patientSearch.value.trim().toLowerCase();
+        Array.from(patientSelect.options).forEach(option => {
+            if (!option.value) return;
+            const text = (option.dataset.search || '').toLowerCase();
+            option.hidden = term && !text.includes(term);
+        });
+    }
+
+    existingRadio.addEventListener('change', syncPatientMode);
+    newRadio.addEventListener('change', syncPatientMode);
+    patientSearch.addEventListener('input', filterPatients);
+    syncPatientMode();
+</script>

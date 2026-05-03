@@ -1,0 +1,38 @@
+@model ServiceFormViewModel
+
+@{
+    ViewData["Title"] = "تعديل خدمة";
+    ViewData["ActivePage"] = "Services";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/service-form.css" asp-append-version="true" />
+}
+
+<div class="form-header">
+    <h1><i class="fas fa-edit"></i> تعديل خدمة</h1>
+    <p>تعديل بيانات الخدمة والقسم والسعر</p>
+</div>
+
+<div class="form-card">
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="validation-msg"></div>
+        <input type="hidden" asp-for="Id" />
+
+        <partial name="_Form" model="Model" />
+
+        <div class="form-actions">
+            <button type="submit" class="btn-save">
+                <i class="fas fa-save"></i> حفظ التعديلات
+            </button>
+            <a asp-action="Index" class="btn-back">
+                <i class="fas fa-arrow-right"></i> رجوع
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

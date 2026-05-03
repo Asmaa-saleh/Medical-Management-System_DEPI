@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["ActivePage"] = "Home";
+}
+
+
+<!-- ========== HERO ========== -->
+<section class="dash-hero">
+    <div class="dash-hero-inner">
+        <div class="dash-hero-text" data-aos="fade-left" data-aos-duration="1000">
+            <h1>مرحباً بك في<em> MediCare </em></h1>
+            <p>إدارة شاملة للعيادة — المواعيد، المرضى، الأطباء، الأقسام، الخدمات والأدوية كلها في مكان واحد.</p>
+        </div>
+        <div class="hero-visual" data-aos="fade-right" data-aos-duration="1000" data-aos-delay="200">
+            <div class="hero-ring"></div>
+            <div class="hero-ring-2"></div>
+            <div class="hero-center"><i class="fas fa-hospital"></i></div>
+            <div class="oi oi-1"><i class="fas fa-calendar-check"></i></div>
+            <div class="oi oi-2"><i class="fas fa-pills"></i></div>
+            <div class="oi oi-3"><i class="fas fa-user-md"></i></div>
+            <div class="oi oi-4"><i class="fas fa-heartbeat"></i></div>
+            <div class="oi oi-5"><i class="fas fa-stethoscope"></i></div>
+            <div class="oi oi-6"><i class="fas fa-syringe"></i></div>
+        </div>
+    </div>
+</section>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<!-- ========== CARDS ========== -->
+<section class="dash-cards">
+    <div class="dash-cards-grid">
+        <a href="@Url.Action("Index", "Appointment")" class="dc dc-cyan" data-aos="fade-up">
+            <div class="dc-icon"><i class="fas fa-calendar-check"></i></div>
+            <h3>المواعيد</h3>
+            <p class="dc-desc">حجز مواعيد جديدة، متابعة المواعيد الحالية، وإدارة جدول العيادة</p>
+            <div class="dc-bottom">
+                <span class="dc-label">إدارة المواعيد</span>
+                <div class="dc-go"><i class="fas fa-arrow-left"></i></div>
+            </div>
+        </a>
+
+        <a href="@Url.Action("Index", "Patient")" class="dc dc-green" data-aos="fade-up" data-aos-delay="100">
+            <div class="dc-icon"><i class="fas fa-users"></i></div>
+            <h3>المرضى</h3>
+            <p class="dc-desc">تسجيل مرضى جدد، تعديل البيانات، والبحث في سجلات المرضى</p>
+            <div class="dc-bottom">
+                <span class="dc-label">إدارة المرضى</span>
+                <div class="dc-go"><i class="fas fa-arrow-left"></i></div>
+            </div>
+        </a>
+
+        <a href="@Url.Action("Index", "Doctor")" class="dc dc-purple" data-aos="fade-up" data-aos-delay="200">
+            <div class="dc-icon"><i class="fas fa-user-md"></i></div>
+            <h3>الأطباء</h3>
+            <p class="dc-desc">إضافة أطباء جدد، تعديل التخصصات، وإدارة الفريق الطبي</p>
+            <div class="dc-bottom">
+                <span class="dc-label">إدارة الأطباء</span>
+                <div class="dc-go"><i class="fas fa-arrow-left"></i></div>
+            </div>
+        </a>
+
+        <a href="@Url.Action("Index", "Department")" class="dc dc-amber" data-aos="fade-up" data-aos-delay="300">
+            <div class="dc-icon"><i class="fas fa-hospital"></i></div>
+            <h3>الأقسام</h3>
+            <p class="dc-desc">إنشاء أقسام طبية جديدة وربط الأطباء والخدمات بالأقسام</p>
+            <div class="dc-bottom">
+                <span class="dc-label">إدارة الأقسام</span>
+                <div class="dc-go"><i class="fas fa-arrow-left"></i></div>
+            </div>
+        </a>
+
+        <a href="@Url.Action("Index", "Service")" class="dc dc-rose" data-aos="fade-up" data-aos-delay="400">
+            <div class="dc-icon"><i class="fas fa-concierge-bell"></i></div>
+            <h3>الخدمات</h3>
+            <p class="dc-desc">إضافة خدمات طبية جديدة، تحديد الأسعار، وربطها بالأقسام</p>
+            <div class="dc-bottom">
+                <span class="dc-label">إدارة الخدمات</span>
+                <div class="dc-go"><i class="fas fa-arrow-left"></i></div>
+            </div>
+        </a>
+
+        <a href="@Url.Action("Index", "Medicine")" class="dc dc-teal" data-aos="fade-up" data-aos-delay="500">
+            <div class="dc-icon"><i class="fas fa-pills"></i></div>
+            <h3>الأدوية</h3>
+            <p class="dc-desc">إدارة قاعدة بيانات الأدوية، إضافة أدوية جديدة، والبحث فيها</p>
+            <div class="dc-bottom">
+                <span class="dc-label">إدارة الأدوية</span>
+                <div class="dc-go"><i class="fas fa-arrow-left"></i></div>
+            </div>
+        </a>
+    </div>
+</section>

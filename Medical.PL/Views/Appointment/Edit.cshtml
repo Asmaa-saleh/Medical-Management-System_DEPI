@@ -1,0 +1,21 @@
+@model AppointmentFormViewModel
+
+@{
+    ViewData["Title"] = "تعديل الحجز";
+    ViewData["ActivePage"] = "Appointments";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/appointment-form.css" asp-append-version="true" />
+}
+
+<div class="form-header">
+    <h1><i class="fas fa-calendar-pen"></i> تعديل الحجز</h1>
+    <p>تعديل بيانات الحجز ومطابقتها مع جدول عمل الطبيب</p>
+</div>
+
+<partial name="_Form" model="Model" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,71 @@
+@model IEnumerable<Service>
+
+@{
+    ViewData["Title"] = "الخدمات";
+    ViewData["ActivePage"] = "Services";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/service-index.css" asp-append-version="true" />
+}
+
+<div class="pg-header">
+    <h1><i class="fas fa-concierge-bell"></i> الخدمات</h1>
+    <a asp-action="Create" class="btn-add">
+        <i class="fas fa-plus"></i> إضافة خدمة جديدة
+    </a>
+</div>
+
+<div class="tbl-card">
+    @if (Model.Any())
+    {
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>الخدمة</th>
+                    <th>القسم</th>
+                    <th>السعر</th>
+                    <th>الوصف</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var service in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="service-cell">
+                                <div class="service-avatar"><i class="fas fa-stethoscope"></i></div>
+                                <div>
+                                    <div class="service-name">@service.Name</div>
+                                    <div class="service-code">#@service.Id</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge-dept">@service.Department.Name</span></td>
+                        <td><span class="badge-price">@service.Price.ToString("0.00") ج.م</span></td>
+                        <td class="desc-cell">@(string.IsNullOrWhiteSpace(service.Description) ? "لا يوجد وصف" : service.Description)</td>
+                        <td>
+                            <div class="act-btns">
+                                <a asp-action="Details" asp-route-id="@service.Id" class="act-btn ab-view" title="عرض"><i class="fas fa-eye"></i></a>
+                                <a asp-action="Edit" asp-route-id="@service.Id" class="act-btn ab-edit" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <a asp-action="Delete" asp-route-id="@service.Id" class="act-btn ab-delete" title="حذف"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty">
+            <i class="fas fa-concierge-bell"></i>
+            <h3>لا يوجد خدمات حالياً</h3>
+            <p>ابدأ بإضافة خدمة وربطها بالقسم المناسب</p>
+            <a asp-action="Create" class="btn-add">
+                <i class="fas fa-plus"></i> إضافة خدمة
+            </a>
+        </div>
+    }
+</div>

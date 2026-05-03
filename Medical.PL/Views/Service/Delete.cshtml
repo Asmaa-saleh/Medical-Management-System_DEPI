@@ -1,0 +1,48 @@
+@model Service
+
+@{
+    ViewData["Title"] = "حذف خدمة";
+    ViewData["ActivePage"] = "Services";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/service-delete.css" asp-append-version="true" />
+}
+
+<div class="del-wrap">
+    <div class="del-card">
+        <div class="del-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2>تأكيد الحذف</h2>
+        <p>هل أنت متأكد من حذف الخدمة التالية؟ سيتم إخفاؤها من قائمة الخدمات والحجوزات الجديدة.</p>
+
+        <div class="del-info">
+            <div class="del-info-row">
+                <span class="del-info-label">الخدمة</span>
+                <span class="del-info-val">@Model.Name</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">القسم</span>
+                <span class="del-info-val">@Model.Department.Name</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">السعر</span>
+                <span class="del-info-val">@Model.Price.ToString("0.00") ج.م</span>
+            </div>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div class="del-actions">
+                <button type="submit" class="btn-del-yes">
+                    <i class="fas fa-trash"></i> نعم، احذف
+                </button>
+                <a asp-action="Index" class="btn-del-no">
+                    <i class="fas fa-times"></i> إلغاء
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
