@@ -32,6 +32,11 @@ namespace Medical.PL.Data.Configurations
                 .WithMany(s => s.Appointments)
                 .HasForeignKey(a => a.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(a => a.DoctorSchedules)                    // ✅ جديد
+            .WithMany(s => s.Appointments)
+            .HasForeignKey(a => a.ScheduleId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

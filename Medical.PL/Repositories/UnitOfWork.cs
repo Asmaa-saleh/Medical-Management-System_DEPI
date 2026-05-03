@@ -17,7 +17,7 @@ namespace Medical.PL.Repositories
         public IGenericRepository<Appointment> Appointments { get; private set; }
         public IGenericRepository<Prescription> Prescriptions { get; private set; }
         public IGenericRepository<PrescriptionItem> PrescriptionItems { get; private set; }
-
+        public IGenericRepository<DoctorSchedule> DoctorSchedules { get; private set; }
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
@@ -31,6 +31,7 @@ namespace Medical.PL.Repositories
             Appointments = new GenericRepository<Appointment>(context);
             Prescriptions = new GenericRepository<Prescription>(context);
             PrescriptionItems = new GenericRepository<PrescriptionItem>(context);
+            DoctorSchedules = new GenericRepository<DoctorSchedule>(context);
         }
 
         public async Task<int> CompleteAsync()

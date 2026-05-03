@@ -32,29 +32,60 @@ namespace Medical.PL.Repositories
         }
 
         public async Task AddAsync(T entity)
+
+
+        public async Task<IEnumerable<T>> GetAllWithIncludesAsync(params Expression<Func<T, object>>[] includes)
         {
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.ToListAsync();
         }
 
         
-
         public async Task DeleteAsync(int id)
+        public async Task<T?> GetByIdWithIncludesAsync(int id, params Expression<Func<T, object>>[] includes)
         {
             //_dbSet.Remove(entity);
             var result = await _dbSet.FindAsync(id);
             _dbSet.Remove(result);
             await _context.SaveChangesAsync();
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id);
         }
 
-        
+
+
+
+        public async Task AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+        }
+
         public async Task UpdateAsync(T entity)
+        public void Update(T entity)
         {
             //await _dbSet.UpdateAsync(entity);
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
            
+        }
 
+        public void Delete(T entity)
+        {
+            _dbSet.Remove(entity);
         }
     }
 }

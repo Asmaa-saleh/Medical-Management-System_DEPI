@@ -1,0 +1,51 @@
+@model Service
+
+@{
+    ViewData["Title"] = "تفاصيل الخدمة";
+    ViewData["ActivePage"] = "Services";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/service-details.css" asp-append-version="true" />
+}
+
+<div class="det-header">
+    <h1><i class="fas fa-info-circle"></i> تفاصيل الخدمة</h1>
+</div>
+
+<div class="det-card">
+    <div class="det-top">
+        <div class="det-avatar"><i class="fas fa-stethoscope"></i></div>
+        <div>
+            <div class="det-service-name">@Model.Name</div>
+            <div class="det-service-dept">@Model.Department.Name</div>
+        </div>
+    </div>
+
+    <div class="det-body">
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-hospital"></i> القسم</span>
+            <span class="det-badge db-teal">@Model.Department.Name</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-money-bill-wave"></i> السعر</span>
+            <span class="det-badge db-blue">@Model.Price.ToString("0.00") ج.م</span>
+        </div>
+        <div class="det-row det-row-block">
+            <span class="det-label"><i class="fas fa-align-right"></i> الوصف</span>
+            <span class="det-val">@(string.IsNullOrWhiteSpace(Model.Description) ? "لا يوجد وصف" : Model.Description)</span>
+        </div>
+    </div>
+
+    <div class="det-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-det-edit">
+            <i class="fas fa-edit"></i> تعديل
+        </a>
+        <a asp-action="Index" class="btn-det-back">
+            <i class="fas fa-arrow-right"></i> رجوع
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn-det-del">
+            <i class="fas fa-trash"></i> حذف
+        </a>
+    </div>
+</div>

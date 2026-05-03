@@ -12,8 +12,9 @@
         public string BookingSource { get; set; }
         public string Status { get; set; }
         public string? Notes { get; set; }
+        public int ScheduleId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
+        public DoctorSchedule DoctorSchedules { get; set; }
         public Patient Patient { get; set; }
         public Doctor Doctor { get; set; }
         public Service Service { get; set; }

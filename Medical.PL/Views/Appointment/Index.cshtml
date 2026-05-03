@@ -1,0 +1,100 @@
+@model IEnumerable<Appointment>
+
+@{
+    ViewData["Title"] = "الحجوزات";
+    ViewData["ActivePage"] = "Appointments";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/appointment-index.css" asp-append-version="true" />
+}
+
+@functions {
+    string StatusText(string status) => status switch
+    {
+        "Booked" => "محجوز",
+        "Completed" => "تم الكشف",
+        "Cancelled" => "ملغي",
+        _ => status
+    };
+
+    string SourceText(string source) => source switch
+    {
+        "Clinic" => "داخل العيادة",
+        "Online" => "أونلاين",
+        _ => source
+    };
+}
+
+<div class="pg-header">
+    <h1><i class="fas fa-calendar-check"></i> الحجوزات</h1>
+    <a asp-action="Create" class="btn-add">
+        <i class="fas fa-plus"></i> إضافة حجز جديد
+    </a>
+</div>
+
+<div class="tbl-card">
+    @if (Model.Any())
+    {
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>المريض</th>
+                    <th>الطبيب</th>
+                    <th>الخدمة</th>
+                    <th>التاريخ</th>
+                    <th>الوقت</th>
+                    <th>الدور</th>
+                    <th>المصدر</th>
+                    <th>الحالة</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var statusClass = item.Status == "Cancelled" ? "b-red" : item.Status == "Completed" ? "b-teal" : "b-amber";
+                    <tr>
+                        <td>
+                            <div class="person-cell">
+                                <div class="avatar"><i class="fas fa-user"></i></div>
+                                <div>
+                                    <div class="main-name">@item.Patient.User.Name</div>
+                                    <div class="sub-text">@item.Patient.User.Phone</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="main-name">د. @item.Doctor.User.Name</div>
+                            <div class="sub-text">@item.DoctorSchedules.DayOfWeek</div>
+                        </td>
+                        <td>@item.Service.Name</td>
+                        <td><span class="badge b-blue">@item.AppointmentDate.ToString("yyyy/MM/dd")</span></td>
+                        <td><span class="badge b-blue">@item.AppointmentTime.ToString(@"hh\:mm")</span></td>
+                        <td><span class="badge b-purple">#@item.QueueNumber</span></td>
+                        <td><span class="badge b-teal">@SourceText(item.BookingSource)</span></td>
+                        <td><span class="badge @statusClass">@StatusText(item.Status)</span></td>
+                        <td>
+                            <div class="act-btns">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="act-btn ab-view" title="عرض"><i class="fas fa-eye"></i></a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="act-btn ab-edit" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="act-btn ab-delete" title="حذف"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty">
+            <i class="fas fa-calendar-times"></i>
+            <h3>لا توجد حجوزات حالياً</h3>
+            <p>ابدأ بإضافة حجز جديد من جدول عمل الأطباء</p>
+            <a asp-action="Create" class="btn-add">
+                <i class="fas fa-plus"></i> إضافة حجز
+            </a>
+        </div>
+    }
+</div>

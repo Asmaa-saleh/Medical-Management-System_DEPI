@@ -4,6 +4,7 @@ using Medical.PL.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical.PL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260501173929_aa")]
+    partial class aa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,9 +59,6 @@ namespace Medical.PL.Migrations
                     b.Property<int>("QueueNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("ScheduleId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
@@ -72,8 +72,6 @@ namespace Medical.PL.Migrations
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
-
-                    b.HasIndex("ScheduleId");
 
                     b.HasIndex("ServiceId");
 
@@ -149,44 +147,6 @@ namespace Medical.PL.Migrations
                     b.ToTable("Doctors");
                 });
 
-            modelBuilder.Entity("Medical.PL.Data.Models.DoctorSchedule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("DayOfWeek")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("MaxOnlineBooking")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaxPatients")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorId");
-
-                    b.ToTable("DoctorSchedules");
-                });
-
             modelBuilder.Entity("Medical.PL.Data.Models.Medicine", b =>
                 {
                     b.Property<int>("Id")
@@ -196,12 +156,10 @@ namespace Medical.PL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Category")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Form")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -404,12 +362,6 @@ namespace Medical.PL.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Medical.PL.Data.Models.DoctorSchedule", "DoctorSchedules")
-                        .WithMany("Appointments")
-                        .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Medical.PL.Data.Models.Service", "Service")
                         .WithMany("Appointments")
                         .HasForeignKey("ServiceId")
@@ -417,8 +369,6 @@ namespace Medical.PL.Migrations
                         .IsRequired();
 
                     b.Navigation("Doctor");
-
-                    b.Navigation("DoctorSchedules");
 
                     b.Navigation("Patient");
 
@@ -442,17 +392,6 @@ namespace Medical.PL.Migrations
                     b.Navigation("Department");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Medical.PL.Data.Models.DoctorSchedule", b =>
-                {
-                    b.HasOne("Medical.PL.Data.Models.Doctor", "Doctor")
-                        .WithMany("DoctorSchedules")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("Medical.PL.Data.Models.Patient", b =>
@@ -539,14 +478,7 @@ namespace Medical.PL.Migrations
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("DoctorSchedules");
-
                     b.Navigation("Prescriptions");
-                });
-
-            modelBuilder.Entity("Medical.PL.Data.Models.DoctorSchedule", b =>
-                {
-                    b.Navigation("Appointments");
                 });
 
             modelBuilder.Entity("Medical.PL.Data.Models.Medicine", b =>

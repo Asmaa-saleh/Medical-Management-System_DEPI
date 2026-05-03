@@ -13,6 +13,7 @@ namespace Medical.PL.Interfaces
         IGenericRepository<Appointment> Appointments { get; }
         IGenericRepository<Prescription> Prescriptions { get; }
         IGenericRepository<PrescriptionItem> PrescriptionItems { get; }
+        IGenericRepository<DoctorSchedule> DoctorSchedules { get; }
 
         Task<int> CompleteAsync();
     }

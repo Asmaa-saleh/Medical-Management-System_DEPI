@@ -1,52 +1,140 @@
 ﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Medical.PL</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - MediCare</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Medical.PL.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <!-- Bootstrap RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Medical.PL</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Medicine" asp-action="Index">Medicine</a>
-                        </li>
-                    </ul>
-                </div>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="mc-navbar">
+        <div class="mc-navbar-inner">
+
+            <!-- ✅ الروابط دلوقتي الأول في الـ HTML => هتظهر أقصى اليمين -->
+            <ul class="mc-nav">
+                <li>
+                    <a href="@Url.Action("Index", "Home")"
+                           class="@(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")">
+                        <i class="fas fa-home"></i> الرئيسية
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Appointment")"
+                           class="@(ViewData["ActivePage"]?.ToString() == "Appointments" ? "active" : "")">
+                        <i class="fas fa-calendar-check"></i> الحجوزات
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Patient")"
+                           class="@(ViewData["ActivePage"]?.ToString() == "Patients" ? "active" : "")">
+                        <i class="fas fa-users"></i> المرضى
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Doctor")"
+                           class="@(ViewData["ActivePage"]?.ToString() == "Doctors" ? "active" : "")">
+                        <i class="fas fa-user-md"></i> الأطباء
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Department")"
+                           class="@(ViewData["ActivePage"]?.ToString() == "Departments" ? "active" : "")">
+                        <i class="fas fa-hospital"></i> الأقسام
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Service")"
+                           class="@(ViewData["ActivePage"]?.ToString() == "Services" ? "active" : "")">
+                        <i class="fas fa-concierge-bell"></i> الخدمات
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="DoctorSchedule" asp-action="Index">
+                        <i class="fas fa-calendar-check"></i> المواعيد
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Medicine")"
+                           class="@(ViewData["ActivePage"]?.ToString() == "Medicines" ? "active" : "")">
+                        <i class="fas fa-pills"></i> الأدوية
+                    </a>
+                </li>
+            </ul>
+
+            <!-- ✅ اللوجو دلوقتي آخر عنصر => هيظهر أقصى الشمال (يسار) -->
+            <div class="mc-brand">
+                <a href="@Url.Action("Index", "Dashboard")" class="mc-logo">
+                    <i class="fas fa-heartbeat"></i>
+                    MediCare
+                </a>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
+
+        </div>
+    </nav>
+
+    <!-- ========== MAIN ========== -->
+    <div class="mc-main">
+        @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Medical.PL - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- ========== FOOTER ========== -->
+    <footer class="mc-footer" style="margin-top:auto;">
+        <div class="mc-footer-inner">
+            <div class="mc-footer-top">
+                <div class="mc-footer-brand">
+                    <div class="mc-footer-logo">
+                        <i class="fas fa-heartbeat"></i>
+                        MediCare
+                    </div>
+                    <p>نظام متكامل لإدارة العيادات والمستشفيات. صُمم بعناية لتجربة سلسة وإدارة فعّالة.</p>
+                </div>
+                <div class="mc-footer-nav">
+                    <a href="@Url.Action("Index", "Home")"><i class="fas fa-chevron-left"></i> الرئيسية</a>
+                    <a href="@Url.Action("Index", "Appointment")"><i class="fas fa-chevron-left"></i> الحجوزات</a>
+                    <a href="@Url.Action("Index", "Patient")"><i class="fas fa-chevron-left"></i> المرضى</a>
+                    <a href="@Url.Action("Index", "Doctor")"><i class="fas fa-chevron-left"></i> الأطباء</a>
+                    <a href="@Url.Action("Index", "Department")"><i class="fas fa-chevron-left"></i> الأقسام</a>
+                    <a href="@Url.Action("Index", "Service")"><i class="fas fa-chevron-left"></i> الخدمات</a>
+                    <a href="@Url.Action("Index", "DoctorSchedule")"><i class="fas fa-chevron-left"></i> المواعيد</a>
+                    <a href="@Url.Action("Index", "Medicine")"><i class="fas fa-chevron-left"></i> الأدوية</a>
+                </div>
+            </div>
+            <div class="mc-footer-line"></div>
+            <div class="mc-footer-bottom">
+                <p>© 2025 MediCare. جميع الحقوق محفوظة ❤️</p>
+                <div class="mc-footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init({ once: true, offset: 60 });</script>
     @await RenderSectionAsync("Scripts", required: false)
     @await Component.InvokeAsync("NToastNotify");
 </body>

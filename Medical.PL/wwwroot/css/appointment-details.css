@@ -1,0 +1,59 @@
+.det-header { margin: 32px 48px 28px; }
+    .det-header h1 { font-size: 1.8rem; font-weight: 900; color: #0F172A; display: flex; align-items: center; gap: 12px; margin: 0; }
+    .det-header h1 i { color: #0891B2; }
+    .det-card {
+        background: #fff; border-radius: 20px; padding: 0;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04); border: 1.5px solid #EEF2F6;
+        margin: 0 48px 48px; max-width: 720px; overflow: hidden;
+    }
+    .det-top {
+        background: linear-gradient(135deg, #0F172A, #1E293B);
+        padding: 32px 36px; display: flex; align-items: center; gap: 18px;
+    }
+    .det-avatar {
+        width: 56px; height: 56px; border-radius: 16px; background: rgba(8,145,178,0.2);
+        color: #67E8F9; display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; flex-shrink: 0;
+    }
+    .det-name { color: #fff; font-size: 1.2rem; font-weight: 800; }
+    .det-sub { color: rgba(255,255,255,0.55); font-size: 0.85rem; }
+    .det-body { padding: 8px 0; }
+    .det-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 36px; gap: 16px; transition: background 0.2s;
+    }
+    .det-row:hover { background: #FAFBFC; }
+    .det-label { font-size: 0.88rem; font-weight: 600; color: #64748B; display: flex; align-items: center; gap: 10px; }
+    .det-label i { color: #0891B2; font-size: 0.82rem; width: 18px; text-align: center; }
+    .det-val { font-size: 0.92rem; font-weight: 700; color: #0F172A; text-align: left; }
+    .det-badge {
+        padding: 6px 18px; border-radius: 10px; font-size: 0.84rem;
+        font-weight: 700; display: inline-block; white-space: nowrap;
+    }
+    .db-teal { background: #F0FDFA; color: #0D9488; }
+    .db-blue { background: #EFF6FF; color: #3B82F6; }
+    .db-amber { background: #FEF3C7; color: #D97706; }
+    .db-purple { background: #F5F3FF; color: #7C3AED; }
+    .db-gray { background: #F1F5F9; color: #64748B; }
+    .det-actions { display: flex; gap: 12px; padding: 24px 36px; border-top: 1px solid #F1F5F9; }
+    .btn-det-edit {
+        padding: 12px 28px; background: linear-gradient(135deg, #D97706, #F59E0B); color: #fff;
+        border: none; border-radius: 14px; font-family: 'Cairo', sans-serif;
+        font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+        text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-det-edit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(217,119,6,0.3); color: #fff; }
+    .btn-det-back, .btn-det-del {
+        padding: 12px 28px; border: none; border-radius: 14px; font-family: 'Cairo', sans-serif;
+        font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+        text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-det-back { background: #F1F5F9; color: #64748B; }
+    .btn-det-back:hover { background: #E2E8F0; color: #334155; }
+    .btn-det-del { background: #FEE2E2; color: #EF4444; margin-right: auto; }
+    .btn-det-del:hover { background: #EF4444; color: #fff; }
+    @media (max-width: 768px) {
+        .det-header, .det-card { margin-right: 20px; margin-left: 20px; }
+        .det-top, .det-row, .det-actions { padding-right: 24px; padding-left: 24px; }
+        .det-row { align-items: flex-start; flex-direction: column; }
+    }
