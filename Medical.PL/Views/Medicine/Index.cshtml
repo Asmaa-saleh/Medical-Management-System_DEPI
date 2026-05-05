@@ -1,103 +1,4 @@
-﻿@* @model IEnumerable<Medical.PL.Data.Models.Medicine>
-
-@{
-    ViewData["Title"] = "Medicines";
-}
-
-<style>
-    .medicine-row {
-        transition: all 0.2s ease;
-        border-radius: 10px;
-        background: #FEFEFD;
-    }
-
-        .medicine-row:hover {
-            background-color: #f8f9fa;
-            transform: scale(1.005);
-        }
-    /* Prevents badges and text from wrapping */
-    .nowrap {
-        white-space: nowrap;
-    }
-
-    .btn-action {
-        padding: 5px 12px;
-        font-size: 0.85rem;
-        border-radius: 6px;
-    }
-</style>
-
-<div class="container mt-4">
-
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        
-        <a asp-action="Create" class="btn btn-primary shadow-sm">
-            <i class="bi bi-plus"></i> Add Medicine
-        </a>
-    </div>
-
-    @if (!Model.Any())
-    {
-        <div class="text-center text-muted py-5 border rounded-3 bg-light">
-            <h5>No medicines found 😢</h5>
-        </div>
-    }
-    else
-    {
-        <div class="card  border-0">
-            <div class="card-body p-0">
-                @foreach (var item in Model)
-                {
-                    <div class="medicine-row shadow-sm border-bottom p-3 mb-1">
-                        <!-- Use row class to unlock the grid, align-items-center for vertical middle -->
-                        <div class="row align-items-center flex-nowrap g-0">
-                            
-                            <!-- 1. Left Section: Name & Generic (Aligned Left) -->
-                            <div class="col-4 d-flex flex-column justify-content-center">
-                                <h6 class="fw-bold text-primary mb-1">
-                                    @item.Name
-                                </h6>
-    
-                                <small class="text-muted">
-                                    @item.GenericName
-                                </small>
-                            </div>
-
-                            <!-- 2. Middle Section: Badges (Perfectly Centered) -->
-                            <div class="col-4 d-flex justify-content-center">
-                                <div class="nowrap d-flex gap-1">
-                                    <span class="badge rounded-pill bg-info text-dark">@item.Category</span>
-                                    <span class="badge rounded-pill bg-light text-secondary border">@item.Form</span>
-                                    <span class="badge rounded-pill bg-secondary">@item.Strength</span>
-                                </div>
-                            </div>
-
-                            <!-- 3. Right Section: Actions (Aligned Right) -->
-                            <div class="col-4 d-flex justify-content-end">
-                                <div class="nowrap d-flex gap-1">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-action btn-outline-info">
-                                        View
-                                    </a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-action btn-outline-warning">
-                                        Edit
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id"
-                                           class="btn btn-action btn-outline-danger"
-                                           onclick="return confirm('Are you sure?')">
-                                        Delete
-                                    </a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-    }
-</div> *@
-@model IEnumerable<Medical.PL.Data.Models.Medicine>
+﻿@model IEnumerable<Medical.PL.Data.Models.Medicine>
 
 @{
     ViewData["Title"] = "الأدوية";
@@ -108,112 +9,181 @@
     <link rel="stylesheet" href="~/css/doctor-schedule-index.css" asp-append-version="true" />
 
     <style>
-        /* فقط أيقونة الدواء بدل الدكتور */
+        .pg-header {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tbl-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
         .doc-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: #eef2ff;
             color: #0d6efd;
+        }
+
+        .tbl tr:hover {
+            background: #f9fafb;
+            transition: 0.2s;
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: 500;
         }
     </style>
 }
 
-<div class="pg-header">
-    <h1><i class="bi bi-capsule"></i> الأدوية</h1>
+<!-- HEADER -->
 
-    <a asp-action="Create" class="btn-add">
-        <i class="fas fa-plus"></i> إضافة دواء جديد
-    </a>
-</div>
+<div class="pg-header d-flex justify-content-between align-items-center flex-wrap gap-3">
 
-<div class="tbl-card">
+    <div>
+        <h1 class="mb-0">
+            <i class="bi bi-capsule"></i> الأدوية
+        </h1>
+         @* <small class="text-muted">إدارة الأدوية داخل النظام</small>  *@
+    </div>
+
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+
+        <!-- SEARCH -->
+         <form method="get" asp-action="Index" class="d-flex align-items-center gap-2">
+
+            <div class="input-group" style="max-width: 260px;">
+
+                <span class="input-group-text bg-white rounded-start-pill">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+
+                <input type="text"
+                       name="searchTerm"
+                       class="form-control rounded-end-pill"
+                       placeholder="ابحث عن دواء..."
+                       value="@Context.Request.Query["searchTerm"]" />
+
+            </div>
+
+            <button type="submit" class="btn btn-primary rounded-pill btn-sm px-3">
+                بحث
+            </button>
+
+            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill btn-sm px-3">
+                إعادة
+            </a>
+
+           </form> 
+
+        
+
+        <!-- ADD -->
+        <a asp-action="Create" class="btn-add">
+            <i class="fas fa-plus"></i> إضافة دواء
+        </a>
+
+    </div>
+</div> 
+
+<!-- TABLE -->
+<div class="tbl-card shadow-sm mt-3">
+
     @if (Model.Any())
     {
-        <table class="tbl">
-            <thead>
-                <tr>
-                    <th>الاسم</th>
-                    <th>النوع</th>
-                    <th>الشكل</th>
-                    <th>القوة</th>
-                    <th>الاسم العلمي</th>
-                    <th>إجراءات</th>
-                </tr>
-            </thead>
+        <div class="table-responsive">
 
-            <tbody>
-                @foreach (var item in Model)
-                {
+            <table class="tbl table align-middle">
+
+                <thead class="table-light">
                     <tr>
-
-                        <!-- الاسم -->
-                        <td>
-                            <div class="doc-cell">
-                                <div class="doc-avatar">
-                                    <i class="bi bi-capsule"></i>
-                                </div>
-
-                                <div class="doc-name">
-                                    @item.Name
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- النوع -->
-                        <td>
-                            <span class="badge-day">@item.Category</span>
-                        </td>
-
-                        <!-- الشكل -->
-                        <td>
-                            <span class="badge-time">@item.Form</span>
-                        </td>
-
-                        <!-- القوة -->
-                        <td>
-                            <span class="badge-count">@item.Strength</span>
-                        </td>
-
-                        <!-- الاسم العلمي -->
-                        <td>
-                            <span class="badge-online">@item.GenericName</span>
-                        </td>
-
-                        <!-- الإجراءات -->
-                        <td>
-                            <div class="act-btns">
-
-                                <a asp-action="Details" asp-route-id="@item.Id"
-                                       class="act-btn ab-view" title="عرض">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-
-                                <a asp-action="Edit" asp-route-id="@item.Id"
-                                       class="act-btn ab-edit" title="تعديل">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-
-                                <a asp-action="Delete" asp-route-id="@item.Id"
-                                       class="act-btn ab-delete">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-
-                            </div>
-                        </td>
-
+                        <th>الاسم</th>
+                        <th>النوع</th>
+                        <th>الشكل</th>
+                        <th>القوة</th>
+                        <th>الاسم العلمي</th>
+                        <th class="text-center">إجراءات</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <!-- NAME -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="doc-avatar">
+                                        <i class="bi bi-capsule"></i>
+                                    </div>
+                                    <strong>@item.Name</strong>
+                                </div>
+                            </td>
+
+                            <td><span class="badge bg-info text-dark">@item.Category</span></td>
+
+                            <td><span class="badge bg-secondary">@item.Form</span></td>
+
+                            <td><span class="badge bg-success">@item.Strength</span></td>
+
+                            <td class="text-muted">@item.GenericName</td>
+
+                            <!-- ACTIONS -->
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-info rounded-pill">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-warning rounded-pill">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-danger rounded-pill">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
     }
     else
     {
-        <div class="empty">
-            <i class="bi bi-capsule" style="font-size:40px;"></i>
-            <h3>لا يوجد أدوية حالياً</h3>
-            <p>ابدأ بإضافة دواء جديد للنظام</p>
+        <!-- EMPTY STATE -->
+        <div class="text-center py-5">
 
-            <a asp-action="Create" class="btn-add mt-3 d-inline-block">
+            <i class="bi bi-capsule text-muted" style="font-size:50px;"></i>
+
+            <h4 class="mt-3">لا يوجد أدوية حالياً</h4>
+            <p class="text-muted">ابدأ بإضافة دواء جديد للنظام</p>
+
+            <a asp-action="Create" class="btn-add mt-2 d-inline-block">
                 <i class="fas fa-plus"></i> إضافة دواء
             </a>
+
         </div>
     }
+
 </div>
+
+
+

@@ -14,10 +14,12 @@ namespace Medical.PL.Controllers
             _service = service;
             _toast = toast;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            var allMedicines = await _service.GetAllAsync();
-            return View(allMedicines);
+            //var allMedicines = await _service.GetAllAsync();
+            //return View(allMedicines);
+            var medicines = await _service.SearchAsync(searchTerm);
+            return View(medicines);
         }
         [HttpGet]
         public IActionResult Create()

@@ -5,5 +5,6 @@ namespace Medical.PL.Services
 {
     public interface IMedicineService :IGenericRepository<Medicine>
     {
+        Task<IEnumerable<Medicine>> SearchAsync(string term);
     }
 }
