@@ -1,3 +1,4 @@
+using Medical.PL.Data;
 using Medical.PL.Data.Context;
 using Medical.PL.Interfaces;
 using Medical.PL.Repositories;
@@ -28,6 +29,7 @@ namespace Medical.PL
                 PreventDuplicates = true,
                 CloseButton = true
             });
+            
 
             var app = builder.Build();
 
@@ -46,10 +48,12 @@ namespace Medical.PL
 
             app.UseAuthorization();
 
+            
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            DbInitializer.Seed(app);
             app.Run();
         }
     }

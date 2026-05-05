@@ -6,7 +6,10 @@
         Capsule,
         Syrup,
         Injection,
-        Cream
+        Gel,
+        Spray,
+        Inhaler,
+        Solution
     }
 }
 

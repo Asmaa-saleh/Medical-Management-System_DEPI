@@ -2,10 +2,20 @@
 {
     public enum MedicineCategory
     {
-        Antibiotic,
         Analgesic,
+        Antibiotic,
+        AntiInflammatory,
         Antipyretic,
+        Decongestant,
         Vitamin,
-        Antiseptic
+        Antihistamine,
+        Hormone,
+        Antidiabetic,
+        Gastrointestinal,
+        Bronchodilator,
+        Anticoagulant,
+        Diuretic,
+        Antiseptic,
+        Supplement
     }
 }
