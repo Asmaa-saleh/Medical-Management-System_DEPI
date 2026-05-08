@@ -53,7 +53,7 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    var statusClass = item.Status == "Cancelled" ? "b-red" : item.Status == "Completed" ? "b-teal" : "b-amber";
+                    var statusClass = item.Status == "Cancelled" ? "b-red" : item.Status == "Completed" ? "b-green" : "b-amber";
                     <tr>
                         <td>
                             <div class="person-cell">
