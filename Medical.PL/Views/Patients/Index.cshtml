@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Medical.PL.ViewModels.PatientVM>
+@model IEnumerable<Medical.PL.ViewModels.PatientVM>
 
 @{
     ViewData["Title"] = "المرضى";
@@ -28,6 +28,7 @@
                     <th>الهاتف</th>
                     <th>البريد الإلكتروني</th>
                     <th>الحجوزات</th>
+                    <th>الوصفات</th>
                     <th>إجراءات</th>
                 </tr>
             </thead>
@@ -56,6 +57,11 @@
                         <td>
                             <a asp-action="Appointments" asp-route-id="@patient.Id" class="badge-count">
                                 @patient.AppointmentsCount
+                            </a>
+                        </td>
+                        <td>
+                            <a asp-action="Prescriptions" asp-route-id="@patient.Id" class="badge-count badge-rx">
+                                @patient.PrescriptionsCount
                             </a>
                         </td>
                         <td>

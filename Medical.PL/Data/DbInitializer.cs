@@ -11,84 +11,82 @@ namespace Medical.PL.Data
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
-                
+
                 context.Database.EnsureCreated();
 
                 if (!context.Medicines.Any())
                 {
                     var medicines = new List<Medicine>
-{
-    new Medicine { Name="Panadol", GenericName="Paracetamol", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="500 mg" },
-    new Medicine { Name="Panadol Extra", GenericName="Paracetamol + Caffeine", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="500/65 mg" },
-    new Medicine { Name="Brufen", GenericName="Ibuprofen", Category=MedicineCategory.AntiInflammatory, Form=MedicineForm.Tablet, Strength="400 mg" },
-    new Medicine { Name="Cataflam", GenericName="Diclofenac Potassium", Category=MedicineCategory.AntiInflammatory, Form=MedicineForm.Tablet, Strength="50 mg" },
-    new Medicine { Name="Voltaren", GenericName="Diclofenac Sodium", Category=MedicineCategory.AntiInflammatory, Form=MedicineForm.Gel, Strength="1%" },
+                    {
+                        new Medicine { Name="Panadol", GenericName="Paracetamol", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="500 mg" },
+                        new Medicine { Name="Panadol Extra", GenericName="Paracetamol + Caffeine", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="500/65 mg" },
+                        new Medicine { Name="Brufen", GenericName="Ibuprofen", Category=MedicineCategory.AntiInflammatory, Form=MedicineForm.Tablet, Strength="400 mg" },
+                        new Medicine { Name="Cataflam", GenericName="Diclofenac Potassium", Category=MedicineCategory.AntiInflammatory, Form=MedicineForm.Tablet, Strength="50 mg" },
+                        new Medicine { Name="Voltaren", GenericName="Diclofenac Sodium", Category=MedicineCategory.AntiInflammatory, Form=MedicineForm.Gel, Strength="1%" },
 
-    new Medicine { Name="Augmentin", GenericName="Amoxicillin + Clavulanic Acid", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Tablet, Strength="625 mg" },
-    new Medicine { Name="Amoxil", GenericName="Amoxicillin", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Capsule, Strength="500 mg" },
-    new Medicine { Name="Zithromax", GenericName="Azithromycin", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Tablet, Strength="500 mg" },
-    new Medicine { Name="Flagyl", GenericName="Metronidazole", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Tablet, Strength="500 mg" },
-    new Medicine { Name="Cipro", GenericName="Ciprofloxacin", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Tablet, Strength="500 mg" },
+                        new Medicine { Name="Augmentin", GenericName="Amoxicillin + Clavulanic Acid", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Tablet, Strength="625 mg" },
+                        new Medicine { Name="Amoxil", GenericName="Amoxicillin", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Capsule, Strength="500 mg" },
+                        new Medicine { Name="Zithromax", GenericName="Azithromycin", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Tablet, Strength="500 mg" },
+                        new Medicine { Name="Flagyl", GenericName="Metronidazole", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Tablet, Strength="500 mg" },
+                        new Medicine { Name="Cipro", GenericName="Ciprofloxacin", Category=MedicineCategory.Antibiotic, Form=MedicineForm.Tablet, Strength="500 mg" },
 
-    new Medicine { Name="Clarinase", GenericName="Loratadine + Pseudoephedrine", Category=MedicineCategory.Antihistamine, Form=MedicineForm.Tablet, Strength="5/120 mg" },
-    new Medicine { Name="Zyrtec", GenericName="Cetirizine", Category=MedicineCategory.Antihistamine, Form=MedicineForm.Tablet, Strength="10 mg" },
-    new Medicine { Name="Telfast", GenericName="Fexofenadine", Category=MedicineCategory.Antihistamine, Form=MedicineForm.Tablet, Strength="120 mg" },
+                        new Medicine { Name="Clarinase", GenericName="Loratadine + Pseudoephedrine", Category=MedicineCategory.Antihistamine, Form=MedicineForm.Tablet, Strength="5/120 mg" },
+                        new Medicine { Name="Zyrtec", GenericName="Cetirizine", Category=MedicineCategory.Antihistamine, Form=MedicineForm.Tablet, Strength="10 mg" },
+                        new Medicine { Name="Telfast", GenericName="Fexofenadine", Category=MedicineCategory.Antihistamine, Form=MedicineForm.Tablet, Strength="120 mg" },
 
-    new Medicine { Name="Otrivin", GenericName="Xylometazoline", Category=MedicineCategory.Decongestant, Form=MedicineForm.Spray, Strength="0.1%" },
-    new Medicine { Name="Nasacort", GenericName="Triamcinolone", Category=MedicineCategory.Decongestant, Form=MedicineForm.Spray, Strength="55 mcg" },
+                        new Medicine { Name="Otrivin", GenericName="Xylometazoline", Category=MedicineCategory.Decongestant, Form=MedicineForm.Spray, Strength="0.1%" },
+                        new Medicine { Name="Nasacort", GenericName="Triamcinolone", Category=MedicineCategory.Decongestant, Form=MedicineForm.Spray, Strength="55 mcg" },
 
-    new Medicine { Name="Vitamin C", GenericName="Ascorbic Acid", Category=MedicineCategory.Vitamin, Form=MedicineForm.Tablet, Strength="1000 mg" },
-    new Medicine { Name="Vitamin D3", GenericName="Cholecalciferol", Category=MedicineCategory.Vitamin, Form=MedicineForm.Capsule, Strength="1000 IU" },
-    new Medicine { Name="Centrum", GenericName="Multivitamins", Category=MedicineCategory.Vitamin, Form=MedicineForm.Tablet, Strength="Multivitamin" },
+                        new Medicine { Name="Vitamin C", GenericName="Ascorbic Acid", Category=MedicineCategory.Vitamin, Form=MedicineForm.Tablet, Strength="1000 mg" },
+                        new Medicine { Name="Vitamin D3", GenericName="Cholecalciferol", Category=MedicineCategory.Vitamin, Form=MedicineForm.Capsule, Strength="1000 IU" },
+                        new Medicine { Name="Centrum", GenericName="Multivitamins", Category=MedicineCategory.Vitamin, Form=MedicineForm.Tablet, Strength="Multivitamin" },
 
-    new Medicine { Name="Insulin", GenericName="Human Insulin", Category=MedicineCategory.Hormone, Form=MedicineForm.Injection, Strength="100 IU/ml" },
-    new Medicine { Name="Glucophage", GenericName="Metformin", Category=MedicineCategory.Antidiabetic, Form=MedicineForm.Tablet, Strength="500 mg" },
+                        new Medicine { Name="Insulin", GenericName="Human Insulin", Category=MedicineCategory.Hormone, Form=MedicineForm.Injection, Strength="100 IU/ml" },
+                        new Medicine { Name="Glucophage", GenericName="Metformin", Category=MedicineCategory.Antidiabetic, Form=MedicineForm.Tablet, Strength="500 mg" },
 
-    new Medicine { Name="Aspirin", GenericName="Acetylsalicylic Acid", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="75 mg" },
-    new Medicine { Name="Ketolac", GenericName="Ketorolac", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="10 mg" },
+                        new Medicine { Name="Aspirin", GenericName="Acetylsalicylic Acid", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="75 mg" },
+                        new Medicine { Name="Ketolac", GenericName="Ketorolac", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="10 mg" },
 
-    new Medicine { Name="Eucarbon", GenericName="Activated Charcoal", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Tablet, Strength="250 mg" },
-    new Medicine { Name="Imodium", GenericName="Loperamide", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Capsule, Strength="2 mg" },
+                        new Medicine { Name="Eucarbon", GenericName="Activated Charcoal", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Tablet, Strength="250 mg" },
+                        new Medicine { Name="Imodium", GenericName="Loperamide", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Capsule, Strength="2 mg" },
 
-    new Medicine { Name="Ventolin", GenericName="Salbutamol", Category=MedicineCategory.Bronchodilator, Form=MedicineForm.Inhaler, Strength="100 mcg" },
-    new Medicine { Name="Symbicort", GenericName="Budesonide + Formoterol", Category=MedicineCategory.Bronchodilator, Form=MedicineForm.Inhaler, Strength="160/4.5 mcg" },
+                        new Medicine { Name="Ventolin", GenericName="Salbutamol", Category=MedicineCategory.Bronchodilator, Form=MedicineForm.Inhaler, Strength="100 mcg" },
+                        new Medicine { Name="Symbicort", GenericName="Budesonide + Formoterol", Category=MedicineCategory.Bronchodilator, Form=MedicineForm.Inhaler, Strength="160/4.5 mcg" },
 
-    new Medicine { Name="Losec", GenericName="Omeprazole", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Capsule, Strength="20 mg" },
-    new Medicine { Name="Nexium", GenericName="Esomeprazole", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Tablet, Strength="40 mg" },
+                        new Medicine { Name="Losec", GenericName="Omeprazole", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Capsule, Strength="20 mg" },
+                        new Medicine { Name="Nexium", GenericName="Esomeprazole", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Tablet, Strength="40 mg" },
 
-    new Medicine { Name="Heparin", GenericName="Heparin Sodium", Category=MedicineCategory.Anticoagulant, Form=MedicineForm.Injection, Strength="5000 IU" },
-    new Medicine { Name="Warfarin", GenericName="Warfarin", Category=MedicineCategory.Anticoagulant, Form=MedicineForm.Tablet, Strength="5 mg" },
+                        new Medicine { Name="Heparin", GenericName="Heparin Sodium", Category=MedicineCategory.Anticoagulant, Form=MedicineForm.Injection, Strength="5000 IU" },
+                        new Medicine { Name="Warfarin", GenericName="Warfarin", Category=MedicineCategory.Anticoagulant, Form=MedicineForm.Tablet, Strength="5 mg" },
 
-    new Medicine { Name="Lasix", GenericName="Furosemide", Category=MedicineCategory.Diuretic, Form=MedicineForm.Tablet, Strength="40 mg" },
-    new Medicine { Name="Aldactone", GenericName="Spironolactone", Category=MedicineCategory.Diuretic, Form=MedicineForm.Tablet, Strength="25 mg" },
+                        new Medicine { Name="Lasix", GenericName="Furosemide", Category=MedicineCategory.Diuretic, Form=MedicineForm.Tablet, Strength="40 mg" },
+                        new Medicine { Name="Aldactone", GenericName="Spironolactone", Category=MedicineCategory.Diuretic, Form=MedicineForm.Tablet, Strength="25 mg" },
 
-    new Medicine { Name="Betadine", GenericName="Povidone Iodine", Category=MedicineCategory.Antiseptic, Form=MedicineForm.Solution, Strength="10%" },
-    new Medicine { Name="Dettol", GenericName="Chloroxylenol", Category=MedicineCategory.Antiseptic, Form=MedicineForm.Solution, Strength="4.8%" },
+                        new Medicine { Name="Betadine", GenericName="Povidone Iodine", Category=MedicineCategory.Antiseptic, Form=MedicineForm.Solution, Strength="10%" },
+                        new Medicine { Name="Dettol", GenericName="Chloroxylenol", Category=MedicineCategory.Antiseptic, Form=MedicineForm.Solution, Strength="4.8%" },
 
-    new Medicine { Name="Tramal", GenericName="Tramadol", Category=MedicineCategory.Analgesic, Form=MedicineForm.Capsule, Strength="50 mg" },
-    new Medicine { Name="Morphine", GenericName="Morphine Sulfate", Category=MedicineCategory.Analgesic, Form=MedicineForm.Injection, Strength="10 mg/ml" },
+                        new Medicine { Name="Tramal", GenericName="Tramadol", Category=MedicineCategory.Analgesic, Form=MedicineForm.Capsule, Strength="50 mg" },
+                        new Medicine { Name="Morphine", GenericName="Morphine Sulfate", Category=MedicineCategory.Analgesic, Form=MedicineForm.Injection, Strength="10 mg/ml" },
 
-    new Medicine { Name="Lantus", GenericName="Insulin Glargine", Category=MedicineCategory.Hormone, Form=MedicineForm.Injection, Strength="100 IU/ml" },
-    new Medicine { Name="Januvia", GenericName="Sitagliptin", Category=MedicineCategory.Antidiabetic, Form=MedicineForm.Tablet, Strength="100 mg" },
+                        new Medicine { Name="Lantus", GenericName="Insulin Glargine", Category=MedicineCategory.Hormone, Form=MedicineForm.Injection, Strength="100 IU/ml" },
+                        new Medicine { Name="Januvia", GenericName="Sitagliptin", Category=MedicineCategory.Antidiabetic, Form=MedicineForm.Tablet, Strength="100 mg" },
 
-    new Medicine { Name="Duspatalin", GenericName="Mebeverine", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Tablet, Strength="135 mg" },
-    new Medicine { Name="Buscopan", GenericName="Hyoscine", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Tablet, Strength="10 mg" },
+                        new Medicine { Name="Duspatalin", GenericName="Mebeverine", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Tablet, Strength="135 mg" },
+                        new Medicine { Name="Buscopan", GenericName="Hyoscine", Category=MedicineCategory.Gastrointestinal, Form=MedicineForm.Tablet, Strength="10 mg" },
 
-    new Medicine { Name="Neurobion", GenericName="Vitamin B Complex", Category=MedicineCategory.Vitamin, Form=MedicineForm.Tablet, Strength="B1+B6+B12" },
-    new Medicine { Name="Feroglobin", GenericName="Iron Supplement", Category=MedicineCategory.Supplement, Form=MedicineForm.Syrup, Strength="Iron" },
+                        new Medicine { Name="Neurobion", GenericName="Vitamin B Complex", Category=MedicineCategory.Vitamin, Form=MedicineForm.Tablet, Strength="B1+B6+B12" },
+                        new Medicine { Name="Feroglobin", GenericName="Iron Supplement", Category=MedicineCategory.Supplement, Form=MedicineForm.Syrup, Strength="Iron" },
 
-    new Medicine { Name="Calcium D", GenericName="Calcium + Vitamin D", Category=MedicineCategory.Supplement, Form=MedicineForm.Tablet, Strength="600 mg" },
-    new Medicine { Name="Omega 3", GenericName="Fish Oil", Category=MedicineCategory.Supplement, Form=MedicineForm.Capsule, Strength="1000 mg" },
+                        new Medicine { Name="Calcium D", GenericName="Calcium + Vitamin D", Category=MedicineCategory.Supplement, Form=MedicineForm.Tablet, Strength="600 mg" },
+                        new Medicine { Name="Omega 3", GenericName="Fish Oil", Category=MedicineCategory.Supplement, Form=MedicineForm.Capsule, Strength="1000 mg" },
 
-    new Medicine { Name="Efferalgan", GenericName="Paracetamol", Category=MedicineCategory.Analgesic, Form=MedicineForm.Syrup, Strength="250 mg" },
-    new Medicine { Name="Doliprane", GenericName="Paracetamol", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="500 mg" }
-};
-              
+                        new Medicine { Name="Efferalgan", GenericName="Paracetamol", Category=MedicineCategory.Analgesic, Form=MedicineForm.Syrup, Strength="250 mg" },
+                        new Medicine { Name="Doliprane", GenericName="Paracetamol", Category=MedicineCategory.Analgesic, Form=MedicineForm.Tablet, Strength="500 mg" }
+                    };
 
                     context.Medicines.AddRange(medicines);
                     context.SaveChanges();
                 }
-
 
                 // ── Department ─────────────────────────────────────────────────────────
                 if (!context.Departments.Any())
@@ -190,7 +188,7 @@ namespace Medical.PL.Data
                     context.SaveChanges();
                 }
 
-                // ── Appointments ─────────────────────────────
+                // ── Appointments ───────────────────────────────────────────────────────
                 if (!context.Appointments.Any())
                 {
                     var doctor = context.Doctors.First();
@@ -209,7 +207,7 @@ namespace Medical.PL.Data
                             AppointmentTime = new TimeSpan(9, 0, 0),
                             QueueNumber = 1,
                             BookingSource = "Clinic",
-                            Status = "تم الكشف",
+                            Status = "Completed",
                             Notes = "Diagnosed with Acute Viral Gastroenteritis"
                         },
                         new Appointment
@@ -222,13 +220,75 @@ namespace Medical.PL.Data
                             AppointmentTime = new TimeSpan(11, 0, 0),
                             QueueNumber = 2,
                             BookingSource = "Clinic",
-                            Status = "محجوز",
+                            Status = "Booked",
                             Notes = "Follow-up for Acute Viral Gastroenteritis"
                         }
                     );
                     context.SaveChanges();
                 }
 
+                // ── Prescriptions (Pediatric — Acute Viral Gastroenteritis) ───────────
+                if (!context.Prescriptions.Any())
+                {
+                    var doctor = context.Doctors.First();
+                    var patient1 = context.Patients.First();
+
+                    var appointment = context.Appointments
+                        .Where(a => a.PatientId == patient1.Id && a.Status == "تم الكشف")
+                        .OrderBy(a => a.AppointmentDate)
+                        .First();
+
+                    var efferalgan = context.Medicines.First(m => m.Name == "Efferalgan");
+                    var flagyl = context.Medicines.First(m => m.Name == "Flagyl");
+                    var eucarbon = context.Medicines.First(m => m.Name == "Eucarbon");
+                    var imodium = context.Medicines.First(m => m.Name == "Imodium");
+
+                    var prescription = new Prescription
+                    {
+                        AppointmentId = appointment.Id,
+                        DoctorId = doctor.Id,
+                        PatientId = patient1.Id,
+                        Notes = "يُنصح بالراحة التامة والإكثار من شرب السوائل ومحاليل الإماهة الفموية (ORS). تجنب الأطعمة الدهنية والحارة ومنتجات الألبان حتى التعافي. مراجعة الطبيب فوراً في حالة ارتفاع درجة الحرارة فوق 39 أو استمرار الأعراض أكثر من 48 ساعة.",
+                        Items = new List<PrescriptionItem>
+                        {
+                            new PrescriptionItem
+                            {
+                                MedicineId   = efferalgan.Id,
+                                Dosage       = "125 mg",
+                                Quantity     = 1,
+                                Duration     = "5 أيام",
+                                Instructions = "ملعقة صغيرة (5 مل) كل 6 ساعات عند الحاجة لخفض الحرارة أو تخفيف الألم"
+                            },
+                            new PrescriptionItem
+                            {
+                                MedicineId   = flagyl.Id,
+                                Dosage       = "125 mg",
+                                Quantity     = 15,
+                                Duration     = "5 أيام",
+                                Instructions = "نصف قرص ثلاث مرات يومياً بعد الأكل — جرعة مخصصة للأطفال"
+                            },
+                            new PrescriptionItem
+                            {
+                                MedicineId   = eucarbon.Id,
+                                Dosage       = "250 mg",
+                                Quantity     = 10,
+                                Duration     = "3 أيام",
+                                Instructions = "قرص واحد مرتين يومياً بعد الوجبات لامتصاص السموم وتخفيف الانتفاخ"
+                            },
+                            new PrescriptionItem
+                            {
+                                MedicineId   = imodium.Id,
+                                Dosage       = "1 mg",
+                                Quantity     = 6,
+                                Duration     = "عند الحاجة",
+                                Instructions = "نصف كبسولة بعد كل إسهال، بحد أقصى 3 جرعات يومياً — للأطفال فوق 6 سنوات"
+                            }
+                        }
+                    };
+
+                    context.Prescriptions.Add(prescription);
+                    context.SaveChanges();
+                }
             }
         }
     }

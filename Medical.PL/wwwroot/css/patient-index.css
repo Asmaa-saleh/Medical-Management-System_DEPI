@@ -1,4 +1,4 @@
-﻿.pg-header {
+.pg-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -7,19 +7,17 @@
     gap: 16px;
 }
 
-    .pg-header h1 {
-        font-size: 1.8rem;
-        font-weight: 900;
-        color: #0F172A;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin: 0;
-    }
+.pg-header h1 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #0F172A;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+}
 
-        .pg-header h1 i {
-            color: #0891B2;
-        }
+.pg-header h1 i { color: #0891B2; }
 
 .btn-add {
     padding: 12px 28px;
@@ -38,11 +36,11 @@
     text-decoration: none;
 }
 
-    .btn-add:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(8, 145, 178, 0.3);
-        color: #fff;
-    }
+.btn-add:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(8, 145, 178, 0.3);
+    color: #fff;
+}
 
 .tbl-card {
     background: #fff;
@@ -58,34 +56,29 @@
     border-collapse: collapse;
 }
 
-    .tbl th {
-        padding: 16px 22px;
-        text-align: right;
-        font-size: 0.78rem;
-        font-weight: 700;
-        color: #64748B;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        background: #F8FAFC;
-        border-bottom: 2px solid #EEF2F6;
-        white-space: nowrap;
-    }
+.tbl th {
+    padding: 16px 22px;
+    text-align: right;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #F8FAFC;
+    border-bottom: 2px solid #EEF2F6;
+    white-space: nowrap;
+}
 
-    .tbl td {
-        padding: 18px 22px;
-        font-size: 0.9rem;
-        color: #0F172A;
-        border-bottom: 1px solid #F1F5F9;
-        vertical-align: middle;
-    }
+.tbl td {
+    padding: 18px 22px;
+    font-size: 0.9rem;
+    color: #0F172A;
+    border-bottom: 1px solid #F1F5F9;
+    vertical-align: middle;
+}
 
-    .tbl tr:hover td {
-        background: #FAFBFC;
-    }
-
-    .tbl tr:last-child td {
-        border-bottom: none;
-    }
+.tbl tr:hover td { background: #FAFBFC; }
+.tbl tr:last-child td { border-bottom: none; }
 
 .patient-cell {
     display: flex;
@@ -129,15 +122,8 @@
     white-space: nowrap;
 }
 
-.bg-male {
-    background: #EFF6FF;
-    color: #2563EB;
-}
-
-.bg-female {
-    background: #FDF2F8;
-    color: #DB2777;
-}
+.bg-male { background: #EFF6FF; color: #2563EB; }
+.bg-female { background: #FDF2F8; color: #DB2777; }
 
 .badge-count {
     padding: 5px 14px;
@@ -147,6 +133,15 @@
     background: #F0FDFA;
     color: #0D9488;
     display: inline-block;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.badge-count:hover { opacity: 0.75; }
+
+.badge-rx {
+    background: #F5F3FF;
+    color: #7C3AED;
 }
 
 .email-cell {
@@ -173,60 +168,37 @@
     text-decoration: none;
 }
 
-.ab-view {
-    background: #ECFEFF;
-    color: #0891B2;
-}
-
-    .ab-view:hover {
-        background: #0891B2;
-        color: #fff;
-    }
-
-.ab-edit {
-    background: #FEF3C7;
-    color: #D97706;
-}
-
-    .ab-edit:hover {
-        background: #D97706;
-        color: #fff;
-    }
-
-.ab-delete {
-    background: #FEE2E2;
-    color: #EF4444;
-}
-
-    .ab-delete:hover {
-        background: #EF4444;
-        color: #fff;
-    }
+.ab-view { background: #ECFEFF; color: #0891B2; }
+.ab-view:hover { background: #0891B2; color: #fff; }
+.ab-edit { background: #FEF3C7; color: #D97706; }
+.ab-edit:hover { background: #D97706; color: #fff; }
+.ab-delete { background: #FEE2E2; color: #EF4444; }
+.ab-delete:hover { background: #EF4444; color: #fff; }
 
 .empty {
     text-align: center;
     padding: 80px 20px;
 }
 
-    .empty i {
-        font-size: 4rem;
-        color: #E2E8F0;
-        margin-bottom: 20px;
-        display: block;
-    }
+.empty i {
+    font-size: 4rem;
+    color: #E2E8F0;
+    margin-bottom: 20px;
+    display: block;
+}
 
-    .empty h3 {
-        color: #64748B;
-        font-weight: 700;
-        font-size: 1.2rem;
-        margin-bottom: 8px;
-    }
+.empty h3 {
+    color: #64748B;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
 
-    .empty p {
-        color: #94A3B8;
-        font-size: 0.9rem;
-        margin-bottom: 24px;
-    }
+.empty p {
+    color: #94A3B8;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+}
 
 .badge-status {
     padding: 4px 12px;
@@ -237,20 +209,9 @@
     white-space: nowrap;
 }
 
-.status-booked {
-    background: #EFF6FF;
-    color: #2563EB;
-}
-
-.status-done {
-    background: #F0FDF4;
-    color: #16A34A;
-}
-
-.status-cancelled {
-    background: #FEF2F2;
-    color: #DC2626;
-}
+.status-booked    { background: #EFF6FF; color: #2563EB; }
+.status-done      { background: #F0FDF4; color: #16A34A; }
+.status-cancelled { background: #FEF2F2; color: #DC2626; }
 
 .btn-back-link {
     padding: 10px 24px;
@@ -267,19 +228,17 @@
     transition: all 0.3s;
 }
 
-    .btn-back-link:hover {
-        background: #E2E8F0;
-        color: #334155;
-    }
+.btn-back-link:hover {
+    background: #E2E8F0;
+    color: #334155;
+}
 
 .det-link {
     text-decoration: none;
     transition: opacity 0.2s;
 }
 
-    .det-link:hover {
-        opacity: 0.8;
-    }
+.det-link:hover { opacity: 0.8; }
 
 @media (max-width: 768px) {
     .pg-header,
@@ -287,11 +246,7 @@
         margin: 20px;
     }
 
-    .tbl-card {
-        overflow-x: auto;
-    }
+    .tbl-card { overflow-x: auto; }
 
-    .pg-header h1 {
-        font-size: 1.3rem;
-    }
+    .pg-header h1 { font-size: 1.3rem; }
 }

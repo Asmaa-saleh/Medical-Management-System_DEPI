@@ -1,0 +1,189 @@
+@model ICollection<Medical.PL.Data.Models.Prescription>
+
+@{
+    ViewData["Title"] = "وصفات المريض";
+    ViewData["ActivePage"] = "Patients";
+    string patientName = ViewBag.PatientName ?? "المريض";
+    int    patientId   = ViewBag.PatientId   ?? 0;
+    int    psIndex     = 1;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/patient-prescriptions.css" asp-append-version="true" />
+}
+
+<div class="rx-header">
+    <h1><i class="fas fa-file-prescription"></i> وصفات المريض</h1>
+</div>
+
+<div class="rx-breadcrumb">
+    <a asp-action="Index">المرضى</a>
+    <i class="fas fa-chevron-left"></i>
+    @if (patientId > 0)
+    {
+        <a asp-action="Details" asp-route-id="@patientId">@patientName</a>
+    }
+    else
+    {
+        <span>@patientName</span>
+    }
+    <i class="fas fa-chevron-left"></i>
+    <span>الوصفات الطبية</span>
+</div>
+
+<div class="rx-subheader">
+    <span class="rx-patient-name"><i class="fas fa-user" style="color:#0891B2; margin-left:6px;"></i>@patientName</span>
+    <span class="rx-count-badge">@Model.Count وصفة@(Model.Count != 1 ? "" : "")</span>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="rx-empty">
+        <i class="fas fa-file-medical-alt"></i>
+        <h3>لا توجد وصفات طبية</h3>
+        <p>لم يتم إضافة أي وصفات طبية لهذا المريض بعد.</p>
+    </div>
+}
+else
+{
+    @foreach (var ps in Model)
+    {
+        var bodyId = $"body-{ps.Id}";
+        var chevId = $"chev-{ps.Id}";
+
+        <div class="rx-card">
+
+            <div class="rx-card-header" onclick="toggleRx('@bodyId', '@chevId')">
+                <div class="rx-card-header-right">
+                    <span class="rx-num">وصفة #@psIndex</span>
+                    <span class="rx-id-pill">Ps-@(ps.Id.ToString("D4"))</span>
+                    <span class="rx-items-pill">@ps.Items.Count دواء</span>
+                </div>
+                <div class="rx-card-header-left">
+                    @if (ps.Doctor?.User != null)
+                    {
+                        <span class="rx-doctor-meta">د. @ps.Doctor.User.Name</span>
+                    }
+                    <i class="fas fa-chevron-down rx-chevron" id="@chevId"></i>
+                </div>
+            </div>
+
+            <div class="rx-card-body" id="@bodyId">
+
+                @if (ps.Doctor?.User != null)
+                {
+                    <div class="rx-doctor-strip">
+                        <div class="rx-doctor-avatar">@ps.Doctor.User.Name[0].ToString().ToUpper()</div>
+                        <div>
+                            <div class="rx-doctor-name">د. @ps.Doctor.User.Name</div>
+                            <div class="rx-doctor-label">الطبيب المعالج</div>
+                        </div>
+                    </div>
+                }
+
+                @if (ps.Appointment != null)
+                {
+                    <div class="rx-date-strip">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>تاريخ الزيارة: <strong>@ps.Appointment.AppointmentDate.ToString("dd/MM/yyyy")</strong></span>
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(ps.Notes))
+                {
+                    <div class="rx-notes-row">
+                        <span class="rx-notes-label"><i class="fas fa-sticky-note"></i> ملاحظات:</span>
+                        <span>@ps.Notes</span>
+                    </div>
+                }
+
+                <div class="rx-medicines">
+                    <div class="rx-medicines-title">
+                        <i class="fas fa-pills"></i>
+                        الأدوية الموصوفة
+                    </div>
+
+                    @if (!ps.Items.Any())
+                    {
+                        <p class="rx-no-items">لا توجد أدوية مسجلة في هذه الوصفة.</p>
+                    }
+                    else
+                    {
+                        <table class="rx-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>الدواء</th>
+                                    <th>الجرعة</th>
+                                    <th>الكمية</th>
+                                    <th>المدة</th>
+                                    <th>التعليمات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ var itemNo = 1; }
+                                @foreach (var item in ps.Items)
+                                {
+                                    <tr>
+                                        <td style="color:#94A3B8; font-size:0.8rem; font-weight:700;">@itemNo</td>
+                                        <td>
+                                            <div class="rx-med-name">@item.Medicine?.Name</div>
+                                            @if (!string.IsNullOrWhiteSpace(item.Medicine?.GenericName))
+                                            {
+                                                <div class="rx-med-generic">@item.Medicine.GenericName</div>
+                                            }
+                                        </td>
+                                        <td><span class="rx-dosage-pill">@item.Dosage</span></td>
+                                        <td style="font-weight:700;">@item.Quantity</td>
+                                        <td style="color:#334155;">@item.Duration</td>
+                                        <td style="color:#64748B;">@(item.Instructions ?? "—")</td>
+                                    </tr>
+                                    itemNo++;
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+        psIndex++;
+    }
+}
+
+<div class="rx-footer">
+    @if (patientId > 0)
+    {
+        <a asp-action="Details" asp-route-id="@patientId" class="btn-rx-back">
+            <i class="fas fa-arrow-right"></i> العودة لبيانات المريض
+        </a>
+    }
+    else
+    {
+        <a asp-action="Index" class="btn-rx-back">
+            <i class="fas fa-arrow-right"></i> العودة للمرضى
+        </a>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function toggleRx(bodyId, chevId) {
+            const body = document.getElementById(bodyId);
+            const chev = document.getElementById(chevId);
+            const isOpen = body.classList.contains('open');
+            body.classList.toggle('open', !isOpen);
+            chev.classList.toggle('open', !isOpen);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const bodies = document.querySelectorAll('.rx-card-body');
+            if (bodies.length === 1) {
+                bodies[0].classList.add('open');
+                const chevrons = document.querySelectorAll('.rx-chevron');
+                if (chevrons.length === 1) chevrons[0].classList.add('open');
+            }
+        });
+    </script>
+}
