@@ -1,0 +1,80 @@
+﻿@model Medical.PL.ViewModels.PatientAppointmentsVM
+
+@{
+    ViewData["Title"] = "حجوزات المريض";
+    ViewData["ActivePage"] = "Patients";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/patient-index.css" asp-append-version="true" />
+}
+
+<div class="pg-header">
+    <h1>
+        <i class="fas fa-calendar-check"></i>
+        حجوزات: @Model.PatientName
+    </h1>
+    <a asp-action="Details" asp-route-id="@Model.PatientId" class="btn-back-link">
+        <i class="fas fa-arrow-right"></i> العودة للمريض
+    </a>
+</div>
+
+<div class="tbl-card">
+    @if (Model.Appointments.Any())
+    {
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>التاريخ</th>
+                    <th>الوقت</th>
+                    <th>الطبيب</th>
+                    <th>الخدمة</th>
+                    <th>الحالة</th>
+                    <th>رقم الدور</th>
+                    <th>المصدر</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var appt in Model.Appointments)
+                {
+                    <tr>
+                        <td><span class="patient-id">#@appt.Id</span></td>
+                        <td>@appt.AppointmentDate.ToString("dd/MM/yyyy")</td>
+                        <td>@appt.AppointmentTime.ToString(@"hh\:mm")</td>
+                        <td>
+                            <div class="patient-name">@appt.Doctor.User.Name</div>
+                            <div class="patient-id">@appt.Doctor.Specialization</div>
+                        </td>
+                        <td>@appt.Service.Name</td>
+                        <td>
+                            <span class="badge-status @GetStatusClass(appt.Status)">
+                                @appt.Status
+                            </span>
+                        </td>
+                        <td>@appt.QueueNumber</td>
+                        <td>@appt.BookingSource</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty">
+            <i class="fas fa-calendar-times"></i>
+            <h3>لا يوجد حجوزات لهذا المريض</h3>
+            <p>لم يتم تسجيل أي حجوزات بعد</p>
+        </div>
+    }
+</div>
+
+@functions {
+    string GetStatusClass(string status) => status switch
+    {
+        "محجوز" => "status-booked",
+        "تم الكشف" => "status-done",
+        "ملغى" => "status-cancelled",
+        _ => ""
+    };
+}

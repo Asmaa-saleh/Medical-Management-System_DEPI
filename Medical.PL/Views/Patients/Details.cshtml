@@ -1,0 +1,74 @@
+﻿@model Medical.PL.ViewModels.PatientVM
+
+@{
+    ViewData["Title"] = "تفاصيل المريض";
+    ViewData["ActivePage"] = "Patients";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/patient-details.css" asp-append-version="true" />
+}
+
+<div class="det-header">
+    <h1><i class="fas fa-user-circle"></i> تفاصيل المريض</h1>
+</div>
+
+<div class="det-card">
+    <div class="det-top">
+        <div class="det-avatar"><i class="fas fa-user"></i></div>
+        <div>
+            <div class="det-patient-name">@Model.Name</div>
+            <div class="det-patient-sub">مريض #@Model.Id</div>
+        </div>
+    </div>
+
+    <div class="det-body">
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-venus-mars"></i> الجنس</span>
+            <span class="det-badge @(Model.Gender == "ذكر" ? "db-blue" : "db-pink")">
+                <i class="fas @(Model.Gender == "ذكر" ? "fa-mars" : "fa-venus")"></i>
+                @Model.Gender
+            </span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-calendar"></i> تاريخ الميلاد</span>
+            <span class="det-val">@Model.DateOfBirth.ToString("dd/MM/yyyy")</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-phone"></i> رقم الهاتف</span>
+            <span class="det-val">@Model.Phone</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-envelope"></i> البريد الإلكتروني</span>
+            <span class="det-val">@Model.Email</span>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-calendar-check"></i> الحجوزات</span>
+            <a asp-action="Appointments" asp-route-id="@Model.Id" class="det-badge db-teal det-link">
+                @Model.AppointmentsCount حجز
+            </a>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-file-prescription"></i> الوصفات</span>
+            <a asp-action="Prescriptions" asp-route-id="@Model.Id" class="det-badge db-purple det-link">
+                @Model.PrescriptionsCount وصفة
+            </a>
+        </div>
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-clock"></i> تاريخ التسجيل</span>
+            <span class="det-val">@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+        </div>
+    </div>
+
+    <div class="det-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-det-edit">
+            <i class="fas fa-edit"></i> تعديل
+        </a>
+        <a asp-action="Index" class="btn-det-back">
+            <i class="fas fa-arrow-right"></i> رجوع
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn-det-del">
+            <i class="fas fa-trash"></i> حذف
+        </a>
+    </div>
+</div>

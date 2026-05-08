@@ -11,6 +11,7 @@ namespace Medical.PL.Data
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
+                
                 context.Database.EnsureCreated();
 
                 if (!context.Medicines.Any())
@@ -87,6 +88,147 @@ namespace Medical.PL.Data
                     context.Medicines.AddRange(medicines);
                     context.SaveChanges();
                 }
+
+
+                // ── Department ─────────────────────────────────────────────────────────
+                if (!context.Departments.Any())
+                {
+                    context.Departments.Add(new Department
+                    {
+                        Name = "Pediatrics",
+                        Description = "Focuses on well-baby checkups, developmental assessments, and routine screenings."
+                    });
+                    context.SaveChanges();
+                }
+
+                // ── Doctor ─────────────────────────────────────────────────────────────
+                if (!context.Doctors.Any())
+                {
+                    var dept = context.Departments.First();
+
+                    var doctorUser = new User
+                    {
+                        Name = "Walid Amr",
+                        DateOfBirth = new DateTime(1960, 3, 15),
+                        Email = "dr.walid.amr@medicare.com",
+                        Phone = "01012395678",
+                        Gender = "ذكر"
+                    };
+                    context.Users.Add(doctorUser);
+                    context.SaveChanges();
+
+                    context.Doctors.Add(new Doctor
+                    {
+                        UserId = doctorUser.Id,
+                        DepartmentId = dept.Id,
+                        Specialization = "Pediatrics",
+                        ExperienceYears = 15,
+                        IsActive = true
+                    });
+                    context.SaveChanges();
+                }
+
+                // ── Service ────────────────────────────────────────────────────────────
+                if (!context.Services.Any())
+                {
+                    var dept = context.Departments.First();
+
+                    context.Services.Add(new Service
+                    {
+                        Name = "General Consultation",
+                        Description = "Standard outpatient consultation",
+                        Price = 200m,
+                        DepartmentId = dept.Id
+                    });
+                    context.SaveChanges();
+                }
+
+                // ── Doctor Schedule ────────────────────────────────────────────────────
+                if (!context.DoctorSchedules.Any())
+                {
+                    var doctor = context.Doctors.First();
+
+                    context.DoctorSchedules.Add(new DoctorSchedule
+                    {
+                        DoctorId = doctor.Id,
+                        DayOfWeek = "الأحد",
+                        StartTime = new TimeSpan(9, 0, 0),
+                        EndTime = new TimeSpan(17, 0, 0),
+                        MaxPatients = 20,
+                        MaxOnlineBooking = 10
+                    });
+                    context.SaveChanges();
+                }
+
+                // ── Patients ───────────────────────────────────────────────────────────
+                if (!context.Patients.Any())
+                {
+                    var userSara = new User
+                    {
+                        Name = "Sara Mohamed",
+                        DateOfBirth = new DateTime(2019, 5, 20),
+                        Email = "sara.mohamed@email.com",
+                        Phone = "01098765432",
+                        Gender = "أنثى"
+                    };
+                    var userKarim = new User
+                    {
+                        Name = "Karim Ibrahim",
+                        DateOfBirth = new DateTime(2023, 11, 30),
+                        Email = "karim.ibrahim@email.com",
+                        Phone = "01112223344",
+                        Gender = "ذكر"
+                    };
+
+                    context.Users.AddRange(userSara, userKarim);
+                    context.SaveChanges();
+
+                    context.Patients.AddRange(
+                        new Patient { UserId = userSara.Id },
+                        new Patient { UserId = userKarim.Id }
+                    );
+                    context.SaveChanges();
+                }
+
+                // ── Appointments ─────────────────────────────
+                if (!context.Appointments.Any())
+                {
+                    var doctor = context.Doctors.First();
+                    var service = context.Services.First();
+                    var schedule = context.DoctorSchedules.First();
+                    var patient1 = context.Patients.First();
+
+                    context.Appointments.AddRange(
+                        new Appointment
+                        {
+                            PatientId = patient1.Id,
+                            DoctorId = doctor.Id,
+                            ServiceId = service.Id,
+                            ScheduleId = schedule.Id,
+                            AppointmentDate = new DateTime(2026, 5, 3),
+                            AppointmentTime = new TimeSpan(9, 0, 0),
+                            QueueNumber = 1,
+                            BookingSource = "Clinic",
+                            Status = "تم الكشف",
+                            Notes = "Diagnosed with Acute Viral Gastroenteritis"
+                        },
+                        new Appointment
+                        {
+                            PatientId = patient1.Id,
+                            DoctorId = doctor.Id,
+                            ServiceId = service.Id,
+                            ScheduleId = schedule.Id,
+                            AppointmentDate = new DateTime(2026, 5, 10),
+                            AppointmentTime = new TimeSpan(11, 0, 0),
+                            QueueNumber = 2,
+                            BookingSource = "Clinic",
+                            Status = "محجوز",
+                            Notes = "Follow-up for Acute Viral Gastroenteritis"
+                        }
+                    );
+                    context.SaveChanges();
+                }
+
             }
         }
     }

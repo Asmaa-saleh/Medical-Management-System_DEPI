@@ -1,0 +1,73 @@
+﻿@model Medical.PL.ViewModels.PatientVM
+
+@{
+    ViewData["Title"] = "تعديل بيانات المريض";
+    ViewData["ActivePage"] = "Patients";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/patient-form.css" asp-append-version="true" />
+}
+
+<div class="form-header">
+    <h1><i class="fas fa-user-edit"></i> تعديل بيانات المريض</h1>
+    <p>تعديل المعلومات الشخصية للمريض</p>
+</div>
+
+<div class="form-card">
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="validation-msg"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="UserId" />
+
+        <div class="fg">
+            <div class="fg-item">
+                <label asp-for="Name"><i class="fas fa-user"></i> الاسم الكامل</label>
+                <input asp-for="Name" class="fc" placeholder="أدخل الاسم الكامل" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+
+            <div class="fg-item">
+                <label asp-for="Gender"><i class="fas fa-venus-mars"></i> الجنس</label>
+                <select asp-for="Gender" class="fc">
+                    <option value="">-- اختر الجنس --</option>
+                    <option value="ذكر">ذكر</option>
+                    <option value="أنثى">أنثى</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger small"></span>
+            </div>
+
+            <div class="fg-item">
+                <label asp-for="DateOfBirth"><i class="fas fa-calendar"></i> تاريخ الميلاد</label>
+                <input asp-for="DateOfBirth" type="date" class="fc" />
+                <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+            </div>
+
+            <div class="fg-item">
+                <label asp-for="Phone"><i class="fas fa-phone"></i> رقم الهاتف</label>
+                <input asp-for="Phone" class="fc" placeholder="أدخل رقم الهاتف" />
+                <span asp-validation-for="Phone" class="text-danger small"></span>
+            </div>
+
+            <div class="fg-item fg-full">
+                <label asp-for="Email"><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+                <input asp-for="Email" type="email" class="fc" placeholder="أدخل البريد الإلكتروني" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-save">
+                <i class="fas fa-save"></i> حفظ التعديلات
+            </button>
+            <a asp-action="Index" class="btn-back">
+                <i class="fas fa-arrow-right"></i> رجوع
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

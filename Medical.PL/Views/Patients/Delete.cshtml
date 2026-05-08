@@ -1,0 +1,68 @@
+﻿@model Medical.PL.ViewModels.PatientVM
+
+@{
+    ViewData["Title"] = "حذف مريض";
+    ViewData["ActivePage"] = "Patients";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/patient-delete.css" asp-append-version="true" />
+}
+
+<div class="del-wrap">
+    <div class="del-card">
+        <div class="del-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2>تأكيد الحذف</h2>
+        <p>هل أنت متأكد من حذف بيانات المريض التالي؟ سيتم حذف جميع بياناته الشخصية من النظام.</p>
+
+        @if (Model.AppointmentsCount > 0)
+        {
+            <div class="del-warning">
+                <i class="fas fa-info-circle"></i>
+                لا يمكن حذف هذا المريض لوجود <strong>@Model.AppointmentsCount حجز</strong> مرتبط به.
+                يرجى حذف الحجوزات أولاً.
+            </div>
+        }
+
+        <div class="del-info">
+            <div class="del-info-row">
+                <span class="del-info-label">الاسم</span>
+                <span class="del-info-val">@Model.Name</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">الجنس</span>
+                <span class="del-info-val">@Model.Gender</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">الهاتف</span>
+                <span class="del-info-val">@Model.Phone</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">البريد الإلكتروني</span>
+                <span class="del-info-val">@Model.Email</span>
+            </div>
+            <div class="del-info-row">
+                <span class="del-info-label">عدد الحجوزات</span>
+                <span class="del-info-val">@Model.AppointmentsCount</span>
+            </div>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div class="del-actions">
+                @if (Model.AppointmentsCount == 0)
+                {
+                    <button type="submit" class="btn-del-yes">
+                        <i class="fas fa-trash"></i> نعم، احذف
+                    </button>
+                }
+                <a asp-action="Index" class="btn-del-no">
+                    <i class="fas fa-times"></i> إلغاء
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

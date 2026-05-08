@@ -27,7 +27,7 @@
     <nav class="mc-navbar">
         <div class="mc-navbar-inner">
 
-            <!-- ✅ الروابط دلوقتي الأول في الـ HTML => هتظهر أقصى اليمين -->
+         
             <ul class="mc-nav">
                 <li>
                     <a href="@Url.Action("Index", "Home")"
@@ -42,8 +42,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="@Url.Action("Index", "Patient")"
-                           class="@(ViewData["ActivePage"]?.ToString() == "Patients" ? "active" : "")">
+                    <a href="@Url.Action("Index", "Patients")"
+                           class="@(ViewData["ActivePage"]?.ToString() == "Patient" ? "active" : "")">
                         <i class="fas fa-users"></i> المرضى
                     </a>
                 </li>
@@ -109,7 +109,7 @@
                 <div class="mc-footer-nav">
                     <a href="@Url.Action("Index", "Home")"><i class="fas fa-chevron-left"></i> الرئيسية</a>
                     <a href="@Url.Action("Index", "Appointment")"><i class="fas fa-chevron-left"></i> الحجوزات</a>
-                    <a href="@Url.Action("Index", "Patient")"><i class="fas fa-chevron-left"></i> المرضى</a>
+                    <a href="@Url.Action("Index", "Patients")"><i class="fas fa-chevron-left"></i> المرضى</a>
                     <a href="@Url.Action("Index", "Doctor")"><i class="fas fa-chevron-left"></i> الأطباء</a>
                     <a href="@Url.Action("Index", "Department")"><i class="fas fa-chevron-left"></i> الأقسام</a>
                     <a href="@Url.Action("Index", "Service")"><i class="fas fa-chevron-left"></i> الخدمات</a>
