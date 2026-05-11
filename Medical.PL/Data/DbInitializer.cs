@@ -1,6 +1,7 @@
 ﻿using Medical.PL.Data.Context;
 using Medical.PL.Data.Enum;
 using Medical.PL.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Medical.PL.Data
 {
@@ -13,7 +14,7 @@ namespace Medical.PL.Data
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
 
                 context.Database.EnsureCreated();
-
+                //context.Database.Migrate();
                 if (!context.Medicines.Any())
                 {
                     var medicines = new List<Medicine>
@@ -234,9 +235,9 @@ namespace Medical.PL.Data
                     var patient1 = context.Patients.First();
 
                     var appointment = context.Appointments
-                        .Where(a => a.PatientId == patient1.Id && a.Status == "تم الكشف")
+                        .Where(a => a.PatientId == patient1.Id && a.Status == "Completed")
                         .OrderBy(a => a.AppointmentDate)
-                        .First();
+                        .FirstOrDefault();
 
                     var efferalgan = context.Medicines.First(m => m.Name == "Efferalgan");
                     var flagyl = context.Medicines.First(m => m.Name == "Flagyl");
