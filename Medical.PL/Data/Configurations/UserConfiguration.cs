@@ -8,6 +8,8 @@ namespace Medical.PL.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            builder.ToTable("Users");
+
             builder.HasKey(u => u.Id);
 
             builder.Property(u => u.Name)
@@ -18,7 +20,7 @@ namespace Medical.PL.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(150);
 
-            builder.Property(u => u.Phone)
+            builder.Property(u => u.PhoneNumber)
                 .IsRequired()
                 .HasMaxLength(20);
 
@@ -27,7 +29,7 @@ namespace Medical.PL.Data.Configurations
                 .HasMaxLength(10);
 
             builder.HasIndex(u => u.Email).IsUnique();
-            builder.HasIndex(u => u.Phone).IsUnique();
+            builder.HasIndex(u => u.PhoneNumber).IsUnique();
         }
     }
 }

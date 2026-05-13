@@ -1,0 +1,97 @@
+@model UserViewModel
+
+@{
+    var showPassword = ViewData["ShowPassword"] as bool? ?? false;
+}
+
+<form asp-action="@ViewData["FormAction"]" asp-route-id="@Model.Id" method="post" class="user-form">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <div class="user-grid">
+        <div class="user-field">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="user-input" placeholder="الاسم الكامل" />
+            <span asp-validation-for="Name" class="user-validation"></span>
+        </div>
+
+        <div class="user-field">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="user-input" placeholder="name@example.com" />
+            <span asp-validation-for="Email" class="user-validation"></span>
+        </div>
+    </div>
+
+    <div class="user-grid">
+        <div class="user-field">
+            <label asp-for="PhoneNumber"></label>
+            <input asp-for="PhoneNumber" class="user-input" placeholder="01000000000" />
+            <span asp-validation-for="PhoneNumber" class="user-validation"></span>
+        </div>
+
+        <div class="user-field">
+            <label asp-for="DateOfBirth"></label>
+            <input asp-for="DateOfBirth" class="user-input" />
+            <span asp-validation-for="DateOfBirth" class="user-validation"></span>
+        </div>
+    </div>
+
+    <div class="user-field">
+        <label asp-for="Gender"></label>
+        <select asp-for="Gender" class="user-input">
+            <option value="">اختر النوع</option>
+            <option value="ذكر">ذكر</option>
+            <option value="أنثى">أنثى</option>
+        </select>
+        <span asp-validation-for="Gender" class="user-validation"></span>
+    </div>
+
+    @if (showPassword)
+    {
+        <div class="user-grid">
+            <div class="user-field">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="user-input" placeholder="••••••••" />
+                <span asp-validation-for="Password" class="user-validation"></span>
+            </div>
+
+            <div class="user-field">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="user-input" placeholder="••••••••" />
+                <span asp-validation-for="ConfirmPassword" class="user-validation"></span>
+            </div>
+        </div>
+    }
+
+    <div class="user-field">
+        <label>الأدوار</label>
+        <div class="user-role-list">
+            @if (Model.AvailableRoles.Any())
+            {
+                @foreach (var role in Model.AvailableRoles)
+                {
+                    <label class="user-role-option">
+                        <input type="checkbox" name="SelectedRoles" value="@role" checked="@Model.SelectedRoles.Contains(role)" />
+                        <span>@role</span>
+                    </label>
+                }
+            }
+            else
+            {
+                <span class="user-muted">لا توجد أدوار مضافة</span>
+            }
+        </div>
+    </div>
+
+    <div class="user-form-actions">
+        <button type="submit" class="user-btn user-btn-primary">
+            <i class="fas fa-save"></i>
+            حفظ
+        </button>
+        <a asp-action="Index" class="user-btn user-btn-light">
+            <i class="fas fa-arrow-right"></i>
+            رجوع
+        </a>
+    </div>
+</form>

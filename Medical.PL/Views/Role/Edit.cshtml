@@ -1,0 +1,28 @@
+@model RoleViewModel
+
+@{
+    ViewData["Title"] = "تعديل دور";
+    ViewData["FormAction"] = "Edit";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/role.css" asp-append-version="true" />
+}
+
+<div class="role-header">
+    <div class="role-title">
+        <span class="role-title-icon"><i class="fas fa-edit"></i></span>
+        <div>
+            <h1>تعديل الدور</h1>
+            <p>تحديث اسم الدور مع الحفاظ على المستخدمين المرتبطين به.</p>
+        </div>
+    </div>
+</div>
+
+<div class="role-form-card">
+    <partial name="_Form" model="Model" />
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

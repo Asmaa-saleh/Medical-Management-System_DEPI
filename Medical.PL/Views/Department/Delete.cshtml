@@ -1,0 +1,21 @@
+﻿@model DepartmentViewModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/appointment-delete.css" asp-append-version="true" />
+}
+<div class="del-wrap">
+    <div class="del-card">
+        <div class="del-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h2>تأكيد حذف القسم</h2>
+        <div class="del-info">
+            <div class="del-info-row"><span class="del-info-label">اسم القسم</span><span class="del-info-val">@Model.Name</span></div>
+        </div>
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div class="del-actions">
+                <button type="submit" class="btn-del-yes"><i class="fas fa-trash"></i> نعم، حذف القسم</button>
+                <a asp-action="Index" class="btn-del-no"><i class="fas fa-times"></i> إلغاء</a>
+            </div>
+        </form>
+    </div>
+</div>

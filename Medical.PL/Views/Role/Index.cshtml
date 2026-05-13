@@ -1,0 +1,79 @@
+@model IEnumerable<RoleViewModel>
+
+@{
+    ViewData["Title"] = "الأدوار";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/role.css" asp-append-version="true" />
+}
+
+<div class="role-header">
+    <div class="role-title">
+        <span class="role-title-icon"><i class="fas fa-user-shield"></i></span>
+        <div>
+            <h1>إدارة الأدوار</h1>
+            <p>تنظيم صلاحيات المستخدمين داخل نظام MediCare</p>
+        </div>
+    </div>
+    <a asp-action="Create" class="role-btn role-btn-primary">
+        <i class="fas fa-plus"></i>
+        إضافة دور
+    </a>
+</div>
+
+<div class="role-table-card">
+    @if (Model.Any())
+    {
+        <table class="role-table">
+            <thead>
+                <tr>
+                    <th>الدور</th>
+                    <th>عدد المستخدمين</th>
+                    <th class="text-center">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var role in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="role-name-cell">
+                                <span class="role-avatar"><i class="fas fa-key"></i></span>
+                                <div>
+                                    <div class="role-name">@role.Name</div>
+                                    <div class="role-code">#@role.Id</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="role-badge">
+                                <i class="fas fa-users"></i>
+                                @role.UsersCount مستخدم
+                            </span>
+                        </td>
+                        <td>
+                            <div class="role-actions">
+                                <a asp-action="Details" asp-route-id="@role.Id" class="role-action role-action-view" title="عرض"><i class="fas fa-eye"></i></a>
+                                <a asp-action="Edit" asp-route-id="@role.Id" class="role-action role-action-edit" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <a asp-action="Delete" asp-route-id="@role.Id" class="role-action role-action-delete" title="حذف"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="role-empty">
+            <i class="fas fa-user-shield"></i>
+            <h3>لا توجد أدوار حتى الآن</h3>
+            <p>ابدأ بإضافة أول دور لاستخدامه في تنظيم صلاحيات المستخدمين.</p>
+            <a asp-action="Create" class="role-btn role-btn-primary">
+                <i class="fas fa-plus"></i>
+                إضافة دور
+            </a>
+        </div>
+    }
+</div>

@@ -1,0 +1,42 @@
+@model RoleViewModel
+
+@{
+    ViewData["Title"] = "حذف دور";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/role.css" asp-append-version="true" />
+}
+
+<div class="role-header">
+    <div class="role-title">
+        <span class="role-title-icon"><i class="fas fa-trash"></i></span>
+        <div>
+            <h1>حذف الدور</h1>
+            <p>تأكد من عدم ارتباط الدور بمستخدمين قبل الحذف.</p>
+        </div>
+    </div>
+</div>
+
+<div class="role-delete-card">
+    <div class="role-delete-icon"><i class="fas fa-triangle-exclamation"></i></div>
+    <h2>هل تريد حذف دور @Model.Name؟</h2>
+    <p>عدد المستخدمين المرتبطين بهذا الدور: <strong>@Model.UsersCount</strong></p>
+
+    <form asp-action="Delete" method="post" class="role-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="role-form-actions">
+            <button type="submit" class="role-btn role-btn-danger">
+                <i class="fas fa-trash"></i>
+                نعم، حذف الدور
+            </button>
+            <a asp-action="Index" class="role-btn role-btn-light">
+                <i class="fas fa-times"></i>
+                إلغاء
+            </a>
+        </div>
+    </form>
+</div>

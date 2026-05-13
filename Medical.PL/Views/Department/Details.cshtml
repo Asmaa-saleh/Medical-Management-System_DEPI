@@ -1,0 +1,21 @@
+﻿@model DepartmentViewModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/appointment-details.css" asp-append-version="true" />
+}
+<div class="det-header"><h1><i class="fas fa-info-circle"></i> تفاصيل القسم</h1></div>
+<div class="det-card">
+    <div class="det-top">
+        <div class="det-avatar"><i class="fas fa-hospital"></i></div>
+        <div><div class="det-name">@Model.Name</div><div class="det-sub">معرف القسم: #@Model.Id</div></div>
+    </div>
+    <div class="det-body">
+        <div class="det-row">
+            <span class="det-label"><i class="fas fa-file-alt"></i> الوصف</span>
+            <span class="det-val">@(Model.Description ?? "لا يوجد وصف")</span>
+        </div>
+    </div>
+    <div class="det-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-det-edit"><i class="fas fa-edit"></i> تعديل</a>
+        <a asp-action="Index" class="btn-det-back"><i class="fas fa-arrow-right"></i> رجوع</a>
+    </div>
+</div>

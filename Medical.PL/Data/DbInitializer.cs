@@ -91,11 +91,25 @@ namespace Medical.PL.Data
                 // ── Department ─────────────────────────────────────────────────────────
                 if (!context.Departments.Any())
                 {
-                    context.Departments.Add(new Department
+                    //context.Departments.Add(new Department
+                    //{
+                    //    Name = "Pediatrics",
+                    //    Description = "Focuses on well-baby checkups, developmental assessments, and routine screenings."
+                    //});
+
+                    //context.SaveChanges();
+
+                    var Departments = new List<Department>
                     {
-                        Name = "Pediatrics",
-                        Description = "Focuses on well-baby checkups, developmental assessments, and routine screenings."
-                    });
+                        new Department {  Name = "أمراض القلب" ,   Description = "تشخيص وعلاج أمراض القلب والأوعية الدموية بأحدث التقنيات والأجهزة الطبية المتطورة" },
+                        new Department {  Name = "المخ والأعصاب" ,   Description = "فريق متخصص في علاج أمراض الجهاز العصبي والمخ بأحدث الأساليب العلاجية" },
+                        new Department {  Name = "العظام والمفاصل" ,   Description = "علاج الكسور وجراحات العظام والمفاصل وإعادة التأهيل الحركي" },
+                        new Department {  Name = "طب العيون" ,   Description = "فحص وعلاج أمراض العيون وعمليات تصحيح الإبصار بالليزر" },
+                        new Department {  Name = "طب الأسنان" ,   Description = "جميع خدمات الأسنان من تنظيف وحشو وتقويم وزراعة وتجميل الأسنان" },
+                        new Department {  Name = "التحاليل والمختبرات" ,   Description = "مختبرات مجهزة بأحدث الأجهزة لإجراء جميع التحاليل الطبية بدقة عالية" },
+                    };
+
+                    context.Departments.AddRange(Departments);
                     context.SaveChanges();
                 }
 
@@ -109,7 +123,7 @@ namespace Medical.PL.Data
                         Name = "Walid Amr",
                         DateOfBirth = new DateTime(1960, 3, 15),
                         Email = "dr.walid.amr@medicare.com",
-                        Phone = "01012395678",
+                        PhoneNumber = "01012395678",
                         Gender = "ذكر"
                     };
                     context.Users.Add(doctorUser);
@@ -166,7 +180,7 @@ namespace Medical.PL.Data
                         Name = "Sara Mohamed",
                         DateOfBirth = new DateTime(2019, 5, 20),
                         Email = "sara.mohamed@email.com",
-                        Phone = "01098765432",
+                        PhoneNumber = "01098765432",
                         Gender = "أنثى"
                     };
                     var userKarim = new User
@@ -174,7 +188,7 @@ namespace Medical.PL.Data
                         Name = "Karim Ibrahim",
                         DateOfBirth = new DateTime(2023, 11, 30),
                         Email = "karim.ibrahim@email.com",
-                        Phone = "01112223344",
+                        PhoneNumber = "01112223344",
                         Gender = "ذكر"
                     };
 

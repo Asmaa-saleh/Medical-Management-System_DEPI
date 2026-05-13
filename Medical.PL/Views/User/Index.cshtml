@@ -1,0 +1,89 @@
+@model IEnumerable<UserViewModel>
+
+@{
+    ViewData["Title"] = "المستخدمين";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/user.css" asp-append-version="true" />
+}
+
+<div class="user-header">
+    <div class="user-title">
+        <span class="user-title-icon"><i class="fas fa-users"></i></span>
+        <div>
+            <h1>المستخدمين</h1>
+            <p>إدارة الحسابات والأدوار داخل النظام</p>
+        </div>
+    </div>
+    <a asp-action="Create" class="user-btn user-btn-primary">
+        <i class="fas fa-user-plus"></i>
+        إضافة مستخدم
+    </a>
+</div>
+
+<div class="user-table-card">
+    @if (Model.Any())
+    {
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>المستخدم</th>
+                    <th>الهاتف</th>
+                    <th>الأدوار</th>
+                    <th>النوع</th>
+                    <th class="text-center">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="user-name-cell">
+                                <span class="user-avatar"><i class="fas fa-user"></i></span>
+                                <div>
+                                    <div class="user-name">@user.Name</div>
+                                    <div class="user-code">@user.Email</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@user.PhoneNumber</td>
+                        <td>
+                            @if (user.Roles.Any())
+                            {
+                                @foreach (var role in user.Roles)
+                                {
+                                    <span class="user-badge">@role</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="user-badge user-badge-muted">بدون دور</span>
+                            }
+                        </td>
+                        <td>@user.Gender</td>
+                        <td>
+                            <div class="user-actions">
+                                <a asp-action="Details" asp-route-id="@user.Id" class="user-action user-action-view" title="عرض"><i class="fas fa-eye"></i></a>
+                                <a asp-action="Edit" asp-route-id="@user.Id" class="user-action user-action-edit" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <a asp-action="Delete" asp-route-id="@user.Id" class="user-action user-action-delete" title="حذف"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="user-empty">
+            <i class="fas fa-users"></i>
+            <h3>لا يوجد مستخدمين حتى الآن</h3>
+            <a asp-action="Create" class="user-btn user-btn-primary">
+                <i class="fas fa-user-plus"></i>
+                إضافة مستخدم
+            </a>
+        </div>
+    }
+</div>

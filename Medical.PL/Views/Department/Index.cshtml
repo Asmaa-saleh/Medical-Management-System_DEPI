@@ -1,0 +1,66 @@
+﻿@model IEnumerable<DepartmentViewModel>
+
+@{
+    ViewData["Title"] = "الأقسام";
+    ViewData["ActivePage"] = "Departments";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/appointment-index.css" asp-append-version="true" />
+}
+
+<div class="pg-header">
+    <h1><i class="fas fa-hospital"></i> الأقسام الطبية</h1>
+    <a asp-action="Create" class="btn-add">
+        <i class="fas fa-plus"></i> إضافة قسم جديد
+    </a>
+</div>
+
+<div class="tbl-card">
+    @if (Model.Any())
+    {
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>اسم القسم</th>
+                    <th>الوصف</th>
+                    <th class="text-center">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="person-cell">
+                                <div class="avatar"><i class="fas fa-clinic-medical"></i></div>
+                                <div class="main-name">@item.Name</div>
+                            </div>
+                        </td>
+                        <td style="max-width: 300px; color: #64748B;">
+                            @(string.IsNullOrEmpty(item.Description) ? "لا يوجد وصف" : item.Description)
+                        </td>
+                        <td>
+                            <div class="act-btns" style="justify-content: center;">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="act-btn ab-view" title="عرض"><i class="fas fa-eye"></i></a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="act-btn ab-edit" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="act-btn ab-delete" title="حذف"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty">
+            <i class="fas fa-hospital-alt"></i>
+            <h3>لا توجد أقسام مضافة</h3>
+            <p>ابدأ بإضافة أول قسم طبي للمستشفى</p>
+            <a asp-action="Create" class="btn-add">
+                <i class="fas fa-plus"></i> إضافة قسم
+            </a>
+        </div>
+    }
+</div>

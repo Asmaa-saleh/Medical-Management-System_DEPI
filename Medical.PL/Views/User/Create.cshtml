@@ -1,0 +1,29 @@
+@model UserViewModel
+
+@{
+    ViewData["Title"] = "إضافة مستخدم";
+    ViewData["FormAction"] = "Create";
+    ViewData["ShowPassword"] = true;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/user.css" asp-append-version="true" />
+}
+
+<div class="user-header">
+    <div class="user-title">
+        <span class="user-title-icon"><i class="fas fa-user-plus"></i></span>
+        <div>
+            <h1>إضافة مستخدم</h1>
+            <p>أدخل بيانات الحساب الأساسية</p>
+        </div>
+    </div>
+</div>
+
+<div class="user-form-card">
+    <partial name="_Form" model="Model" />
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

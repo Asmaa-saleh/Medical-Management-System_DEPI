@@ -1,0 +1,37 @@
+﻿@model DepartmentViewModel
+
+<div class="form-card">
+    @* تم تحديد الـ Controller والـ Action بشكل صريح لحل مشكلة عدم الاستجابة *@
+    <form asp-controller="Department" asp-action="@(ViewContext.RouteData.Values["action"]?.ToString() == "Edit" ? "Edit" : "Create")" method="post">
+        @Html.AntiForgeryToken()
+        
+        @if (ViewContext.RouteData.Values["action"]?.ToString() == "Edit")
+        {
+            <input type="hidden" asp-for="Id" />
+        }
+        
+        <div class="fg">
+            <div class="fg-item fg-full">
+                <label asp-for="Name"><i class="fas fa-tag"></i> اسم القسم</label>
+                <input asp-for="Name" class="fc" placeholder="أدخل اسم القسم (مثلاً: العظام)" required />
+                <span asp-validation-for="Name" class="validation-msg"></span>
+            </div>
+
+            <div class="fg-item fg-full">
+                <label asp-for="Description"><i class="fas fa-align-right"></i> وصف القسم</label>
+                <textarea asp-for="Description" class="fc" placeholder="اكتب وصفاً مختصراً للقسم..."></textarea>
+                <span asp-validation-for="Description" class="validation-msg"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            @* تأكد أن النوع هو submit *@
+            <button type="submit" class="btn-save">
+                <i class="fas fa-check"></i> حفظ البيانات
+            </button>
+            <a asp-action="Index" class="btn-back">
+                <i class="fas fa-arrow-right"></i> رجوع
+            </a>
+        </div>
+    </form>
+</div>

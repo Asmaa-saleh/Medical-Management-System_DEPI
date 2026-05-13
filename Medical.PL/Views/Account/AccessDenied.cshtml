@@ -1,0 +1,39 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "غير مصرح";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MediCare</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-body">
+    <main class="auth-page">
+        <section class="auth-panel">
+            <div class="auth-card">
+                <a asp-controller="Home" asp-action="Index" class="auth-brand">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>MediCare</span>
+                </a>
+                <h1 class="auth-title">غير مصرح بالدخول</h1>
+                <p class="auth-subtitle">الحساب الحالي لا يملك صلاحية الوصول لهذه الصفحة.</p>
+                <a asp-controller="Home" asp-action="Index" class="auth-btn">العودة للرئيسية</a>
+            </div>
+        </section>
+        <section class="auth-visual">
+            <div class="auth-visual-content">
+                <div class="auth-kicker"><i class="fas fa-lock"></i> حماية الصلاحيات</div>
+                <h2>الوصول للصفحات يعتمد على الدور المناسب</h2>
+                <p>راجع مسؤول النظام لتحديث صلاحيات الحساب عند الحاجة.</p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

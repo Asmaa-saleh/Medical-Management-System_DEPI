@@ -29,9 +29,9 @@
                         <option value="">-- اختر المريض --</option>
                         @foreach (var patient in patients)
                         {
-                            var searchText = $"{patient.User.Name} {patient.User.Phone}";
+                            var searchText = $"{patient.User.Name} {patient.User.PhoneNumber}";
                             <option value="@patient.Id" data-search="@searchText" selected="@(Model.ExistingPatientId == patient.Id)">
-                                @patient.User.Name - @patient.User.Phone
+                                @patient.User.Name - @patient.User.PhoneNumber
                             </option>
                         }
                     </select>

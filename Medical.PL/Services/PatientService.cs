@@ -42,7 +42,7 @@ namespace Medical.PL.Services
                 Name = vm.Name.Trim(),
                 DateOfBirth = vm.DateOfBirth,
                 Email = vm.Email.Trim(),
-                Phone = vm.Phone.Trim(),
+                PhoneNumber = vm.Phone.Trim(),
                 Gender = vm.Gender
             };
 
@@ -66,7 +66,7 @@ namespace Medical.PL.Services
                 Name = patient.User.Name,
                 DateOfBirth = patient.User.DateOfBirth,
                 Email = patient.User.Email,
-                Phone = patient.User.Phone,
+                Phone = patient.User.PhoneNumber,
                 Gender = patient.User.Gender
             };
         }
@@ -79,7 +79,7 @@ namespace Medical.PL.Services
             patient.User.Name = vm.Name.Trim();
             patient.User.DateOfBirth = vm.DateOfBirth;
             patient.User.Email = vm.Email.Trim();
-            patient.User.Phone = vm.Phone.Trim();
+            patient.User.PhoneNumber = vm.Phone.Trim();
             patient.User.Gender = vm.Gender;
 
             _unitOfWork.Patients.Update(patient);
@@ -155,7 +155,7 @@ namespace Medical.PL.Services
             Name = p.User.Name,
             DateOfBirth = p.User.DateOfBirth,
             Email = p.User.Email,
-            Phone = p.User.Phone,
+            Phone = p.User.PhoneNumber,
             Gender = p.User.Gender,
             CreatedAt = p.User.CreatedAt,
             AppointmentsCount = p.Appointments.Count,

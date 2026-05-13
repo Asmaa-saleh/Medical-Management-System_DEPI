@@ -329,7 +329,7 @@ namespace Medical.PL.Controllers
                 Name = model.NewPatientName!.Trim(),
                 DateOfBirth = model.NewPatientDateOfBirth!.Value,
                 Email = model.NewPatientEmail!.Trim(),
-                Phone = model.NewPatientPhone!.Trim(),
+                PhoneNumber = model.NewPatientPhone!.Trim(),
                 Gender = model.NewPatientGender!,
                 CreatedAt = DateTime.UtcNow
             };

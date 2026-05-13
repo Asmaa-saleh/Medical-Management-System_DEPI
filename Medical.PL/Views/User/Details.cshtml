@@ -1,0 +1,77 @@
+@model UserViewModel
+
+@{
+    ViewData["Title"] = "تفاصيل مستخدم";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/user.css" asp-append-version="true" />
+}
+
+<div class="user-header">
+    <div class="user-title">
+        <span class="user-title-icon"><i class="fas fa-user"></i></span>
+        <div>
+            <h1>تفاصيل مستخدم</h1>
+            <p>@Model.Name</p>
+        </div>
+    </div>
+    <div class="user-form-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="user-btn user-btn-primary">
+            <i class="fas fa-edit"></i>
+            تعديل
+        </a>
+        <a asp-action="Index" class="user-btn user-btn-light">
+            <i class="fas fa-arrow-right"></i>
+            رجوع
+        </a>
+    </div>
+</div>
+
+<div class="user-details-card">
+    <div class="user-details-grid">
+        <div class="user-detail-item">
+            <span>الاسم</span>
+            <strong>@Model.Name</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>البريد الإلكتروني</span>
+            <strong>@Model.Email</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>رقم الهاتف</span>
+            <strong>@Model.PhoneNumber</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>تاريخ الميلاد</span>
+            <strong>@Model.DateOfBirth.ToString("yyyy-MM-dd")</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>النوع</span>
+            <strong>@Model.Gender</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>تاريخ الإنشاء</span>
+            <strong>@Model.CreatedAt.ToString("yyyy-MM-dd")</strong>
+        </div>
+    </div>
+
+    <div class="user-chips">
+        @foreach (var role in Model.Roles)
+        {
+            <span class="user-chip"><i class="fas fa-key"></i> @role</span>
+        }
+        @if (!Model.Roles.Any())
+        {
+            <span class="user-chip user-chip-muted"><i class="fas fa-user-slash"></i> بدون دور</span>
+        }
+        @if (Model.IsPatient)
+        {
+            <span class="user-chip"><i class="fas fa-bed-pulse"></i> مريض</span>
+        }
+        @if (Model.IsDoctor)
+        {
+            <span class="user-chip"><i class="fas fa-user-doctor"></i> طبيب</span>
+        }
+    </div>
+</div>

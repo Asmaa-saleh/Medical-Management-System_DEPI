@@ -1,0 +1,28 @@
+@model RoleViewModel
+
+@{
+    ViewData["Title"] = "إضافة دور";
+    ViewData["FormAction"] = "Create";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/role.css" asp-append-version="true" />
+}
+
+<div class="role-header">
+    <div class="role-title">
+        <span class="role-title-icon"><i class="fas fa-plus"></i></span>
+        <div>
+            <h1>إضافة دور جديد</h1>
+            <p>أدخل اسم الدور الذي سيتم استخدامه في الصلاحيات.</p>
+        </div>
+    </div>
+</div>
+
+<div class="role-form-card">
+    <partial name="_Form" model="Model" />
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

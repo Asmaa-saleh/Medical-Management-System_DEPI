@@ -1,0 +1,122 @@
+@model SignUpViewModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "إنشاء حساب";
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MediCare</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-body">
+    <main class="auth-page">
+        <section class="auth-panel">
+            <div class="auth-card auth-card-wide">
+                <a asp-controller="Home" asp-action="Index" class="auth-brand">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>MediCare</span>
+                </a>
+
+                <h1 class="auth-title">إنشاء حساب</h1>
+
+                <form asp-action="SignUp" method="post" class="auth-form">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly"></div>
+
+                    <div class="auth-field">
+                        <label asp-for="Name">الاسم الكامل</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-user"></i>
+                            <input asp-for="Name" class="auth-input" placeholder="الاسم الكامل" />
+                        </div>
+                        <span asp-validation-for="Name" class="auth-validation"></span>
+                    </div>
+
+                    <div class="auth-field">
+                        <label asp-for="Email">البريد الإلكتروني</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-envelope"></i>
+                            <input asp-for="Email" class="auth-input" placeholder="name@example.com" />
+                        </div>
+                        <span asp-validation-for="Email" class="auth-validation"></span>
+                    </div>
+
+                    <div class="auth-grid">
+                        <div class="auth-field">
+                            <label asp-for="PhoneNumber">رقم الهاتف</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-phone"></i>
+                                <input asp-for="PhoneNumber" class="auth-input" placeholder="01000000000" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="auth-validation"></span>
+                        </div>
+
+                        <div class="auth-field">
+                            <label asp-for="DateOfBirth">تاريخ الميلاد</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-calendar-day"></i>
+                                <input asp-for="DateOfBirth" class="auth-input" />
+                            </div>
+                            <span asp-validation-for="DateOfBirth" class="auth-validation"></span>
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label asp-for="Gender">النوع</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-venus-mars"></i>
+                            <select asp-for="Gender" class="auth-select">
+                                <option value="">اختر النوع</option>
+                                <option value="ذكر">ذكر</option>
+                                <option value="أنثى">أنثى</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="Gender" class="auth-validation"></span>
+                    </div>
+
+                    <div class="auth-grid">
+                        <div class="auth-field">
+                            <label asp-for="Password">كلمة المرور</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-lock"></i>
+                                <input asp-for="Password" class="auth-input" placeholder="••••••••" />
+                            </div>
+                            <span asp-validation-for="Password" class="auth-validation"></span>
+                        </div>
+
+                        <div class="auth-field">
+                            <label asp-for="ConfirmPassword">تأكيد كلمة المرور</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-shield-halved"></i>
+                                <input asp-for="ConfirmPassword" class="auth-input" placeholder="••••••••" />
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="auth-validation"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="auth-btn">
+                        <i class="fas fa-user-plus"></i>
+                        إنشاء الحساب
+                    </button>
+                </form>
+
+                <div class="auth-switch">
+                    لديك حساب؟ <a asp-action="SignIn">تسجيل الدخول</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    @await Component.InvokeAsync("NToastNotify")
+</body>
+</html>

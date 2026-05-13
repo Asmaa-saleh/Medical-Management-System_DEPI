@@ -1,0 +1,49 @@
+@model UserViewModel
+
+@{
+    ViewData["Title"] = "حذف مستخدم";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/user.css" asp-append-version="true" />
+}
+
+<div class="user-header">
+    <div class="user-title">
+        <span class="user-title-icon"><i class="fas fa-trash"></i></span>
+        <div>
+            <h1>حذف مستخدم</h1>
+            <p>تأكد قبل حذف الحساب</p>
+        </div>
+    </div>
+</div>
+
+<div class="user-delete-card">
+    <div class="user-delete-icon"><i class="fas fa-triangle-exclamation"></i></div>
+    <h2>هل تريد حذف @Model.Name؟</h2>
+    <p>لا يمكن التراجع عن حذف هذا المستخدم.</p>
+
+    @if (Model.IsPatient || Model.IsDoctor)
+    {
+        <div class="user-alert">
+            هذا المستخدم مرتبط ببيانات @(Model.IsDoctor ? "طبيب" : "مريض")، لذلك لن يتم حذفه قبل إزالة هذا الارتباط.
+        </div>
+    }
+
+    <form asp-action="Delete" method="post" class="user-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="user-form-actions">
+            <button type="submit" class="user-btn user-btn-danger">
+                <i class="fas fa-trash"></i>
+                حذف
+            </button>
+            <a asp-action="Index" class="user-btn user-btn-light">
+                <i class="fas fa-times"></i>
+                إلغاء
+            </a>
+        </div>
+    </form>
+</div>

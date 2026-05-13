@@ -1,0 +1,60 @@
+@model RoleViewModel
+
+@{
+    ViewData["Title"] = "تفاصيل الدور";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/role.css" asp-append-version="true" />
+}
+
+<div class="role-header">
+    <div class="role-title">
+        <span class="role-title-icon"><i class="fas fa-user-shield"></i></span>
+        <div>
+            <h1>تفاصيل الدور</h1>
+            <p>عرض بيانات الدور والمستخدمين المرتبطين به.</p>
+        </div>
+    </div>
+    <div class="role-form-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="role-btn role-btn-primary">
+            <i class="fas fa-edit"></i>
+            تعديل
+        </a>
+        <a asp-action="Index" class="role-btn role-btn-light">
+            <i class="fas fa-arrow-right"></i>
+            رجوع
+        </a>
+    </div>
+</div>
+
+<div class="role-details-card">
+    <div class="role-details-grid">
+        <div class="role-detail-item">
+            <span>رقم الدور</span>
+            <strong>#@Model.Id</strong>
+        </div>
+        <div class="role-detail-item">
+            <span>اسم الدور</span>
+            <strong>@Model.Name</strong>
+        </div>
+        <div class="role-detail-item">
+            <span>عدد المستخدمين</span>
+            <strong>@Model.UsersCount</strong>
+        </div>
+    </div>
+
+    <div class="role-users">
+        @if (Model.Users.Any())
+        {
+            @foreach (var user in Model.Users)
+            {
+                <span class="role-user-chip"><i class="fas fa-user"></i> @user</span>
+            }
+        }
+        else
+        {
+            <span class="role-user-chip"><i class="fas fa-user-slash"></i> لا يوجد مستخدمون مرتبطون بهذا الدور</span>
+        }
+    </div>
+</div>
