@@ -187,6 +187,32 @@
     font-size: 0.9rem;
     margin-bottom: 24px;
 }
+.deleted-row {
+    opacity: .6;
+    background: #f8fafc;
+}
+
+    .deleted-row .service-name {
+        text-decoration: line-through;
+    }
+
+.deleted-badge {
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-right: 8px;
+}
+
+.ab-restore {
+    background: #10b981;
+    color: white;
+}
+
+    .ab-restore:hover {
+        background: #059669;
+    }
 
 @media (max-width: 768px) {
     .pg-header,

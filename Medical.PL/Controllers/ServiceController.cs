@@ -19,9 +19,14 @@ namespace Medical.PL.Controllers
         {
             var services = await _unitOfWork.Services.GetAllWithIncludesAsync(s => s.Department);
 
+            //return View(services
+            //    .Where(s => !s.IsDeleted)
+            //    .OrderBy(s => s.Department.Name)
+            //    .ThenBy(s => s.Name));
+
             return View(services
-                .Where(s => !s.IsDeleted)
-                .OrderBy(s => s.Department.Name)
+                .OrderBy(s => s.IsDeleted)
+                .ThenBy(s => s.Department.Name)
                 .ThenBy(s => s.Name));
         }
 
@@ -30,7 +35,8 @@ namespace Medical.PL.Controllers
             if (id == null) return NotFound();
 
             var service = await GetServiceWithDepartment(id.Value);
-            if (service == null || service.IsDeleted) return NotFound();
+            //if (service == null || service.IsDeleted) return NotFound();
+            if (service == null) return NotFound();
 
             return View(service);
         }
@@ -166,6 +172,24 @@ namespace Medical.PL.Controllers
             {
                 ModelState.AddModelError(nameof(ServiceFormViewModel.DepartmentId), "اختر قسم صحيح.");
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Restore(int id)
+        {
+            var service = await _unitOfWork.Services.GetByIdAsync(id);
+
+            if (service == null)
+                return NotFound();
+
+            service.IsDeleted = false;
+
+            _unitOfWork.Services.Update(service);
+
+            await _unitOfWork.CompleteAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

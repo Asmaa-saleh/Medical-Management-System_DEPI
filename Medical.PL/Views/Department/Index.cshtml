@@ -8,7 +8,35 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/appointment-index.css" asp-append-version="true" />
 }
+<style>
+    
+    .deleted-row {
+        opacity: 0.6;
+        background: #f8fafc;
+    }
 
+        .deleted-row .main-name {
+            text-decoration: line-through;
+        }
+
+    .deleted-badge {
+        background: #ef4444;
+        color: white;
+        font-size: 12px;
+        padding: 3px 8px;
+        border-radius: 20px;
+        margin-right: 8px;
+    }
+
+    .ab-restore {
+        background: #10b981;
+        color: white;
+    }
+
+        .ab-restore:hover {
+            background: #059669;
+        }
+</style>
 <div class="pg-header">
     <h1><i class="fas fa-hospital"></i> الأقسام الطبية</h1>
     <a asp-action="Create" class="btn-add">
@@ -21,7 +49,7 @@
     {
         <table class="tbl">
             <thead>
-                <tr>
+                <tr >
                     <th>اسم القسم</th>
                     <th>الوصف</th>
                     <th class="text-center">إجراءات</th>
@@ -30,11 +58,20 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
+                    <tr class="@(item.IsDeleted ? "deleted-row" : "")">
                         <td>
                             <div class="person-cell">
                                 <div class="avatar"><i class="fas fa-clinic-medical"></i></div>
-                                <div class="main-name">@item.Name</div>
+                                <div>
+                                    <div class="main-name">
+                                        @item.Name
+
+                                        @if (item.IsDeleted)
+                                        {
+                                            <span class="deleted-badge">محذوف</span>
+                                        }
+                                    </div>
+                                </div>
                             </div>
                         </td>
                         <td style="max-width: 300px; color: #64748B;">
@@ -42,9 +79,45 @@
                         </td>
                         <td>
                             <div class="act-btns" style="justify-content: center;">
-                                <a asp-action="Details" asp-route-id="@item.Id" class="act-btn ab-view" title="عرض"><i class="fas fa-eye"></i></a>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="act-btn ab-edit" title="تعديل"><i class="fas fa-edit"></i></a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="act-btn ab-delete" title="حذف"><i class="fas fa-trash"></i></a>
+
+                                <a asp-action="Details"
+                                       asp-route-id="@item.Id"
+                                       class="act-btn ab-view"
+                                       title="عرض">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                @if (!item.IsDeleted)
+                                {
+                                    <a asp-action="Edit"
+                                           asp-route-id="@item.Id"
+                                           class="act-btn ab-edit"
+                                           title="تعديل">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <a asp-action="Delete"
+                                           asp-route-id="@item.Id"
+                                           class="act-btn ab-delete"
+                                           title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <form asp-action="Restore"
+                                          asp-route-id="@item.Id"
+                                          method="post"
+                                          style="display:inline;">
+
+                                        <button type="submit"
+                                                class="act-btn ab-restore"
+                                                title="استرجاع">
+
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </form>
+                                }
                             </div>
                         </td>
                     </tr>

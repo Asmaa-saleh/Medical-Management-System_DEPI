@@ -14,7 +14,7 @@ namespace Medical.PL.Data
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
 
                 context.Database.EnsureCreated();
-                //context.Database.Migrate();
+                
                 if (!context.Medicines.Any())
                 {
                     var medicines = new List<Medicine>
@@ -92,25 +92,107 @@ namespace Medical.PL.Data
                 // ── Department ─────────────────────────────────────────────────────────
                 if (!context.Departments.Any())
                 {
-                    //context.Departments.Add(new Department
-                    //{
-                    //    Name = "Pediatrics",
-                    //    Description = "Focuses on well-baby checkups, developmental assessments, and routine screenings."
-                    //});
-
-                    //context.SaveChanges();
-
-                    var Departments = new List<Department>
+                    var departments = new List<Department>
                     {
-                        new Department {  Name = "أمراض القلب" ,   Description = "تشخيص وعلاج أمراض القلب والأوعية الدموية بأحدث التقنيات والأجهزة الطبية المتطورة" },
-                        new Department {  Name = "المخ والأعصاب" ,   Description = "فريق متخصص في علاج أمراض الجهاز العصبي والمخ بأحدث الأساليب العلاجية" },
-                        new Department {  Name = "العظام والمفاصل" ,   Description = "علاج الكسور وجراحات العظام والمفاصل وإعادة التأهيل الحركي" },
-                        new Department {  Name = "طب العيون" ,   Description = "فحص وعلاج أمراض العيون وعمليات تصحيح الإبصار بالليزر" },
-                        new Department {  Name = "طب الأسنان" ,   Description = "جميع خدمات الأسنان من تنظيف وحشو وتقويم وزراعة وتجميل الأسنان" },
-                        new Department {  Name = "التحاليل والمختبرات" ,   Description = "مختبرات مجهزة بأحدث الأجهزة لإجراء جميع التحاليل الطبية بدقة عالية" },
+                        new Department
+                        {
+                            Name = "القلب",
+                            Description = "تشخيص وعلاج أمراض القلب والأوعية الدموية باستخدام أحدث التقنيات الطبية"
+                        },
+                        new Department
+                        {
+                            Name = "المخ والأعصاب",
+                            Description = "تشخيص وعلاج أمراض الجهاز العصبي والمخ مثل الصرع والجلطات"
+                        },
+                        new Department
+                        {
+                            Name = "العظام والمفاصل",
+                            Description = "علاج الكسور، إصابات العظام، وجراحات المفاصل والعمود الفقري"
+                        },
+                        new Department
+                        {
+                            Name = "الرمد",
+                            Description = "تشخيص وعلاج مشاكل الإبصار وعمليات تصحيح النظر بالليزر"
+                        },
+                        new Department
+                        {
+                            Name = "الأسنان",
+                            Description = "جميع خدمات الأسنان من تنظيف، حشو، تقويم، وزراعة الأسنان"
+                        },
+                        new Department
+                        {
+                            Name = "التحاليل الطبية",
+                            Description = "إجراء جميع التحاليل الطبية بدقة عالية باستخدام أحدث الأجهزة"
+                        }
                     };
 
-                    context.Departments.AddRange(Departments);
+                    context.Departments.AddRange(departments);
+                    context.SaveChanges();
+                }
+                // ── services ─────────────────────────────────────────────────────────
+                if (!context.Services.Any())
+                {
+                    var cardiology = context.Departments.First(d => d.Name == "القلب");
+                    var neuro = context.Departments.First(d => d.Name == "المخ والأعصاب");
+                    var ortho = context.Departments.First(d => d.Name == "العظام والمفاصل");
+                    var eye = context.Departments.First(d => d.Name == "الرمد");
+                    var dental = context.Departments.First(d => d.Name == "الأسنان");
+                    var lab = context.Departments.First(d => d.Name == "التحاليل الطبية");
+
+                    var services = new List<Service>
+                    {
+                        // ================= القلب =================
+                        //new Service { Name="كشف قلب", Description="فحص شامل على القلب", Price=300, DepartmentId=cardiology.Id },
+                        new Service { Name="رسم قلب ECG", Description="قياس النشاط الكهربائي للقلب", Price=200, DepartmentId=cardiology.Id },
+                        new Service { Name="إيكو على القلب", Description="موجات صوتية على القلب", Price=600, DepartmentId=cardiology.Id },
+                        new Service { Name="اختبار جهد", Description="قياس كفاءة القلب أثناء المجهود", Price=800, DepartmentId=cardiology.Id },
+                        new Service { Name="متابعة ضغط الدم", Description="متابعة مرضى الضغط المزمن", Price=150, DepartmentId=cardiology.Id },
+                        new Service { Name="قسطرة تشخيصية", Description="تشخيص شرايين القلب", Price=5000, DepartmentId=cardiology.Id },
+
+                        // ================= المخ والأعصاب =================
+                        new Service { Name="كشف مخ وأعصاب", Description="تشخيص الأمراض العصبية", Price=350, DepartmentId=neuro.Id },
+                        new Service { Name="رسم مخ EEG", Description="قياس نشاط المخ الكهربائي", Price=700, DepartmentId=neuro.Id },
+                        new Service { Name="رنين مغناطيسي مخ", Description="تصوير دقيق للمخ", Price=1500, DepartmentId=neuro.Id },
+                        new Service { Name="علاج الصرع", Description="متابعة مرضى الصرع", Price=400, DepartmentId=neuro.Id },
+                        new Service { Name="علاج الجلطات", Description="إعادة تأهيل بعد الجلطات", Price=1200, DepartmentId=neuro.Id },
+                        new Service { Name="اختبار أعصاب", Description="فحص الأعصاب الطرفية", Price=500, DepartmentId=neuro.Id },
+
+                        // ================= العظام =================
+                        new Service { Name="كشف عظام", Description="تشخيص مشاكل العظام", Price=250, DepartmentId=ortho.Id },
+                        new Service { Name="أشعة X-Ray", Description="تصوير العظام", Price=200, DepartmentId=ortho.Id },
+                        new Service { Name="جبس يد/قدم", Description="تثبيت الكسور", Price=400, DepartmentId=ortho.Id },
+                        new Service { Name="علاج خشونة الركبة", Description="جلسات علاج طبيعي", Price=600, DepartmentId=ortho.Id },
+                        new Service { Name="منظار ركبة", Description="تشخيص وإصلاح الركبة", Price=3000, DepartmentId=ortho.Id },
+                        new Service { Name="تركيب شرائح ومسامير", Description="عمليات تثبيت الكسور", Price=7000, DepartmentId=ortho.Id },
+
+                        // ================= العيون =================
+                        new Service { Name="كشف نظر", Description="فحص الإبصار", Price=150, DepartmentId=eye.Id },
+                        new Service { Name="قياس ضغط العين", Description="فحص الجلوكوما", Price=200, DepartmentId=eye.Id },
+                        new Service { Name="عملية مياه بيضاء", Description="إزالة الكتاراكت", Price=4000, DepartmentId=eye.Id },
+                        new Service { Name="تصحيح نظر ليزر", Description="عملية الليزك", Price=8000, DepartmentId=eye.Id },
+                        new Service { Name="فحص قاع العين", Description="تشخيص الشبكية", Price=300, DepartmentId=eye.Id },
+
+                        // ================= الأسنان =================
+                        new Service { Name="كشف أسنان", Description="فحص شامل للأسنان", Price=100, DepartmentId=dental.Id },
+                        new Service { Name="تنظيف جير", Description="تنظيف الأسنان", Price=300, DepartmentId=dental.Id },
+                        new Service { Name="حشو أسنان", Description="علاج التسوس", Price=400, DepartmentId=dental.Id },
+                        new Service { Name="خلع أسنان", Description="خلع عادي أو جراحي", Price=250, DepartmentId=dental.Id },
+                        new Service { Name="تقويم أسنان", Description="تصحيح الأسنان", Price=5000, DepartmentId=dental.Id },
+                        new Service { Name="زراعة أسنان", Description="تركيب أسنان صناعية", Price=10000, DepartmentId=dental.Id },
+                        new Service { Name="تبييض أسنان", Description="تجميل الأسنان", Price=1200, DepartmentId=dental.Id },
+
+                        // ================= التحاليل =================
+                        new Service { Name="تحليل دم كامل", Description="CBC", Price=200, DepartmentId=lab.Id },
+                        new Service { Name="تحليل سكر", Description="قياس السكر", Price=100, DepartmentId=lab.Id },
+                        new Service { Name="تحليل وظائف كبد", Description="Liver Function", Price=300, DepartmentId=lab.Id },
+                        new Service { Name="تحليل وظائف كلى", Description="Kidney Function", Price=300, DepartmentId=lab.Id },
+                        new Service { Name="تحليل فيتامينات", Description="Vitamin D & B12", Price=500, DepartmentId=lab.Id },
+                        new Service { Name="تحليل حمل", Description="Pregnancy Test", Price=150, DepartmentId=lab.Id },
+                        new Service { Name="تحليل براز", Description="Stool Analysis", Price=120, DepartmentId=lab.Id },
+                        new Service { Name="تحليل بول", Description="Urine Analysis", Price=120, DepartmentId=lab.Id }
+                    };
+
+                    context.Services.AddRange(services);
                     context.SaveChanges();
                 }
 
@@ -142,19 +224,19 @@ namespace Medical.PL.Data
                 }
 
                 // ── Service ────────────────────────────────────────────────────────────
-                if (!context.Services.Any())
-                {
-                    var dept = context.Departments.First();
+                //if (!context.Services.Any())
+                //{
+                //    var dept = context.Departments.First();
 
-                    context.Services.Add(new Service
-                    {
-                        Name = "General Consultation",
-                        Description = "Standard outpatient consultation",
-                        Price = 200m,
-                        DepartmentId = dept.Id
-                    });
-                    context.SaveChanges();
-                }
+                //    context.Services.Add(new Service
+                //    {
+                //        Name = "General Consultation",
+                //        Description = "Standard outpatient consultation",
+                //        Price = 200m,
+                //        DepartmentId = dept.Id
+                //    });
+                //    context.SaveChanges();
+                //}
 
                 // ── Doctor Schedule ────────────────────────────────────────────────────
                 if (!context.DoctorSchedules.Any())

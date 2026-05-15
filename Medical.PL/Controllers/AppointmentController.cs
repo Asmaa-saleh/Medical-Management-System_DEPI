@@ -1,8 +1,10 @@
 using Medical.PL.Data.Models;
 using Medical.PL.Interfaces;
+using Medical.PL.Repositories;
 using Medical.PL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using X.PagedList.Extensions;
 
 namespace Medical.PL.Controllers
 {
@@ -376,5 +378,49 @@ namespace Medical.PL.Controllers
                 _ => string.Empty
             };
         }
+        
+
+        public async Task<IActionResult> Booking(int? departmentId, int page = 1)
+        {
+            int pageSize = 8;
+
+            // Get services with department included
+            var services = await _unitOfWork.Services
+                .GetAllWithIncludesAsync(s => s.Department);
+
+            // Base query (remove deleted)
+            var query = services
+                .Where(s => !s.IsDeleted)
+                .AsQueryable();
+
+            // Filter by department if selected
+            if (departmentId.HasValue)
+            {
+                query = query.Where(s => s.DepartmentId == departmentId.Value);
+            }
+
+            // Pagination
+            var model = query
+                .OrderBy(s => s.Id)
+                .ToPagedList(page, pageSize);
+
+            // Get only departments that have services
+            var validDepartmentIds = services
+                .Where(s => !s.IsDeleted)
+                .Select(s => s.DepartmentId)
+                .Distinct()
+                .ToList();
+
+            var departments = await _unitOfWork.Departments.GetAllAsync();
+
+            ViewBag.Departments = departments
+                .Where(d => !d.IsDeleted && validDepartmentIds.Contains(d.Id))
+                .ToList();
+
+            ViewBag.SelectedDepartment = departmentId;
+
+            return View(model);
+        }
     }
 }
+

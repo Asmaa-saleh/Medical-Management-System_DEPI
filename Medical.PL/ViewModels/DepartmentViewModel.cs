@@ -13,6 +13,7 @@ namespace Medical.PL.ViewModels
 
         [Display(Name = "الوصف")]
         public string? Description { get; set; }
+        public bool IsDeleted { get; set; }
 
         [Display(Name = "عدد الأطباء")]
         public int DoctorsCount { get; set; }

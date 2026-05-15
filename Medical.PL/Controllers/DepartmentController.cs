@@ -16,12 +16,14 @@ namespace Medical.PL.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var departments = await _unitOfWork.Departments.FindAsync(d => !d.IsDeleted);
+            //var departments = await _unitOfWork.Departments.FindAsync(d => !d.IsDeleted);
+            var departments = await _unitOfWork.Departments.GetAllAsync();
             var viewModel = departments.Select(d => new DepartmentViewModel
             {
                 Id = d.Id,
                 Name = d.Name,
-                Description = d.Description
+                Description = d.Description,
+                IsDeleted = d.IsDeleted
             }).ToList();
 
             return View(viewModel);
@@ -116,6 +118,24 @@ namespace Medical.PL.Controllers
             department.IsDeleted = true;
             _unitOfWork.Departments.Update(department);
             await _unitOfWork.CompleteAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Restore(int id)
+        {
+            var department = await _unitOfWork.Departments.GetByIdAsync(id);
+
+            if (department == null)
+                return NotFound();
+
+            department.IsDeleted = false;
+
+            _unitOfWork.Departments.Update(department);
+
+            await _unitOfWork.CompleteAsync();
+
             return RedirectToAction(nameof(Index));
         }
     }

@@ -1,0 +1,406 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+
+@model IPagedList<Service>
+
+@* @await Html.PartialAsync("_BookingStepper", 1) *@
+
+
+<style>
+    /* Tabs */
+    /* Tabs Container */
+    .tabs-container {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Wrapper */
+    .tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    /* Single Tab */
+    .tab {
+        border: 1px solid #0E7490;
+        background: #ffffff;
+        padding: 6px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #475569;
+        transition: 0.3s ease;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(15,23,42,0.04);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        /* Hover */
+        .tab:hover {
+            transform: translateY(-2px);
+            background: #f8fafc;
+            border-color: #bae6fd;
+        }
+
+        /* Active */
+        .tab.active {
+            background: linear-gradient(135deg, #0E7490, #0E7190);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 20px rgba(56,189,248,0.25);
+        }
+
+    /* GRID */
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 22px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    /* CARD */
+    .service-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 22px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 8px 25px rgba(15,23,42,0.05);
+        transition: 0.35s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .service-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 30px rgba(15,23,42,0.08);
+        }
+
+    /* HEADER */
+    .service-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    /* AVATAR */
+    .service-icon {
+       
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #ECFEFF;
+        color: #0891B2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    /* TITLE */
+    .service-title {
+        flex: 1;
+    }
+
+        .service-title h3 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .service-title span {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+    /* DESCRIPTION */
+    .service-content p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.7;
+        color: #64748b;
+        min-height: 65px;
+    }
+
+    /* FOOTER */
+    .service-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+    }
+
+    /* PRICE */
+    .price {
+        font-size: 16px;
+        font-weight: 700;
+        color: #0f766e;
+        background: #ecfeff;
+        padding: 7px 14px;
+        border-radius: 12px;
+    }
+
+    /* BUTTON */
+    .book-btn {
+        background: #B36995;
+        color: white;
+        padding: 9px 16px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .book-btn:hover {
+            background: #64748B;
+            color: white;
+        }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+        padding: 0;
+    }
+
+        .pagination li {
+            list-style: none;
+        }
+
+        /* buttons */
+        .pagination a,
+        .pagination span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #0E7490;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+        }
+
+            /* hover */
+            .pagination a:hover {
+                background: #ECFEFF;
+                transform: translateY(-2px);
+                border-color: #67e8f9;
+            }
+
+        /* active page */
+        .pagination .active span {
+            background: linear-gradient(135deg, #0E7490, #0E7190);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 18px rgba(14, 116, 144, 0.25);
+        }
+
+        /* disabled */
+        .pagination .disabled span {
+            color: #cbd5e1;
+            background: #f8fafc;
+            border-color: #f1f5f9;
+        }
+    .booking-layout {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        margin-top: 20px;
+    }
+
+    /* Right Side */
+    .booking-sidebar {
+        width: 300px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 100px;
+    }
+
+    /* Left Side */
+    .booking-content {
+        flex: 1;
+    }
+
+    /* Responsive */
+    @@media(max-width: 992px) {
+
+        .booking-layout {
+            flex-direction: column;
+        }
+
+        .booking-sidebar {
+            width: 100%;
+            position: static;
+        }
+    }
+
+    /* Responsive */
+    @@media(max-width: 1200px) {
+        .services-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @@media(max-width: 768px) {
+        .services-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width: 500px) {
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="booking-layout">
+
+    <!-- Stepper -->
+    <div class="booking-sidebar">
+
+        @await Html.PartialAsync("_BookingStepper", 1)
+
+    </div>
+    <!-- Main Content -->
+    <div class="booking-content">
+
+<div class="tabs-container">
+    <div class="tabs">
+        @* <button class="tab active" data-id="all">كل الخدمات</button> *@
+        <a asp-action="Booking"
+               class="tab @(ViewBag.SelectedDepartment == null ? "active" : "")">
+
+            كل الخدمات
+        </a>
+
+        @foreach (var dept in ViewBag.Departments)
+        {
+            @* <button class="tab" data-id="@dept.Id">
+                @dept.Name
+            </button> *@
+            <a asp-action="Booking"
+                   asp-route-departmentId="@dept.Id"
+                   class="tab @(ViewBag.SelectedDepartment == dept.Id ? "active" : "")">
+
+                @dept.Name
+            </a>
+        }
+    </div>
+</div>
+
+<div class="services-grid">
+    @foreach (var service in Model)
+    {
+        <div class="service-card" data-dept="@service.DepartmentId">
+
+            <!-- Header -->
+            <div class="service-header">
+
+                <div class="service-icon">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+
+                <div class="service-title">
+                    <h3>@service.Name</h3>
+                    <span>خدمة طبية</span>
+                </div>
+
+            </div>
+
+            <!-- Content -->
+            <div class="service-content">
+                <p>
+                    @(string.IsNullOrWhiteSpace(service.Description)
+                        ? "لا يوجد وصف للخدمة حالياً"
+                        : service.Description)
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="service-footer">
+
+                <span class="price">
+                    @service.Price ج.م
+                </span>
+
+                <a href="#" class="book-btn">
+                    احجز الآن
+                </a>
+
+            </div>
+
+        </div>
+    }
+</div>
+<div class="pagination-container">
+
+    @Html.PagedListPager(
+        Model,
+        page => Url.Action("Booking", new
+        {
+            page,
+            departmentId = ViewBag.SelectedDepartment
+        }),
+        new PagedListRenderOptions
+        {
+            UlElementClasses = new[] { "pagination" },
+            LiElementClasses = new[] { "" }
+        }
+    )
+
+</div>
+</div>
+
+@* <script>
+    const tabs = document.querySelectorAll(".tab");
+    const cards = document.querySelectorAll(".service-card");
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+
+            // active tab
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+
+            const id = tab.dataset.id;
+
+            cards.forEach(card => {
+
+                if (id === "all") {
+                    card.style.display = "block";
+                }
+                else {
+                    card.style.display =
+                        card.dataset.dept === id ? "block" : "none";
+                }
+            });
+        });
+    });
+</script> *@

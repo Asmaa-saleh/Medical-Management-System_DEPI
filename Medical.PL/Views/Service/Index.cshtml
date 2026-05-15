@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/service-index.css" asp-append-version="true" />
 }
 
+
 <div class="pg-header">
     <h1><i class="fas fa-concierge-bell"></i> الخدمات</h1>
     <a asp-action="Create" class="btn-add">
@@ -32,12 +33,21 @@
             <tbody>
                 @foreach (var service in Model)
                 {
-                    <tr>
+                    <tr class="@(service.IsDeleted ? "deleted-row" : "")">
                         <td>
                             <div class="service-cell">
                                 <div class="service-avatar"><i class="fas fa-stethoscope"></i></div>
                                 <div>
-                                    <div class="service-name">@service.Name</div>
+                                    <div class="service-name">
+                                        @service.Name
+
+                                        @if (service.IsDeleted)
+                                        {
+                                            <span class="deleted-badge">
+                                                محذوفة
+                                            </span>
+                                        }
+                                    </div>
                                     <div class="service-code">#@service.Id</div>
                                 </div>
                             </div>
@@ -47,9 +57,53 @@
                         <td class="desc-cell">@(string.IsNullOrWhiteSpace(service.Description) ? "لا يوجد وصف" : service.Description)</td>
                         <td>
                             <div class="act-btns">
-                                <a asp-action="Details" asp-route-id="@service.Id" class="act-btn ab-view" title="عرض"><i class="fas fa-eye"></i></a>
-                                <a asp-action="Edit" asp-route-id="@service.Id" class="act-btn ab-edit" title="تعديل"><i class="fas fa-edit"></i></a>
-                                <a asp-action="Delete" asp-route-id="@service.Id" class="act-btn ab-delete" title="حذف"><i class="fas fa-trash"></i></a>
+
+                                <a asp-action="Details"
+                                       asp-route-id="@service.Id"
+                                       class="act-btn ab-view"
+                                       title="عرض">
+
+                                    <i class="fas fa-eye"></i>
+
+                                </a>
+
+                                @if (!service.IsDeleted)
+                                {
+                                    <a asp-action="Edit"
+                                           asp-route-id="@service.Id"
+                                           class="act-btn ab-edit"
+                                           title="تعديل">
+
+                                        <i class="fas fa-edit"></i>
+
+                                    </a>
+
+                                    <a asp-action="Delete"
+                                           asp-route-id="@service.Id"
+                                           class="act-btn ab-delete"
+                                           title="حذف">
+
+                                        <i class="fas fa-trash"></i>
+
+                                    </a>
+                                }
+                                else
+                                {
+                                    <form asp-action="Restore"
+                                          asp-route-id="@service.Id"
+                                          method="post"
+                                          style="display:inline;">
+
+                                        <button type="submit"
+                                                class="act-btn ab-restore"
+                                                title="استرجاع">
+
+                                            <i class="fas fa-undo"></i>
+
+                                        </button>
+                                    </form>
+                                }
+
                             </div>
                         </td>
                     </tr>

@@ -6,6 +6,7 @@
 }
 
 @section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/doctor-schedule-index.css" asp-append-version="true" />
 
     <style>
@@ -21,15 +22,27 @@
         }
 
         .doc-avatar {
-            width: 35px;
+            /* width: 35px;
             height: 35px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #eef2ff;
-            color: #0d6efd;
+            color: #0d6efd; */
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #ECFEFF;
+            color: #0891B2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
         }
+
+        
 
         .tbl tr:hover {
             background: #f9fafb;
@@ -122,6 +135,7 @@
                             <!-- NAME -->
                             <td>
                                 <div class="d-flex align-items-center gap-2">
+                                    
                                     <div class="doc-avatar">
                                         <i class="bi bi-capsule"></i>
                                     </div>
@@ -169,7 +183,7 @@
     else
     {
         <!-- EMPTY STATE -->
-        <div class="text-center py-5">
+        <div class="text-center py-5"> 
 
             <i class="bi bi-capsule text-muted" style="font-size:50px;"></i>
 
