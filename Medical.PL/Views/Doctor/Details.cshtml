@@ -1,4 +1,4 @@
-﻿@model Medical.PL.Models.Doctor
+@model Medical.PL.Data.Models.Doctor
 @{
     ViewData["Title"] = "Doctor Details";
 }
@@ -22,7 +22,7 @@
 <div class="card border-0 shadow-sm rounded-3">
     <div class="card-body p-4">
 
-        {{/* Profile Header */}}
+        @* Profile Header *@
         <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
             @if (Model.Image != null)
             {
@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        {{/* Info Grid */}}
+        @* Info Grid *@
         <div class="row g-4 mb-4">
             <div class="col-md-6">
                 <div class="text-uppercase text-muted fw-semibold mb-1"
@@ -97,7 +97,7 @@
             }
         </div>
 
-        {{/* Actions */}}
+        @* Actions *@
         <div class="d-flex justify-content-end pt-3 border-top">
             <a asp-action="Delete" asp-route-id="@Model.Id"
                class="btn btn-outline-danger">

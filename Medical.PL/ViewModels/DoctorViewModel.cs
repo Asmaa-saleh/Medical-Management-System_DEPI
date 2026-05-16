@@ -9,8 +9,9 @@ namespace Medical.PL.ViewModels
         public int Id { get; set; }
 
         [Required(ErrorMessage = "مطلوب المستخدم")]
+        [Range(1, int.MaxValue, ErrorMessage = "مطلوب المستخدم")]
         [Display(Name = "المستخدم")]
-        public string UserId { get; set; }
+        public int UserId { get; set; }
 
         [Required(ErrorMessage = "مطلوب القسم")]
         [Display(Name = "القسم")]
@@ -19,7 +20,7 @@ namespace Medical.PL.ViewModels
         [Required(ErrorMessage = "مطلوب التخصص")]
         [MaxLength(100)]
         [Display(Name = "التخصص")]
-        public string Specialization { get; set; }
+        public string Specialization { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "مطلوب عدد سنوات الخبرة")]
         [Range(0, 60, ErrorMessage = "يجب ان تكون عدد سنوات الخبرة من 0 ل60 سنة")]

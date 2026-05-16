@@ -79,6 +79,9 @@
     </div>
 
     <div class="det-actions">
+        <a asp-controller="Doctor" asp-action="MedicalReport" asp-route-id="@Model.Id" class="btn-det-edit">
+            <i class="fas fa-file-medical"></i> التقرير الطبي
+        </a>
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-det-edit">
             <i class="fas fa-edit"></i> تعديل
         </a>

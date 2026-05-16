@@ -25,9 +25,75 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar-custom" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-heartbeat"></i>
+                MediCare
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">الرئيسية</a></li>
+                <li><a href="#services">خدماتنا</a></li>
+                <li><a href="#why-us">لماذا نحن</a></li>
+                <li><a href="#doctors">أطباؤنا</a></li>
+                <li><a href="#contact" class="btn-nav">احجز الآن</a></li>
+            </ul>
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
     @RenderBody()
-
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-about">
+                <div class="logo">
+                    <i class="fas fa-heartbeat"></i>
+                    MediCare
+                </div>
+                <p>نظام متكامل لإدارة العيادات والمستشفيات. هدفنا تقديم أفضل رعاية صحية رقمية في المنطقة.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="#home">الرئيسية</a></li>
+                    <li><a href="#services">خدماتنا</a></li>
+                    <li><a href="#doctors">أطباؤنا</a></li>
+                    <li><a href="#contact">احجز موعد</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>خدماتنا</h4>
+                <ul>
+                    <li><a href="#">أمراض القلب</a></li>
+                    <li><a href="#">المخ والأعصاب</a></li>
+                    <li><a href="#">العظام</a></li>
+                    <li><a href="#">طب العيون</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>تواصل معنا</h4>
+                <ul>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> القاهرة، مصر</a></li>
+                    <li><a href="tel:+201234567890"><i class="fas fa-phone"></i> 0123-456-7890</a></li>
+                    <li><a href="mailto:info@medicare.com"><i class="fas fa-envelope"></i> info@@medicare.com</a></li>
+                    <li><a href="#"><i class="fas fa-clock"></i> السبت - الخميس: 9ص - 10م</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 MediCare. جميع الحقوق محفوظة ❤️</p>
+        </div>
+    </footer>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

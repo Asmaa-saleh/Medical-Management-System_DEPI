@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Medical.PL.Models.Doctor>
+@model IEnumerable<Medical.PL.Data.Models.Doctor>
 @{
     ViewData["Title"] = "Doctors";
 }
@@ -13,7 +13,7 @@
     </a>
 </div>
 
-{{/* Stat Cards */}}
+@* Stat Cards *@
 <div class="row g-3 mb-4">
     <div class="col-md-4">
         <div class="card border-0 h-100" style="background:#f8f9fa">
@@ -45,7 +45,7 @@
     </div>
 </div>
 
-{{/* Table */}}
+@* Table *@
 <div class="card border-0 shadow-sm rounded-3">
     <div class="card-body p-0">
         <table class="table table-hover align-middle mb-0">

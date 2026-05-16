@@ -1,0 +1,261 @@
+@model Medical.PL.ViewModels.MedicalReportViewModel
+
+@{
+    ViewData["Title"] = "التقرير الطبي";
+}
+
+@section Styles {
+    <style>
+        .report-shell {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .report-header,
+        .report-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+        }
+
+        .report-header {
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .report-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .report-title h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin: 0;
+            color: #0f172a;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .report-field {
+            background: #f8fafc;
+            border: 1px solid #eef2f7;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .report-label {
+            display: block;
+            color: #64748b;
+            font-size: .78rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .report-value {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .report-card {
+            padding: 22px;
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-bottom: 14px;
+            color: #0f172a;
+        }
+
+        .rx-table th {
+            color: #475569;
+            font-size: .82rem;
+            white-space: nowrap;
+        }
+
+        .rx-table td {
+            min-width: 130px;
+            vertical-align: top;
+        }
+
+        .rx-table td:first-child {
+            min-width: 220px;
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        @@media (max-width: 900px) {
+            .report-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @@media print {
+            .mc-navbar,
+            .mc-footer,
+            .report-actions,
+            button,
+            .btn,
+            .text-danger,
+            textarea,
+            select,
+            input {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block;
+            }
+
+            .report-header,
+            .report-card {
+                box-shadow: none;
+                border-color: #cbd5e1;
+            }
+        }
+    </style>
+}
+
+<div class="report-shell">
+    <div class="report-title report-actions">
+        <h1><i class="fas fa-file-medical"></i> التقرير الطبي والروشتة</h1>
+        <div class="d-flex gap-2">
+            <a asp-controller="Appointment" asp-action="Details" asp-route-id="@Model.AppointmentId" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-right"></i> رجوع للحجز
+            </a>
+            <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> طباعة
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="report-header">
+        <div class="report-grid">
+            <div class="report-field">
+                <span class="report-label">المريض</span>
+                <span class="report-value">@Model.PatientName</span>
+            </div>
+            <div class="report-field">
+                <span class="report-label">رقم الهاتف</span>
+                <span class="report-value">@(string.IsNullOrWhiteSpace(Model.PatientPhone) ? "غير مسجل" : Model.PatientPhone)</span>
+            </div>
+            <div class="report-field">
+                <span class="report-label">الطبيب</span>
+                <span class="report-value">د. @Model.DoctorName</span>
+            </div>
+            <div class="report-field">
+                <span class="report-label">التخصص</span>
+                <span class="report-value">@Model.DoctorSpecialization</span>
+            </div>
+            <div class="report-field">
+                <span class="report-label">الخدمة</span>
+                <span class="report-value">@Model.ServiceName</span>
+            </div>
+            <div class="report-field">
+                <span class="report-label">تاريخ الكشف</span>
+                <span class="report-value">@Model.AppointmentDate.ToString("yyyy/MM/dd")</span>
+            </div>
+            <div class="report-field">
+                <span class="report-label">وقت الكشف</span>
+                <span class="report-value">@Model.AppointmentTime.ToString(@"hh\:mm")</span>
+            </div>
+            <div class="report-field">
+                <span class="report-label">رقم الحجز</span>
+                <span class="report-value">#@Model.AppointmentId</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <form asp-action="MedicalReport" asp-route-id="@Model.AppointmentId" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="AppointmentId" type="hidden" />
+            <input asp-for="DoctorId" type="hidden" />
+            <input asp-for="PatientId" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <span asp-validation-for="Items" class="text-danger d-block mb-2"></span>
+
+            <div class="mb-4">
+                <label asp-for="Notes" class="form-label fw-bold"></label>
+                <textarea asp-for="Notes" class="form-control" rows="4" placeholder="اكتب التشخيص أو ملاحظات التقرير الطبي"></textarea>
+                <div class="print-only border rounded p-3 mt-2">
+                    @(string.IsNullOrWhiteSpace(Model.Notes) ? "لا توجد ملاحظات" : Model.Notes)
+                </div>
+            </div>
+
+            <div class="section-title"><i class="fas fa-prescription-bottle-medical"></i> الروشتة</div>
+
+            <div class="table-responsive">
+                <table class="table rx-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>الدواء</th>
+                            <th>الجرعة</th>
+                            <th>الكمية</th>
+                            <th>المدة</th>
+                            <th>التعليمات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var i = 0; i < Model.Items.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <select asp-for="Items[i].MedicineId" asp-items="ViewBag.Medicines" class="form-select">
+                                        <option value="">اختر الدواء</option>
+                                    </select>
+                                    <span asp-validation-for="Items[i].MedicineId" class="text-danger small"></span>
+                                </td>
+                                <td>
+                                    <input asp-for="Items[i].Dosage" class="form-control" placeholder="مثال: قرص بعد الأكل" />
+                                    <span asp-validation-for="Items[i].Dosage" class="text-danger small"></span>
+                                </td>
+                                <td>
+                                    <input asp-for="Items[i].Quantity" class="form-control" min="1" type="number" />
+                                    <span asp-validation-for="Items[i].Quantity" class="text-danger small"></span>
+                                </td>
+                                <td>
+                                    <input asp-for="Items[i].Duration" class="form-control" placeholder="مثال: 5 أيام" />
+                                    <span asp-validation-for="Items[i].Duration" class="text-danger small"></span>
+                                </td>
+                                <td>
+                                    <input asp-for="Items[i].Instructions" class="form-control" placeholder="تعليمات إضافية" />
+                                    <span asp-validation-for="Items[i].Instructions" class="text-danger small"></span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 report-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> حفظ التقرير
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
