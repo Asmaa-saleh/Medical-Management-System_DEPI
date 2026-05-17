@@ -421,6 +421,177 @@ namespace Medical.PL.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> SelectDoctor(int serviceId)
+        {
+            // Get selected service
+            var service = await _unitOfWork.Services
+                .GetByIdWithIncludesAsync(serviceId,s => s.Department);
+
+            if (service == null)
+                return NotFound();
+
+            // Get doctors in same department
+            var doctors = await _unitOfWork.Doctors
+                .GetAllWithIncludesAsync(
+                    d => d.User,
+                    d => d.Department
+                );
+
+            var model = doctors
+                .Where(d =>
+                    d.IsActive &&
+                    d.DepartmentId == service.DepartmentId)
+                .ToList();
+
+            ViewBag.Service = service;
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> SelectTime(int doctorId, int serviceId)
+        {
+            var doctor = await _unitOfWork.Doctors
+                .GetByIdWithIncludesAsync(doctorId, d => d.User);
+
+            if (doctor == null) return NotFound();
+
+            var schedules = await _unitOfWork.DoctorSchedules
+                .GetAllWithIncludesAsync(s => s.Doctor);
+
+            var model = schedules
+                .Where(s => s.DoctorId == doctorId)
+                .ToList();
+
+            ViewBag.Doctor = doctor;
+            ViewBag.ServiceId = serviceId;
+
+            return View(model);
+        }
+
+        // STEP 4: Patient Info
+        public IActionResult PatientInfo(int serviceId, int doctorId, int scheduleId, DateTime date, TimeSpan time)
+        {
+            var model = new PatientVM
+            {
+                DateOfBirth = DateTime.Now.AddYears(-20)
+            };
+
+            ViewBag.ServiceId = serviceId;
+            ViewBag.DoctorId = doctorId;
+            ViewBag.ScheduleId = scheduleId;
+            ViewBag.Date = date;
+            ViewBag.Time = time;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PatientInfo(
+            PatientVM model,
+            int serviceId,
+            int doctorId,
+            int scheduleId,
+            DateTime date,
+            TimeSpan time)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ServiceId = serviceId;
+                ViewBag.DoctorId = doctorId;
+                ViewBag.ScheduleId = scheduleId;
+                ViewBag.Date = date;
+                ViewBag.Time = time;
+
+                return View(model);
+            }
+
+            var service = await _unitOfWork.Services.GetByIdAsync(serviceId);
+
+            var doctor = await _unitOfWork.Doctors
+                .GetByIdWithIncludesAsync(
+                    doctorId,
+                    d => d.User
+                );
+
+            var schedule = await _unitOfWork.DoctorSchedules
+                .GetByIdAsync(scheduleId);
+
+            var confirmVm = new ConfirmBookingVM
+            {
+                ServiceId = serviceId,
+                DoctorId = doctorId,
+                ScheduleId = scheduleId,
+                Date = date,
+                Time = time,
+
+                Patient = model,
+
+                ServiceName = service?.Name ?? "",
+                DoctorName = doctor?.User?.Name ?? "",
+                DayName = schedule?.DayOfWeek ?? ""
+            };
+
+            return View("ConfirmBooking", confirmVm);
+        }
+
+        // STEP 5: Confirm Booking
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmBooking(ConfirmBookingVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = new User
+            {
+                Name = model.Patient.Name,
+                Email = model.Patient.Email,
+                PhoneNumber = model.Patient.Phone,
+                Gender = model.Patient.Gender,
+                DateOfBirth = model.Patient.DateOfBirth,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _unitOfWork.Users.AddAsync(user);
+            await _unitOfWork.CompleteAsync();
+
+            var patient = new Patient
+            {
+                UserId = user.Id
+            };
+
+            await _unitOfWork.Patients.AddAsync(patient);
+            await _unitOfWork.CompleteAsync();
+
+            var appointment = new Appointment
+            {
+                PatientId = patient.Id,
+                DoctorId = model.DoctorId,
+                ServiceId = model.ServiceId,
+                ScheduleId = model.ScheduleId,
+                AppointmentDate = model.Date.Date,
+                AppointmentTime = model.Time,
+
+                QueueNumber = await GetNextQueueNumber(
+                    model.ScheduleId,
+                    model.Date
+                ),
+
+                Status = "Booked",
+                BookingSource = "Online",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _unitOfWork.Appointments.AddAsync(appointment);
+            await _unitOfWork.CompleteAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
-

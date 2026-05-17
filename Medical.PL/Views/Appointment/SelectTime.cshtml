@@ -1,0 +1,182 @@
+﻿@model IEnumerable<DoctorSchedule>
+
+@{
+    var doctor = ViewBag.Doctor as Doctor;
+    int serviceId = ViewBag.ServiceId;
+}
+
+<style>
+
+    .booking-layout {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        margin-top: 20px;
+    }
+
+    /* Sidebar */
+    .booking-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 100px;
+    }
+
+    /* Main content */
+    .booking-content {
+        flex: 1;
+    }
+
+    /* Title */
+    .page-title {
+        margin-bottom: 20px;
+    }
+
+        .page-title h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .page-title p {
+            color: #64748b;
+            margin-top: 6px;
+        }
+
+    /* GRID */
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    /* CARD */
+    .schedule-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 22px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 8px 25px rgba(15,23,42,0.05);
+        text-align: center;
+        transition: .3s;
+    }
+
+        .schedule-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 30px rgba(15,23,42,0.08);
+        }
+
+    .day {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0E7490;
+    }
+
+    .time {
+        margin: 12px 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .slots {
+        font-size: 13px;
+        color: #16a34a;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    /* BUTTON */
+    .btn-select {
+        display: inline-block;
+        padding: 10px 16px;
+        background: #B36995;
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: .3s;
+        font-weight: 600;
+    }
+
+        .btn-select:hover {
+            background: #64748B;
+            color: white;
+        }
+
+    /* RESPONSIVE */
+    @@media(max-width: 992px) {
+        .booking-layout {
+            flex-direction: column;
+        }
+
+        .booking-sidebar {
+            width: 100%;
+            position: static;
+        }
+
+        .schedule-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width: 600px) {
+        .schedule-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+</style>
+
+<div class="booking-layout">
+
+    <!-- Stepper -->
+    <div class="booking-sidebar">
+        @await Html.PartialAsync("_BookingStepper", 3)
+    </div>
+
+    <!-- Content -->
+    <div class="booking-content">
+
+        <div class="page-title">
+            <h2>اختيار الموعد</h2>
+            <p>د. @doctor.User.Name - @doctor.Specialization</p>
+        </div>
+
+        <div class="schedule-grid">
+
+            @foreach (var s in Model)
+            {
+                <div class="schedule-card">
+
+                    <div class="day">
+                        @s.DayOfWeek
+                    </div>
+
+                    <div class="time">
+                        @s.StartTime.ToString(@"hh\:mm") - @s.EndTime.ToString(@"hh\:mm")
+                    </div>
+
+                    <div class="slots">
+                        متاح للحجز
+                    </div>
+
+                    <a asp-action="PatientInfo"
+                           asp-route-serviceId="@serviceId"
+                           asp-route-doctorId="@doctor.Id"
+                           asp-route-scheduleId="@s.Id"
+                           asp-route-date="@DateTime.Today"
+                           asp-route-time="@s.StartTime"
+                           class="btn-select">
+
+                        اختيار
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

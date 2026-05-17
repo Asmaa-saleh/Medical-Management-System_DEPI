@@ -1,0 +1,230 @@
+﻿@model IEnumerable<Doctor>
+
+@{
+    var service = ViewBag.Service as Service;
+}
+
+<style>
+
+    /* Layout نفس booking */
+    .booking-layout {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        margin-top: 20px;
+    }
+
+    .booking-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 100px;
+    }
+
+    .doctor-content {
+        flex: 1;
+    }
+
+    /* Title */
+    .page-title {
+        margin-bottom: 18px;
+    }
+
+        .page-title h2 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .page-title p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+    /* Grid */
+    .doctors-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    /* Card */
+    .doctor-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 20px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 8px 20px rgba(15,23,42,0.05);
+        transition: 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+        .doctor-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 30px rgba(15,23,42,0.10);
+        }
+
+    /* Header */
+    .doctor-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .doctor-image {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #ECFEFF;
+    }
+
+    .doctor-info h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .doctor-info span {
+        color: #0891B2;
+        font-size: 13px;
+    }
+
+    /* Bio */
+    .doctor-bio {
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.6;
+        min-height: 60px;
+    }
+
+    /* Footer */
+    .doctor-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+    }
+
+    .experience {
+        background: #ecfeff;
+        color: #0f766e;
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .select-btn {
+        background: linear-gradient(135deg, #B36995, #B36990);
+        color: white;
+        text-decoration: none;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .select-btn:hover {
+            background: #64748B;
+        }
+
+    /* Responsive */
+    @@media(max-width: 992px) {
+        .booking-layout {
+            flex-direction: column;
+        }
+
+        .booking-sidebar {
+            width: 100%;
+            position: static;
+        }
+
+        .doctors-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width: 600px) {
+        .doctors-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+</style>
+
+
+<div class="booking-layout">
+
+    <!-- Stepper -->
+    <div class="booking-sidebar">
+        @await Html.PartialAsync("_BookingStepper", 2)
+    </div>
+
+    <!-- Content -->
+    <div class="doctor-content">
+
+        <!-- Title -->
+        <div class="page-title">
+            <h2>اختر الدكتور</h2>
+            <p>
+                الخدمة المختارة:
+                <strong>@service?.Name</strong>
+            </p>
+        </div>
+
+        <!-- Grid -->
+        <div class="doctors-grid">
+
+            @foreach (var doctor in Model)
+            {
+                <div class="doctor-card">
+
+                    <div class="doctor-top">
+
+                        <img src="@(string.IsNullOrEmpty(doctor.Image)
+                                                                                 ? "/images/default-doctor.png"
+                                                                                 : doctor.Image)"
+                             class="doctor-image" />
+
+                        <div class="doctor-info">
+                            <h3>د. @doctor.User.Name</h3>
+                            <span>@doctor.Specialization</span>
+                        </div>
+
+                    </div>
+
+                    <div class="doctor-bio">
+                        @(string.IsNullOrWhiteSpace(doctor.Bio)
+                            ? "لا يوجد نبذة تعريفية حالياً."
+                            : doctor.Bio)
+                    </div>
+
+                    <div class="doctor-footer">
+
+                        <div class="experience">
+                            @doctor.ExperienceYears سنة خبرة
+                        </div>
+
+                        <a asp-action="SelectTime"
+                               asp-route-doctorId="@doctor.Id"
+                               asp-route-serviceId="@service?.Id"
+                               class="select-btn">
+
+                            اختيار
+                        </a>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+</div>

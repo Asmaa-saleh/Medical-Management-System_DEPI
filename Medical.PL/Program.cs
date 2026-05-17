@@ -70,8 +70,8 @@ namespace Medical.PL
 
             app.UseAuthentication();
             app.UseAuthorization();
+           
 
-            
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=LandingPage}/{id?}");

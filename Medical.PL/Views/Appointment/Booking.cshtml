@@ -3,16 +3,6 @@
 
 @model IPagedList<Service>
 
-@{
-    
-    // Layout = "_LandingPageLayout";
-}
-
-@*
-
-@await Html.PartialAsync("_BookingStepper", 1) 
-*@
-
 
 <style>
     /* Tabs */
@@ -358,9 +348,14 @@
                     @service.Price ج.م
                 </span>
 
-                <a href="#" class="book-btn">
-                    احجز الآن
-                </a>
+                        <a asp-action="SelectDoctor"
+                               asp-controller="Appointment"
+                               asp-route-serviceId="@service.Id"
+                               class="book-btn">
+
+                            احجز الآن
+
+                        </a>
 
             </div>
 
@@ -385,30 +380,3 @@
 
 </div>
 </div>
-
-@* <script>
-    const tabs = document.querySelectorAll(".tab");
-    const cards = document.querySelectorAll(".service-card");
-
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-
-            // active tab
-            tabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-
-            const id = tab.dataset.id;
-
-            cards.forEach(card => {
-
-                if (id === "all") {
-                    card.style.display = "block";
-                }
-                else {
-                    card.style.display =
-                        card.dataset.dept === id ? "block" : "none";
-                }
-            });
-        });
-    });
-</script> *@
