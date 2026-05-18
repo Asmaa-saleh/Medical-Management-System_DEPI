@@ -1,6 +1,5 @@
 ﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,8 +25,13 @@
     <!-- ========== NAVBAR ========== -->
     <nav class="mc-navbar">
         <div class="mc-navbar-inner">
+            <div class="mc-brand">
+                <a href="@Url.Action("Index", "Home")" class="mc-logo">
+                    <i class="fas fa-heartbeat"></i>
+                    MediCare
+                </a>
+            </div>
 
-         
             <ul class="mc-nav">
                 <li>
                     <a href="@Url.Action("Index", "Home")"
@@ -78,12 +82,32 @@
                 </li>
             </ul>
 
-            <!-- ✅ اللوجو دلوقتي آخر عنصر => هيظهر أقصى الشمال (يسار) -->
-            <div class="mc-brand">
-                <a href="@Url.Action("Index", "Dashboard")" class="mc-logo">
-                    <i class="fas fa-heartbeat"></i>
-                    MediCare
-                </a>
+            <div class="mc-auth">
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <a asp-controller="Account" asp-action="Profile" class="mc-auth-link mc-auth-light">
+                        <i class="fas fa-user"></i>
+                        الملف الشخصي
+                    </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="mc-auth-form">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="mc-auth-link mc-auth-danger">
+                            <i class="fas fa-right-from-bracket"></i>
+                            تسجيل الخروج
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="SignIn" class="mc-auth-link mc-auth-light">
+                        <i class="fas fa-right-to-bracket"></i>
+                        تسجيل الدخول
+                    </a>
+                    <a asp-controller="Account" asp-action="SignUp" class="mc-auth-link mc-auth-accent">
+                        <i class="fas fa-user-plus"></i>
+                        تسجيل
+                    </a>
+                }
             </div>
 
         </div>
@@ -92,7 +116,6 @@
     <!-- ========== MAIN ========== -->
     <div class="mc-main">
         @RenderBody()
-        </main>
     </div>
 
     <!-- ========== FOOTER ========== -->

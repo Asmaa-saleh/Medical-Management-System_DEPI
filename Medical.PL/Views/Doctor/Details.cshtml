@@ -1,108 +1,101 @@
 @model Medical.PL.Data.Models.Doctor
+
 @{
-    ViewData["Title"] = "Doctor Details";
+    ViewData["Title"] = "تفاصيل الطبيب";
+    ViewData["ActivePage"] = "Doctors";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+@section Styles {
+    <link rel="stylesheet" href="~/css/doctor-profile.css" asp-append-version="true" />
+}
+
+<div class="profile-header">
     <div>
-        <h2 class="fw-semibold mb-0">Doctor Details</h2>
-        <small class="text-muted">Full profile information</small>
+        <h1><i class="fas fa-user-doctor"></i> تفاصيل الطبيب</h1>
+        <p>عرض كامل للبيانات الشخصية والطبية الخاصة بالطبيب.</p>
     </div>
-    <div class="d-flex gap-2">
-        <a asp-action="Edit" asp-route-id="@Model.Id"
-           class="btn btn-outline-primary">
-            <i class="bi bi-pencil me-1"></i> Edit
+
+    <div class="profile-actions-top">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-primary-soft">
+            <i class="fas fa-pen"></i>
+            تعديل
         </a>
-        <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Back
+        <a asp-action="Index" class="btn-light-soft">
+            <i class="fas fa-arrow-right"></i>
+            رجوع
         </a>
     </div>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-body p-4">
-
-        @* Profile Header *@
-        <div class="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
-            @if (Model.Image != null)
-            {
-                <img src="@Model.Image" class="rounded-circle"
-                     width="72" height="72" style="object-fit:cover" />
-            }
-            else
-            {
-                <div class="rounded-circle bg-primary bg-opacity-10 text-primary
-                                d-flex align-items-center justify-content-center fw-bold"
-                     style="width:72px;height:72px;font-size:24px">
-                    @(Model.User?.UserName?.Substring(0, 2).ToUpper() ?? "DR")
-                </div>
-            }
-            <div>
-                <h5 class="mb-1">@Model.User?.UserName</h5>
-                <div class="text-muted small mb-1">
-                    @Model.Department?.Name &nbsp;·&nbsp; @Model.Specialization
-                </div>
-                @if (Model.IsActive)
-                {
-                    <span class="badge rounded-pill"
-                          style="background:#eaf3de;color:#3b6d11">Active</span>
-                }
-                else
-                {
-                    <span class="badge rounded-pill"
-                          style="background:#f1efe8;color:#5f5e5a">Inactive</span>
-                }
+<div class="profile-card">
+    <div class="profile-top">
+        @if (!string.IsNullOrWhiteSpace(Model.Image))
+        {
+            <img src="@Model.Image" alt="صورة الطبيب" class="profile-avatar-img" />
+        }
+        else
+        {
+            <div class="profile-avatar">
+                @(Model.User?.Name?.Length > 0 ? Model.User.Name[0].ToString().ToUpper() : "د")
             </div>
+        }
+
+        <div class="profile-meta">
+            <h2>د. @Model.User?.Name</h2>
+            <p>@Model.Specialization - @Model.Department?.Name</p>
+            <span class="status-badge @(Model.IsActive ? "sb-active" : "sb-inactive")">
+                <i class="fas @(Model.IsActive ? "fa-circle-check" : "fa-circle-minus")"></i>
+                @(Model.IsActive ? "نشط" : "غير نشط")
+            </span>
+        </div>
+    </div>
+
+    <div class="profile-grid">
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-envelope"></i> البريد الإلكتروني</span>
+            <span class="profile-value">@Model.User?.Email</span>
         </div>
 
-        @* Info Grid *@
-        <div class="row g-4 mb-4">
-            <div class="col-md-6">
-                <div class="text-uppercase text-muted fw-semibold mb-1"
-                     style="font-size:11px;letter-spacing:.05em">
-                    Department
-                </div>
-                <div>@Model.Department?.Name</div>
-            </div>
-            <div class="col-md-6">
-                <div class="text-uppercase text-muted fw-semibold mb-1"
-                     style="font-size:11px;letter-spacing:.05em">
-                    Specialization
-                </div>
-                <div>@Model.Specialization</div>
-            </div>
-            <div class="col-md-6">
-                <div class="text-uppercase text-muted fw-semibold mb-1"
-                     style="font-size:11px;letter-spacing:.05em">
-                    Experience
-                </div>
-                <div>@Model.ExperienceYears years</div>
-            </div>
-            <div class="col-md-6">
-                <div class="text-uppercase text-muted fw-semibold mb-1"
-                     style="font-size:11px;letter-spacing:.05em">
-                    Email
-                </div>
-                <div>@Model.User?.Email</div>
-            </div>
-            @if (!string.IsNullOrEmpty(Model.Bio))
-            {
-                <div class="col-12">
-                    <div class="text-uppercase text-muted fw-semibold mb-1"
-                         style="font-size:11px;letter-spacing:.05em">
-                        Bio
-                    </div>
-                    <p class="text-muted mb-0" style="line-height:1.7">@Model.Bio</p>
-                </div>
-            }
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-phone"></i> رقم الهاتف</span>
+            <span class="profile-value">@Model.User?.PhoneNumber</span>
         </div>
 
-        @* Actions *@
-        <div class="d-flex justify-content-end pt-3 border-top">
-            <a asp-action="Delete" asp-route-id="@Model.Id"
-               class="btn btn-outline-danger">
-                <i class="bi bi-trash me-1"></i> Delete
-            </a>
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-hospital"></i> القسم</span>
+            <span class="profile-value">@Model.Department?.Name</span>
         </div>
+
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-stethoscope"></i> التخصص</span>
+            <span class="profile-value">@Model.Specialization</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-briefcase-medical"></i> الخبرة</span>
+            <span class="profile-value">@Model.ExperienceYears سنة</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-calendar-days"></i> تاريخ الميلاد</span>
+            <span class="profile-value">@Model.User?.DateOfBirth.ToString("dd/MM/yyyy")</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-venus-mars"></i> النوع</span>
+            <span class="profile-value">@Model.User?.Gender</span>
+        </div>
+    </div>
+
+    <div class="profile-bio">
+        <span class="profile-label"><i class="fas fa-align-right"></i> النبذة</span>
+        <p>@(string.IsNullOrWhiteSpace(Model.Bio) ? "لا توجد نبذة مضافة لهذا الطبيب." : Model.Bio)</p>
+    </div>
+
+    <div class="profile-actions">
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn-danger-soft">
+            <i class="fas fa-trash"></i>
+            حذف الطبيب
+        </a>
     </div>
 </div>

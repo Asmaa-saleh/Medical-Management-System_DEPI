@@ -38,6 +38,25 @@
                 <li><a href="#why-us">لماذا نحن</a></li>
                 <li><a href="#doctors">أطباؤنا</a></li>
                 <li><a href="#contact" class="btn-nav">احجز الآن</a></li>
+
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <li><a asp-controller="Account" asp-action="Profile" class="btn-nav-secondary"><i class="fas fa-user"></i> الملف الشخصي</a></li>
+                    <li>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="nav-inline-form">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-nav-danger">
+                                <i class="fas fa-right-from-bracket"></i>
+                                تسجيل الخروج
+                            </button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li><a asp-controller="Account" asp-action="SignIn" class="btn-nav-secondary"><i class="fas fa-right-to-bracket"></i> تسجيل الدخول</a></li>
+                    <li><a asp-controller="Account" asp-action="SignUp" class="btn-nav-outline"><i class="fas fa-user-plus"></i> تسجيل</a></li>
+                }
             </ul>
             <button class="menu-toggle" onclick="toggleMenu()">
                 <i class="fas fa-bars"></i>

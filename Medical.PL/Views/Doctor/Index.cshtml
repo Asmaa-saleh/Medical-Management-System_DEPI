@@ -1,144 +1,126 @@
 @model IEnumerable<Medical.PL.Data.Models.Doctor>
+
 @{
-    ViewData["Title"] = "Doctors";
+    ViewData["Title"] = "الأطباء";
+    ViewData["ActivePage"] = "Doctors";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+@section Styles {
+    <link rel="stylesheet" href="~/css/doctor-index.css" asp-append-version="true" />
+}
+
+<div class="pg-header">
     <div>
-        <h2 class="fw-semibold mb-0">Doctors</h2>
-        <small class="text-muted">Manage hospital medical staff</small>
+        <h1><i class="fas fa-user-doctor"></i> الأطباء</h1>
+        <p>إدارة بيانات الأطباء والحسابات المرتبطة بهم داخل النظام.</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-lg me-1"></i> Add Doctor
+
+    <a asp-action="Create" class="btn-add">
+        <i class="fas fa-plus"></i>
+        إضافة طبيب جديد
     </a>
 </div>
 
-@* Stat Cards *@
-<div class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="card border-0 h-100" style="background:#f8f9fa">
-            <div class="card-body">
-                <div class="text-muted small mb-1">Total Doctors</div>
-                <div class="fs-3 fw-semibold">@Model.Count()</div>
-            </div>
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon si-blue"><i class="fas fa-user-doctor"></i></div>
+        <div>
+            <div class="stat-label">إجمالي الأطباء</div>
+            <div class="stat-value">@Model.Count()</div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card border-0 h-100" style="background:#eaf3de">
-            <div class="card-body">
-                <div class="text-muted small mb-1">Active</div>
-                <div class="fs-3 fw-semibold text-success">
-                    @Model.Count(d => d.IsActive)
-                </div>
-            </div>
+
+    <div class="stat-card">
+        <div class="stat-icon si-green"><i class="fas fa-user-check"></i></div>
+        <div>
+            <div class="stat-label">الأطباء النشطون</div>
+            <div class="stat-value">@Model.Count(d => d.IsActive)</div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card border-0 h-100" style="background:#f1efe8">
-            <div class="card-body">
-                <div class="text-muted small mb-1">Inactive</div>
-                <div class="fs-3 fw-semibold text-secondary">
-                    @Model.Count(d => !d.IsActive)
-                </div>
-            </div>
+
+    <div class="stat-card">
+        <div class="stat-icon si-gray"><i class="fas fa-user-slash"></i></div>
+        <div>
+            <div class="stat-label">الأطباء غير النشطين</div>
+            <div class="stat-value">@Model.Count(d => !d.IsActive)</div>
         </div>
     </div>
 </div>
 
-@* Table *@
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-body p-0">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
+<div class="tbl-card">
+    @if (Model.Any())
+    {
+        <table class="tbl">
+            <thead>
                 <tr>
-                    <th class="ps-3">Doctor</th>
-                    <th>Department</th>
-                    <th>Specialization</th>
-                    <th>Experience</th>
-                    <th>Status</th>
-                    <th class="pe-3 text-end">Actions</th>
+                    <th>الطبيب</th>
+                    <th>القسم</th>
+                    <th>التخصص</th>
+                    <th>سنوات الخبرة</th>
+                    <th>الحالة</th>
+                    <th>إجراءات</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var d in Model)
+                @foreach (var doctor in Model)
                 {
                     <tr>
-                        <td class="ps-3">
-                            <div class="d-flex align-items-center gap-2">
-                                @if (d.Image != null)
+                        <td>
+                            <div class="doctor-cell">
+                                @if (!string.IsNullOrWhiteSpace(doctor.Image))
                                 {
-                                    <img src="@d.Image" class="rounded-circle"
-                                         width="38" height="38" style="object-fit:cover" />
+                                    <img src="@doctor.Image" alt="صورة الطبيب" class="doctor-avatar-img" />
                                 }
                                 else
                                 {
-                                    <div class="rounded-circle bg-primary bg-opacity-10
-                                                        text-primary d-flex align-items-center
-                                                        justify-content-center fw-semibold"
-                                         style="width:38px;height:38px;font-size:13px">
-                                        @(d.User?.UserName?.Substring(0, 2).ToUpper() ?? "DR")
+                                    <div class="doctor-avatar">
+                                        @(doctor.User?.Name?.Length > 0 ? doctor.User.Name[0].ToString().ToUpper() : "د")
                                     </div>
                                 }
+
                                 <div>
-                                    <div class="fw-medium" style="font-size:14px">
-                                        @d.User?.UserName
-                                    </div>
-                                    <div class="text-muted" style="font-size:12px">
-                                        @d.User?.Email
-                                    </div>
+                                    <div class="doctor-name">د. @doctor.User?.Name</div>
+                                    <div class="doctor-meta">@doctor.User?.Email</div>
                                 </div>
                             </div>
                         </td>
-                        <td>@d.Department?.Name</td>
-                        <td>@d.Specialization</td>
-                        <td>@d.ExperienceYears yrs</td>
+                        <td>@doctor.Department?.Name</td>
+                        <td>@doctor.Specialization</td>
+                        <td>@doctor.ExperienceYears سنة</td>
                         <td>
-                            @if (d.IsActive)
-                            {
-                                <span class="badge rounded-pill"
-                                      style="background:#eaf3de;color:#3b6d11">
-                                    Active
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="badge rounded-pill"
-                                      style="background:#f1efe8;color:#5f5e5a">
-                                    Inactive
-                                </span>
-                            }
+                            <span class="status-badge @(doctor.IsActive ? "sb-active" : "sb-inactive")">
+                                <i class="fas @(doctor.IsActive ? "fa-circle-check" : "fa-circle-minus")"></i>
+                                @(doctor.IsActive ? "نشط" : "غير نشط")
+                            </span>
                         </td>
-                        <td class="pe-3 text-end">
-                            <div class="d-flex justify-content-end gap-1">
-                                <a asp-action="Details" asp-route-id="@d.Id"
-                                   class="btn btn-sm btn-outline-secondary"
-                                   title="Details">
-                                    <i class="bi bi-eye"></i>
+                        <td>
+                            <div class="act-btns">
+                                <a asp-action="Details" asp-route-id="@doctor.Id" class="act-btn ab-view" title="عرض">
+                                    <i class="fas fa-eye"></i>
                                 </a>
-                                <a asp-action="Edit" asp-route-id="@d.Id"
-                                   class="btn btn-sm btn-outline-primary"
-                                   title="Edit">
-                                    <i class="bi bi-pencil"></i>
+                                <a asp-action="Edit" asp-route-id="@doctor.Id" class="act-btn ab-edit" title="تعديل">
+                                    <i class="fas fa-pen"></i>
                                 </a>
-                                <a asp-action="Delete" asp-route-id="@d.Id"
-                                   class="btn btn-sm btn-outline-danger"
-                                   title="Delete">
-                                    <i class="bi bi-trash"></i>
+                                <a asp-action="Delete" asp-route-id="@doctor.Id" class="act-btn ab-delete" title="حذف">
+                                    <i class="fas fa-trash"></i>
                                 </a>
                             </div>
-                        </td>
-                    </tr>
-                }
-                @if (!Model.Any())
-                {
-                    <tr>
-                        <td colspan="6" class="text-center text-muted py-5">
-                            <i class="bi bi-person-x fs-2 d-block mb-2"></i>
-                            No doctors found. <a asp-action="Create">Add one?</a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-    </div>
+    }
+    else
+    {
+        <div class="empty">
+            <i class="fas fa-user-doctor"></i>
+            <h3>لا يوجد أطباء حاليًا</h3>
+            <p>ابدأ بإضافة طبيب جديد مع إنشاء حسابه مباشرة من نفس الشاشة.</p>
+            <a asp-action="Create" class="btn-add">
+                <i class="fas fa-plus"></i>
+                إضافة طبيب
+            </a>
+        </div>
+    }
 </div>

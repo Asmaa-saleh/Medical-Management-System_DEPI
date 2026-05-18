@@ -138,6 +138,56 @@ a {
         display: none !important;
     }
 
+.btn-nav-secondary,
+.btn-nav-outline,
+.btn-nav-danger {
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-weight: 700 !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.btn-nav-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.btn-nav-outline {
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: var(--white) !important;
+}
+
+.btn-nav-danger {
+    background: rgba(239, 68, 68, 0.16);
+    color: #fecaca;
+    border: 1px solid rgba(248, 113, 113, 0.26);
+    font-family: 'Cairo', sans-serif;
+}
+
+.btn-nav-secondary:hover,
+.btn-nav-outline:hover,
+.btn-nav-danger:hover {
+    transform: translateY(-2px);
+}
+
+.btn-nav-secondary::after,
+.btn-nav-outline::after,
+.btn-nav-danger::after {
+    display: none !important;
+}
+
+.nav-inline-form {
+    margin: 0;
+}
+
+.nav-inline-form button {
+    cursor: pointer;
+}
+
 .menu-toggle {
     display: none;
     font-size: 1.5rem;
@@ -1214,6 +1264,14 @@ a {
         .nav-links.active a {
             color: var(--white) !important;
         }
+
+    .nav-links.active .nav-inline-form,
+    .nav-links.active .nav-inline-form button,
+    .nav-links.active .btn-nav-secondary,
+    .nav-links.active .btn-nav-outline {
+        width: 100%;
+        justify-content: center;
+    }
 
     .hero-content h1 {
         font-size: 2.2rem;

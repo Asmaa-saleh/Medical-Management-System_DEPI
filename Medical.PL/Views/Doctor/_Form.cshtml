@@ -1,92 +1,146 @@
-﻿@model Medical.PL.ViewModels.DoctorViewModel
+@model Medical.PL.ViewModels.DoctorViewModel
 
-<div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3"></div>
+@{
+    var isCreate = Model.Id == 0;
+}
 
-<div class="row g-3">
-    <div class="col-md-6">
-        <label asp-for="UserId" class="form-label fw-medium small text-uppercase
-               text-muted" style="letter-spacing:.05em"></label>
-        <select asp-for="UserId" class="form-select"
-                asp-items="@(ViewBag.Users as SelectList)">
-            <option value="">— Select User —</option>
-        </select>
-        <span asp-validation-for="UserId" class="text-danger small"></span>
+<div asp-validation-summary="ModelOnly" class="validation-msg"></div>
+
+<div class="section-title">
+    <i class="fas fa-id-card"></i>
+    البيانات الشخصية
+</div>
+
+<div class="fg">
+    <div class="fg-item">
+        <label asp-for="Name"><i class="fas fa-user"></i> الاسم الكامل</label>
+        <input asp-for="Name" class="fc" placeholder="أدخل الاسم الكامل" />
+        <span asp-validation-for="Name" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6">
-        <label asp-for="DepartmentId" class="form-label fw-medium small text-uppercase
-               text-muted" style="letter-spacing:.05em"></label>
-        <select asp-for="DepartmentId" class="form-select"
-                asp-items="@(ViewBag.Departments as SelectList)">
-            <option value="">— Select Department —</option>
+    <div class="fg-item">
+        <label asp-for="Email"><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+        <input asp-for="Email" type="email" class="fc" placeholder="doctor@example.com" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+
+    <div class="fg-item">
+        <label asp-for="PhoneNumber"><i class="fas fa-phone"></i> رقم الهاتف</label>
+        <input asp-for="PhoneNumber" class="fc" placeholder="01000000000" />
+        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+    </div>
+
+    <div class="fg-item">
+        <label asp-for="DateOfBirth"><i class="fas fa-calendar-days"></i> تاريخ الميلاد</label>
+        <input asp-for="DateOfBirth" type="date" class="fc" />
+        <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+    </div>
+
+    <div class="fg-item">
+        <label asp-for="Gender"><i class="fas fa-venus-mars"></i> النوع</label>
+        <select asp-for="Gender" class="fc">
+            <option value="">-- اختر النوع --</option>
+            <option value="ذكر">ذكر</option>
+            <option value="أنثى">أنثى</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger small"></span>
+    </div>
+
+    <div class="fg-item">
+        <label asp-for="DepartmentId"><i class="fas fa-hospital"></i> القسم</label>
+        <select asp-for="DepartmentId" asp-items="@(ViewBag.Departments as SelectList)" class="fc">
+            <option value="">-- اختر القسم --</option>
         </select>
         <span asp-validation-for="DepartmentId" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6">
-        <label asp-for="Specialization" class="form-label fw-medium small text-uppercase
-               text-muted" style="letter-spacing:.05em"></label>
-        <input asp-for="Specialization" class="form-control"
-               placeholder="e.g. Heart Surgery" />
+    @if (isCreate)
+    {
+        <div class="fg-item">
+            <label asp-for="Password"><i class="fas fa-lock"></i> كلمة المرور</label>
+            <input asp-for="Password" type="password" class="fc" placeholder="6 أحرف على الأقل" />
+            <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+
+        <div class="fg-item">
+            <label asp-for="ConfirmPassword"><i class="fas fa-shield-halved"></i> تأكيد كلمة المرور</label>
+            <input asp-for="ConfirmPassword" type="password" class="fc" placeholder="أعد كتابة كلمة المرور" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+        </div>
+    }
+</div>
+
+<div class="section-title section-gap">
+    <i class="fas fa-stethoscope"></i>
+    البيانات الطبية
+</div>
+
+<div class="fg">
+    <div class="fg-item">
+        <label asp-for="Specialization"><i class="fas fa-user-doctor"></i> التخصص</label>
+        <input asp-for="Specialization" class="fc" placeholder="مثال: قلب أو عظام" />
         <span asp-validation-for="Specialization" class="text-danger small"></span>
     </div>
 
-    <div class="col-md-6">
-        <label asp-for="ExperienceYears" class="form-label fw-medium small text-uppercase
-               text-muted" style="letter-spacing:.05em"></label>
-        <input asp-for="ExperienceYears" class="form-control"
-               type="number" min="0" max="60" />
+    <div class="fg-item">
+        <label asp-for="ExperienceYears"><i class="fas fa-briefcase-medical"></i> عدد سنوات الخبرة</label>
+        <input asp-for="ExperienceYears" type="number" min="0" max="60" class="fc" placeholder="مثال: 10" />
         <span asp-validation-for="ExperienceYears" class="text-danger small"></span>
     </div>
 
-    <div class="col-12">
-        <label asp-for="Bio" class="form-label fw-medium small text-uppercase
-               text-muted" style="letter-spacing:.05em"></label>
-        <textarea asp-for="Bio" class="form-control" rows="3"
-                  placeholder="Write a short bio about the doctor..."></textarea>
+    <div class="fg-item fg-full">
+        <label asp-for="Bio"><i class="fas fa-align-right"></i> نبذة مختصرة</label>
+        <textarea asp-for="Bio" class="fc ta" rows="4" placeholder="اكتب نبذة قصيرة عن الطبيب وخبراته"></textarea>
         <span asp-validation-for="Bio" class="text-danger small"></span>
     </div>
 
-    <div class="col-12">
-        <label asp-for="ImageFile" class="form-label fw-medium small text-uppercase
-               text-muted" style="letter-spacing:.05em"></label>
+    <div class="fg-item fg-full">
+        <label asp-for="ImageFile"><i class="fas fa-image"></i> الصورة الشخصية</label>
 
-        @if (Model?.Image != null)
-        {
-            <div class="mb-2 d-flex align-items-center gap-2">
-                <img src="@Model.Image" id="previewImg" class="rounded-circle"
-                     width="52" height="52" style="object-fit:cover" />
-                <small class="text-muted">Current image — upload to replace</small>
-            </div>
-        }
-        else
-        {
-            <div class="mb-2">
-                <img id="previewImg" src="#" class="rounded-circle"
-                     width="52" height="52"
-                     style="object-fit:cover;display:none" />
-            </div>
-        }
+        <div class="image-upload-box">
+            @if (!string.IsNullOrWhiteSpace(Model.Image))
+            {
+                <div class="current-photo">
+                    <img src="@Model.Image" id="previewImg" alt="صورة الطبيب" class="img-preview" />
+                    <span>الصورة الحالية</span>
+                </div>
+            }
+            else
+            {
+                <div class="current-photo is-empty">
+                    <img src="#" id="previewImg" alt="معاينة الصورة" class="img-preview hidden-preview" />
+                    <span>لا توجد صورة مضافة</span>
+                </div>
+            }
 
-        <input asp-for="ImageFile" type="file" class="form-control"
-               accept="image/*" onchange="previewDoctorImage(event)" />
+            <input asp-for="ImageFile" type="file" class="fc" accept="image/*" onchange="previewDoctorImage(event)" />
+        </div>
+        <span asp-validation-for="ImageFile" class="text-danger small"></span>
     </div>
 
-    <div class="col-12">
-        <div class="form-check form-switch">
-            <input asp-for="IsActive" class="form-check-input" type="checkbox"
-                   role="switch" />
-            <label asp-for="IsActive" class="form-check-label">Active</label>
-        </div>
+    <div class="fg-item fg-full">
+        <label class="switch-card">
+            <input asp-for="IsActive" type="checkbox" />
+            <span class="switch-copy">
+                <strong>حالة الطبيب</strong>
+                <small>فعّل هذا الخيار إذا كان الطبيب متاحًا للحجز والعمل.</small>
+            </span>
+        </label>
     </div>
 </div>
 
 <script>
-    function previewDoctorImage(e) {
-        const file = e.target.files[0];
+    function previewDoctorImage(event) {
+        const file = event.target.files[0];
         if (!file) return;
+
         const img = document.getElementById('previewImg');
-        img.style.display = 'block';
         img.src = URL.createObjectURL(file);
+        img.classList.remove('hidden-preview');
+
+        const wrapper = img.closest('.current-photo');
+        if (wrapper) {
+            wrapper.classList.remove('is-empty');
+        }
     }
 </script>

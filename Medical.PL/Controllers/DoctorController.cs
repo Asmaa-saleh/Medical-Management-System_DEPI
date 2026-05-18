@@ -1,11 +1,10 @@
-﻿using Medical.PL.Data.Context;
+using Medical.PL.Data.Context;
 using Medical.PL.Data.Models;
 using Medical.PL.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-
-
 
 namespace Medical.PL.Controllers
 {
@@ -13,25 +12,33 @@ namespace Medical.PL.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
 
-        public DoctorController(AppDbContext context, IWebHostEnvironment env)
+        public DoctorController(
+            AppDbContext context,
+            IWebHostEnvironment env,
+            UserManager<User> userManager,
+            RoleManager<IdentityRole<int>> roleManager)
         {
             _context = context;
             _env = env;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
-        // GET: Doctors
         public async Task<IActionResult> Index()
         {
             var doctors = await _context.Doctors
                 .Include(d => d.User)
                 .Include(d => d.Department)
+                .OrderBy(d => d.User.Name)
                 .ToListAsync();
+
             ViewData["ActivePage"] = "Doctors";
             return View(doctors);
         }
 
-        // GET: Doctors Details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -42,23 +49,29 @@ namespace Medical.PL.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (doctor == null) return NotFound();
+
             ViewData["ActivePage"] = "Doctors";
             return View(doctor);
         }
 
-        // GET: Doctors/Create
         public IActionResult Create()
         {
             PopulateDropdowns();
             ViewData["ActivePage"] = "Doctors";
-            return View(new DoctorViewModel());
+
+            return View(new DoctorViewModel
+            {
+                DateOfBirth = DateTime.Today.AddYears(-30),
+                IsActive = true
+            });
         }
 
-        // POST: Doctors Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DoctorViewModel vm)
         {
+            ValidateCreatePassword(vm);
+
             if (!ModelState.IsValid)
             {
                 PopulateDropdowns();
@@ -66,34 +79,67 @@ namespace Medical.PL.Controllers
                 return View(vm);
             }
 
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            var user = new User
+            {
+                Name = vm.Name.Trim(),
+                UserName = vm.Email.Trim(),
+                Email = vm.Email.Trim(),
+                PhoneNumber = vm.PhoneNumber.Trim(),
+                DateOfBirth = vm.DateOfBirth,
+                Gender = vm.Gender,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var userResult = await _userManager.CreateAsync(user, vm.Password!);
+            if (!userResult.Succeeded)
+            {
+                AddIdentityErrors(userResult);
+                PopulateDropdowns();
+                ViewData["ActivePage"] = "Doctors";
+                return View(vm);
+            }
+
+            await AddDoctorRoleIfExistsAsync(user);
+
             var doctor = new Doctor
             {
-                UserId = vm.UserId,
+                UserId = user.Id,
                 DepartmentId = vm.DepartmentId,
-                Specialization = vm.Specialization,
+                Specialization = vm.Specialization.Trim(),
                 ExperienceYears = vm.ExperienceYears,
-                Bio = vm.Bio,
+                Bio = string.IsNullOrWhiteSpace(vm.Bio) ? null : vm.Bio.Trim(),
                 IsActive = vm.IsActive,
                 Image = await SaveImageAsync(vm.ImageFile)
             };
 
-            _context.Add(doctor);
+            _context.Doctors.Add(doctor);
             await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Doctor Edit
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
-            var doctor = await _context.Doctors.FindAsync(id);
+            var doctor = await _context.Doctors
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
             if (doctor == null) return NotFound();
 
             var vm = new DoctorViewModel
             {
                 Id = doctor.Id,
                 UserId = doctor.UserId,
+                Name = doctor.User.Name,
+                Email = doctor.User.Email ?? string.Empty,
+                PhoneNumber = doctor.User.PhoneNumber ?? string.Empty,
+                DateOfBirth = doctor.User.DateOfBirth,
+                Gender = doctor.User.Gender,
                 DepartmentId = doctor.DepartmentId,
                 Specialization = doctor.Specialization,
                 ExperienceYears = doctor.ExperienceYears,
@@ -107,12 +153,14 @@ namespace Medical.PL.Controllers
             return View(vm);
         }
 
-        // POST: Doctor Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, DoctorViewModel vm)
         {
             if (id != vm.Id) return NotFound();
+
+            ModelState.Remove(nameof(DoctorViewModel.Password));
+            ModelState.Remove(nameof(DoctorViewModel.ConfirmPassword));
 
             if (!ModelState.IsValid)
             {
@@ -121,25 +169,44 @@ namespace Medical.PL.Controllers
                 return View(vm);
             }
 
-            var doctor = await _context.Doctors.FindAsync(id);
+            var doctor = await _context.Doctors
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
             if (doctor == null) return NotFound();
 
-            doctor.UserId = vm.UserId;
+            doctor.User.Name = vm.Name.Trim();
+            doctor.User.UserName = vm.Email.Trim();
+            doctor.User.Email = vm.Email.Trim();
+            doctor.User.PhoneNumber = vm.PhoneNumber.Trim();
+            doctor.User.DateOfBirth = vm.DateOfBirth;
+            doctor.User.Gender = vm.Gender;
+
+            var updateUserResult = await _userManager.UpdateAsync(doctor.User);
+            if (!updateUserResult.Succeeded)
+            {
+                AddIdentityErrors(updateUserResult);
+                PopulateDropdowns();
+                ViewData["ActivePage"] = "Doctors";
+                return View(vm);
+            }
+
             doctor.DepartmentId = vm.DepartmentId;
-            doctor.Specialization = vm.Specialization;
+            doctor.Specialization = vm.Specialization.Trim();
             doctor.ExperienceYears = vm.ExperienceYears;
-            doctor.Bio = vm.Bio;
+            doctor.Bio = string.IsNullOrWhiteSpace(vm.Bio) ? null : vm.Bio.Trim();
             doctor.IsActive = vm.IsActive;
 
             if (vm.ImageFile != null)
+            {
                 doctor.Image = await SaveImageAsync(vm.ImageFile);
+            }
 
             _context.Update(doctor);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Doctor Delete
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -150,22 +217,25 @@ namespace Medical.PL.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (doctor == null) return NotFound();
+
             ViewData["ActivePage"] = "Doctors";
             return View(doctor);
         }
 
-        // POST: Doctors Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var doctor = await _context.Doctors.FindAsync(id);
-            if (doctor != null) _context.Doctors.Remove(doctor);
-            await _context.SaveChangesAsync();
+            if (doctor != null)
+            {
+                _context.Doctors.Remove(doctor);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Doctor/MedicalReport/5
         public async Task<IActionResult> MedicalReport(int? id)
         {
             if (id == null) return NotFound();
@@ -178,7 +248,6 @@ namespace Medical.PL.Controllers
             return View(MapToMedicalReportViewModel(appointment));
         }
 
-        // POST: Doctor/MedicalReport/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MedicalReport(int id, MedicalReportViewModel vm)
@@ -239,11 +308,38 @@ namespace Medical.PL.Controllers
             return RedirectToAction(nameof(MedicalReport), new { id = appointment.Id });
         }
 
-        // Helper Methods
         private void PopulateDropdowns()
         {
-            ViewBag.Users = new SelectList(_context.Users, "Id", "Name");
-            ViewBag.Departments = new SelectList(_context.Departments, "Id", "Name");
+            ViewBag.Departments = new SelectList(
+                _context.Departments.OrderBy(d => d.Name).ToList(),
+                "Id",
+                "Name");
+        }
+
+        private void ValidateCreatePassword(DoctorViewModel vm)
+        {
+            if (string.IsNullOrWhiteSpace(vm.Password))
+            {
+                ModelState.AddModelError(nameof(DoctorViewModel.Password), "كلمة المرور مطلوبة.");
+            }
+
+            if (string.IsNullOrWhiteSpace(vm.ConfirmPassword))
+            {
+                ModelState.AddModelError(nameof(DoctorViewModel.ConfirmPassword), "تأكيد كلمة المرور مطلوب.");
+            }
+        }
+
+        private async Task AddDoctorRoleIfExistsAsync(User user)
+        {
+            var doctorRole = await _roleManager.Roles
+                .Where(r => r.Name != null && r.Name.ToLower() == "doctor")
+                .Select(r => r.Name)
+                .FirstOrDefaultAsync();
+
+            if (!string.IsNullOrWhiteSpace(doctorRole))
+            {
+                await _userManager.AddToRoleAsync(user, doctorRole);
+            }
         }
 
         private async Task PopulateMedicinesDropdownAsync()
@@ -366,11 +462,18 @@ namespace Medical.PL.Controllers
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
             var filePath = Path.Combine(uploadsFolder, fileName);
 
-            using var stream = new FileStream(filePath, FileMode.Create);
+            await using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream);
 
             return $"/uploads/doctors/{fileName}";
         }
-       
+
+        private void AddIdentityErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
         }
+    }
 }

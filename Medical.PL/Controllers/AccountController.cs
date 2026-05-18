@@ -1,5 +1,6 @@
 using Medical.PL.Data.Models;
 using Medical.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NToastNotify;
@@ -119,7 +120,20 @@ namespace Medical.PL.Controllers
         {
             await _signInManager.SignOutAsync();
             _toast.AddInfoToastMessage("تم تسجيل الخروج");
-            return RedirectToAction(nameof(SignIn));
+            return RedirectToAction("LandingPage", "Home");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction(nameof(SignIn));
+            }
+
+            return RedirectToAction("Details", "User", new { id = user.Id });
         }
 
         public IActionResult AccessDenied()
