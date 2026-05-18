@@ -46,3 +46,12 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}

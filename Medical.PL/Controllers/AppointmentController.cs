@@ -2,19 +2,23 @@ using Medical.PL.Data.Models;
 using Medical.PL.Interfaces;
 using Medical.PL.Repositories;
 using Medical.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NToastNotify;
 using X.PagedList.Extensions;
 
 namespace Medical.PL.Controllers
 {
+    [Authorize]
     public class AppointmentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        public AppointmentController(IUnitOfWork unitOfWork)
+        private readonly IToastNotification _toast;
+        public AppointmentController(IUnitOfWork unitOfWork, IToastNotification toast)
         {
             _unitOfWork = unitOfWork;
+            _toast=toast;
         }
 
         public async Task<IActionResult> Index()
@@ -469,45 +473,29 @@ namespace Medical.PL.Controllers
             return View(model);
         }
 
-        // STEP 4: Patient Info
-        public IActionResult PatientInfo(int serviceId, int doctorId, int scheduleId, DateTime date, TimeSpan time)
+        public async Task<IActionResult> ConfirmBooking(
+    int serviceId,
+    int doctorId,
+    int scheduleId,
+    DateTime date,
+    TimeSpan time)
         {
-            var model = new PatientVM
-            {
-                DateOfBirth = DateTime.Now.AddYears(-20)
-            };
+            var userId = int.Parse(
+                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value
+            );
 
-            ViewBag.ServiceId = serviceId;
-            ViewBag.DoctorId = doctorId;
-            ViewBag.ScheduleId = scheduleId;
-            ViewBag.Date = date;
-            ViewBag.Time = time;
+            var patient = await _unitOfWork.Patients
+                .GetAllWithIncludesAsync(p => p.User);
 
-            return View(model);
-        }
+            var currentPatient = patient
+                .FirstOrDefault(p => p.UserId == userId);
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PatientInfo(
-            PatientVM model,
-            int serviceId,
-            int doctorId,
-            int scheduleId,
-            DateTime date,
-            TimeSpan time)
-        {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.ServiceId = serviceId;
-                ViewBag.DoctorId = doctorId;
-                ViewBag.ScheduleId = scheduleId;
-                ViewBag.Date = date;
-                ViewBag.Time = time;
+            if (currentPatient == null)
+                //return RedirectToAction("Login", "Account");
+                return RedirectToAction("SignIn", "Account");
 
-                return View(model);
-            }
-
-            var service = await _unitOfWork.Services.GetByIdAsync(serviceId);
+            var service = await _unitOfWork.Services
+                .GetByIdAsync(serviceId);
 
             var doctor = await _unitOfWork.Doctors
                 .GetByIdWithIncludesAsync(
@@ -518,56 +506,55 @@ namespace Medical.PL.Controllers
             var schedule = await _unitOfWork.DoctorSchedules
                 .GetByIdAsync(scheduleId);
 
-            var confirmVm = new ConfirmBookingVM
+            if (service == null || doctor == null || schedule == null)
+                return NotFound();
+
+            var model = new ConfirmBookingVM
             {
                 ServiceId = serviceId,
                 DoctorId = doctorId,
                 ScheduleId = scheduleId,
+
                 Date = date,
                 Time = time,
 
-                Patient = model,
+                ServiceName = service.Name,
+                DoctorName = doctor.User.Name,
+                DayName = schedule.DayOfWeek,
 
-                ServiceName = service?.Name ?? "",
-                DoctorName = doctor?.User?.Name ?? "",
-                DayName = schedule?.DayOfWeek ?? ""
+                Patient = new PatientVM
+                {
+                    Id = currentPatient.Id,
+                    UserId = currentPatient.UserId,
+                    Name = currentPatient.User.Name,
+                    Email = currentPatient.User.Email,
+                    Phone = currentPatient.User.PhoneNumber,
+                    Gender = currentPatient.User.Gender,
+                    DateOfBirth = currentPatient.User.DateOfBirth
+                }
             };
 
-            return View("ConfirmBooking", confirmVm);
+            return View(model);
         }
-
-        // STEP 5: Confirm Booking
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmBooking(ConfirmBookingVM model)
         {
-            if (!ModelState.IsValid)
+            var userId = int.Parse(
+                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value
+            );
+
+            var patients = await _unitOfWork.Patients
+            .GetAllWithIncludesAsync(p => p.User);
+
+            var patient = patients
+                .FirstOrDefault(p => p.UserId == userId);
+
+            if (patient == null)
             {
-                return View(model);
+                return RedirectToAction("SignIn", "Account");
             }
-
-            var user = new User
-            {
-                Name = model.Patient.Name,
-                Email = model.Patient.Email,
-                PhoneNumber = model.Patient.Phone,
-                Gender = model.Patient.Gender,
-                DateOfBirth = model.Patient.DateOfBirth,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            await _unitOfWork.Users.AddAsync(user);
-            await _unitOfWork.CompleteAsync();
-
-            var patient = new Patient
-            {
-                UserId = user.Id
-            };
-
-            await _unitOfWork.Patients.AddAsync(patient);
-            await _unitOfWork.CompleteAsync();
 
             var appointment = new Appointment
             {
@@ -590,8 +577,10 @@ namespace Medical.PL.Controllers
 
             await _unitOfWork.Appointments.AddAsync(appointment);
             await _unitOfWork.CompleteAsync();
-
-            return RedirectToAction(nameof(Index));
+            _toast.AddSuccessToastMessage("تم الحجز بنجاح");
+            TempData["Success"] = "تم الحجز بنجاح11";
+            return RedirectToAction("LandingPage", "Home");
         }
+        
     }
 }

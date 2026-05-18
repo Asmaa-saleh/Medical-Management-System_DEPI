@@ -4,6 +4,10 @@
     var doctor = ViewBag.Doctor as Doctor;
     int serviceId = ViewBag.ServiceId;
 }
+@{
+    Layout = "~/Views/Shared/_LandingPageLayout.cshtml";
+}
+
 
 <style>
 
@@ -160,16 +164,15 @@
                         متاح للحجز
                     </div>
 
-                    <a asp-action="PatientInfo"
+                    
+                    <a asp-action="ConfirmBooking"
                            asp-route-serviceId="@serviceId"
                            asp-route-doctorId="@doctor.Id"
                            asp-route-scheduleId="@s.Id"
                            asp-route-date="@DateTime.Today"
                            asp-route-time="@s.StartTime"
                            class="btn-select">
-
                         اختيار
-
                     </a>
 
                 </div>

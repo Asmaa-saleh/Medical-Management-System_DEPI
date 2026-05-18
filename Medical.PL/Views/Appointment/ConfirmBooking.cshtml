@@ -1,4 +1,7 @@
 ﻿@model ConfirmBookingVM
+@{
+    Layout = "~/Views/Shared/_LandingPageLayout.cshtml";
+}
 
 <style>
 
@@ -115,7 +118,7 @@
             </div>
 
             <div class="info-box">
-                <span>التاريخ</span>
+                <span>تاريخ الحجز</span>
                 <strong>@Model.Date.ToString("yyyy/MM/dd")</strong>
             </div>
 

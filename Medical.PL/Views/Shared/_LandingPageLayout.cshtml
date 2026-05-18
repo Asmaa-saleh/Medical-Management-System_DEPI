@@ -63,7 +63,9 @@
             </button>
         </div>
     </nav>
-    @RenderBody()
+    <main class="main-content">
+        @RenderBody()
+    </main>
     <!-- ========== FOOTER ========== -->
     <footer class="footer">
         <div class="footer-grid">
@@ -126,7 +128,10 @@
         offset: 100
         });
     </script>
-
+    
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+     @await Component.InvokeAsync("NToastNotify") 
 </body>
 </html>
+<a href="c:\users\tibacenter\source\repos\abdallahsanad\medical.plsolution\medical.pl\views\shared\_landingpagelayout.cshtml">c:\users\tibacenter\source\repos\abdallahsanad\medical.plsolution\medical.pl\views\shared\_landingpagelayout.cshtml</a>

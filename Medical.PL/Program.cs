@@ -67,6 +67,7 @@ namespace Medical.PL
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseCookiePolicy();
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -1,4 +1,5 @@
 using Medical.PL.Data.Models;
+using Medical.PL.Interfaces;
 using Medical.PL.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,15 +13,18 @@ namespace Medical.PL.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IToastNotification _toast;
+        private readonly IUnitOfWork _unitOfWork;
 
         public AccountController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IToastNotification toast)
+            IToastNotification toast,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _toast = toast;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
@@ -86,6 +90,13 @@ namespace Medical.PL.Controllers
             {
                 return View(model);
             }
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Email", "هذا البريد الإلكتروني مستخدم بالفعل");
+                return View(model);
+            }
 
             var user = new User
             {
@@ -101,6 +112,14 @@ namespace Medical.PL.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                var patient = new Patient
+                {
+                    UserId = user.Id
+                };
+
+                await _unitOfWork.Patients.AddAsync(patient);
+                await _unitOfWork.CompleteAsync();
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _toast.AddSuccessToastMessage("تم إنشاء الحساب بنجاح");
                 return RedirectToAction("Index", "Home");
