@@ -1,0 +1,295 @@
+@model Medical.PL.ViewModels.WritePrescriptionViewModel
+
+@{
+    ViewData["Title"] = "وصفة طبية جديدة";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/doctor-form.css" asp-append-version="true" />
+    <style>
+        .rx-wrap { overflow-x: auto; }
+
+        .rx-tbl {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .rx-tbl thead th {
+            padding: 12px 14px;
+            text-align: right;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            background: #f8fafc;
+            border: 1px solid #eef2f7;
+            white-space: nowrap;
+        }
+
+        .rx-tbl tbody td {
+            padding: 10px 12px;
+            border: 1px solid #eef2f7;
+            vertical-align: top;
+        }
+
+        .rx-tbl tbody tr:hover td { background: #fafbfc; }
+
+        .rx-tbl .fc {
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            border-radius: 10px;
+        }
+
+        .rx-tbl select.fc {
+            background-position: left 12px center;
+            padding-left: 34px;
+        }
+
+        .btn-rm {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border: none;
+            border-radius: 10px;
+            background: #fef2f2;
+            color: #b91c1c;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-rm:hover { background: #fee2e2; }
+
+        .btn-add-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            background: transparent;
+            color: #64748b;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-add-row:hover {
+            border-color: #0891b2;
+            color: #0891b2;
+            background: #f0f9ff;
+        }
+
+        .no-appointments-note {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 20px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 14px;
+            color: #92400e;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .no-appointments-note i { color: #d97706; }
+    </style>
+}
+
+<div class="form-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h1><i class="fas fa-prescription-bottle-medical"></i> وصفة طبية جديدة</h1>
+    </div>
+    <a asp-action="Prescriptions" asp-route-id="@Model.DoctorId" class="btn-back">
+        <i class="fas fa-arrow-right"></i> رجوع للوصفات
+    </a>
+</div>
+
+<div class="form-card">
+    <!-- Doctor strip -->
+    <div style="display:flex; align-items:center; gap:12px; padding:14px 18px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:14px; margin-bottom:28px;">
+        <div style="width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#0891b2,#06b6d4); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.1rem; font-weight:900; flex-shrink:0;">
+            <i class="fas fa-user-doctor"></i>
+        </div>
+        <div>
+            <div style="font-weight:800; color:#0f172a; font-size:0.95rem;">د. @Model.DoctorName</div>
+            <div style="font-size:0.8rem; color:#64748b;">الطبيب المُصدِر للوصفة</div>
+        </div>
+    </div>
+
+    @{
+        var hasAppointments = ViewBag.Appointments != null &&
+                              ((IEnumerable<SelectListItem>)ViewBag.Appointments).Any();
+    }
+
+    @if (!hasAppointments)
+    {
+        <div class="no-appointments-note">
+            <i class="fas fa-triangle-exclamation"></i>
+            لا توجد حجوزات بحالة "محجوز" لهذا الطبيب حالياً. أضف حجزاً جديداً أولاً.
+        </div>
+        <div class="form-actions" style="margin-top:24px;">
+            <a asp-action="Prescriptions" asp-route-id="@Model.DoctorId" class="btn-back">
+                <i class="fas fa-arrow-right"></i> رجوع
+            </a>
+        </div>
+    }
+    else
+    {
+        <form asp-action="WritePrescription" asp-route-id="@Model.DoctorId" method="post" id="rxForm">
+            @Html.AntiForgeryToken()
+            <input asp-for="DoctorId" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly" class="validation-msg"></div>
+            <span asp-validation-for="Items" class="text-danger d-block mb-3" style="font-size:0.85rem;"></span>
+
+            <!-- Appointment selector -->
+            <div class="section-title"><i class="fas fa-calendar-check"></i> الحجز</div>
+            <div class="fg" style="margin-bottom:32px;">
+                <div class="fg-item fg-full">
+                    <label asp-for="AppointmentId"><i class="fas fa-calendar-check"></i> اختر الحجز</label>
+                    <select asp-for="AppointmentId" asp-items="ViewBag.Appointments" class="fc">
+                        <option value="">-- اختر الحجز --</option>
+                    </select>
+                    <span asp-validation-for="AppointmentId" class="text-danger" style="font-size:0.82rem; margin-top:4px;"></span>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="section-title"><i class="fas fa-notes-medical"></i> التشخيص والملاحظات</div>
+            <div class="fg" style="margin-bottom:32px;">
+                <div class="fg-item fg-full">
+                    <label asp-for="Notes"><i class="fas fa-align-right"></i> ملاحظات التقرير الطبي</label>
+                    <textarea asp-for="Notes" class="fc ta" rows="4" placeholder="اكتب التشخيص أو الملاحظات هنا..."></textarea>
+                </div>
+            </div>
+
+            <!-- Prescription table -->
+            <div class="section-title"><i class="fas fa-pills"></i> الروشتة الطبية</div>
+
+            <div class="rx-wrap">
+                <table class="rx-tbl" id="rxTable">
+                    <thead>
+                        <tr>
+                            <th style="width:36px;">#</th>
+                            <th style="min-width:200px;">الدواء</th>
+                            <th style="min-width:160px;">الجرعة</th>
+                            <th style="min-width:90px;">الكمية</th>
+                            <th style="min-width:130px;">المدة</th>
+                            <th style="min-width:160px;">التعليمات</th>
+                            <th style="width:46px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="rxBody">
+                        @for (var i = 0; i < Model.Items.Count; i++)
+                        {
+                            <tr class="rx-row">
+                                <td style="color:#94a3b8; font-weight:800; font-size:0.82rem; text-align:center;">@(i + 1)</td>
+                                <td>
+                                    <select asp-for="Items[@i].MedicineId" asp-items="ViewBag.Medicines" class="fc">
+                                        <option value="">اختر الدواء</option>
+                                    </select>
+                                    <span asp-validation-for="Items[@i].MedicineId" class="text-danger" style="font-size:0.78rem;"></span>
+                                </td>
+                                <td>
+                                    <input asp-for="Items[@i].Dosage" class="fc" placeholder="مثال: قرص بعد الأكل" />
+                                    <span asp-validation-for="Items[@i].Dosage" class="text-danger" style="font-size:0.78rem;"></span>
+                                </td>
+                                <td>
+                                    <input asp-for="Items[@i].Quantity" class="fc" min="1" type="number" />
+                                    <span asp-validation-for="Items[@i].Quantity" class="text-danger" style="font-size:0.78rem;"></span>
+                                </td>
+                                <td>
+                                    <input asp-for="Items[@i].Duration" class="fc" placeholder="مثال: 5 أيام" />
+                                    <span asp-validation-for="Items[@i].Duration" class="text-danger" style="font-size:0.78rem;"></span>
+                                </td>
+                                <td>
+                                    <input asp-for="Items[@i].Instructions" class="fc" placeholder="تعليمات إضافية (اختياري)" />
+                                </td>
+                                <td style="text-align:center;">
+                                    <button type="button" class="btn-rm" onclick="removeRow(this)" title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top:14px;">
+                <button type="button" class="btn-add-row" onclick="addRow()">
+                    <i class="fas fa-plus"></i> إضافة دواء آخر
+                </button>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save"></i> حفظ الوصفة وإنهاء الكشف
+                </button>
+                <a asp-action="Prescriptions" asp-route-id="@Model.DoctorId" class="btn-back">
+                    <i class="fas fa-arrow-right"></i> رجوع
+                </a>
+            </div>
+        </form>
+    }
+</div>
+
+<template id="rowTemplate">
+    <tr class="rx-row">
+        <td style="color:#94a3b8; font-weight:800; font-size:0.82rem; text-align:center;" class="row-num"></td>
+        <td>
+            <select name="Items[__i__].MedicineId" class="fc">
+                <option value="">اختر الدواء</option>
+                @foreach (var med in (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Medicines)
+                {
+                    <option value="@med.Value">@med.Text</option>
+                }
+            </select>
+        </td>
+        <td><input name="Items[__i__].Dosage" class="fc" placeholder="مثال: قرص بعد الأكل" /></td>
+        <td><input name="Items[__i__].Quantity" class="fc" min="1" type="number" /></td>
+        <td><input name="Items[__i__].Duration" class="fc" placeholder="مثال: 5 أيام" /></td>
+        <td><input name="Items[__i__].Instructions" class="fc" placeholder="تعليمات إضافية (اختياري)" /></td>
+        <td style="text-align:center;">
+            <button type="button" class="btn-rm" onclick="removeRow(this)" title="حذف">
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+</template>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        function reindex() {
+            document.querySelectorAll('#rxBody .rx-row').forEach(function (tr, idx) {
+                const numCell = tr.querySelector('.row-num');
+                if (numCell) numCell.textContent = idx + 1;
+                else tr.cells[0].textContent = idx + 1;
+                tr.querySelectorAll('[name]').forEach(function (el) {
+                    el.name = el.name.replace(/Items\[\d+\]/, 'Items[' + idx + ']');
+                });
+            });
+        }
+
+        function addRow() {
+            const tmpl = document.getElementById('rowTemplate');
+            const idx  = document.querySelectorAll('#rxBody .rx-row').length;
+            const html = tmpl.innerHTML.replace(/__i__/g, idx);
+            const tbody = document.getElementById('rxBody');
+            tbody.insertAdjacentHTML('beforeend', html);
+            tbody.lastElementChild.querySelector('.row-num').textContent = idx + 1;
+        }
+
+        function removeRow(btn) {
+            const rows = document.querySelectorAll('#rxBody .rx-row');
+            if (rows.length <= 1) return;
+            btn.closest('tr').remove();
+            reindex();
+        }
+    </script>
+}

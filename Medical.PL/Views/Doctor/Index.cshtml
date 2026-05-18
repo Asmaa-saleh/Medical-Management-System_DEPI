@@ -98,6 +98,9 @@
                                 <a asp-action="Details" asp-route-id="@doctor.Id" class="act-btn ab-view" title="عرض">
                                     <i class="fas fa-eye"></i>
                                 </a>
+                                <a asp-action="Prescriptions" asp-route-id="@doctor.Id" class="act-btn ab-view" title="الوصفات الطبية" style="background:#F5F3FF; color:#7C3AED;">
+                                    <i class="fas fa-file-prescription"></i>
+                                </a>
                                 <a asp-action="Edit" asp-route-id="@doctor.Id" class="act-btn ab-edit" title="تعديل">
                                     <i class="fas fa-pen"></i>
                                 </a>
