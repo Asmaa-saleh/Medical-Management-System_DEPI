@@ -1,24 +1,24 @@
-﻿@model IEnumerable<DoctorSchedule>
+﻿@model SelectTimeVM
+@using System.Globalization
 
 @{
     var doctor = ViewBag.Doctor as Doctor;
-    int serviceId = ViewBag.ServiceId;
-}
-@{
+
     Layout = "~/Views/Shared/_LandingPageLayout.cshtml";
+}
+
+@{
+    var culture = new CultureInfo("ar-EG");
 }
 
 
 <style>
-
     .booking-layout {
         display: flex;
         gap: 24px;
         align-items: flex-start;
-        margin-top: 20px;
     }
 
-    /* Sidebar */
     .booking-sidebar {
         width: 280px;
         flex-shrink: 0;
@@ -26,89 +26,145 @@
         top: 100px;
     }
 
-    /* Main content */
     .booking-content {
         flex: 1;
     }
 
-    /* Title */
-    .page-title {
-        margin-bottom: 20px;
+    /* DATES */
+    .dates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 16px;
+        margin-bottom: 30px;
     }
 
-        .page-title h2 {
-            font-size: 28px;
+    .date-card {
+        background: #fff;
+        border: 1px solid #edf2f7;
+        border-radius: 20px;
+        padding: 18px;
+        text-align: center;
+        text-decoration: none;
+        transition: .3s;
+        color: #0f172a;
+        box-shadow: 0 8px 20px rgba(15,23,42,.05);
+    }
+
+        .date-card:hover {
+            transform: translateY(-4px);
+            border-color: #B36995;
+        }
+
+        .date-card.active {
+            background: #B36995;
+            color: #fff;
+            border-color: #B36995;
+        }
+
+    .date-day {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: #64748b;
+    }
+
+    .date-card.active .date-day {
+        color: #f1f5f9;
+    }
+
+    .date-number {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    /* CALENDAR */
+    .calendar-box {
+        background: #fff;
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(15,23,42,.06);
+        border: 1px solid #edf2f7;
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+        .calendar-header h4 {
+            margin: 0;
+            font-size: 24px;
             font-weight: 700;
             color: #0f172a;
         }
 
-        .page-title p {
+        .calendar-header span {
             color: #64748b;
-            margin-top: 6px;
+            font-size: 14px;
         }
 
-    /* GRID */
-    .schedule-grid {
+    /* TIMES */
+    .calendar-times {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 14px;
     }
 
-    /* CARD */
-    .schedule-card {
-        background: #fff;
-        padding: 20px;
-        border-radius: 22px;
-        border: 1px solid #edf2f7;
-        box-shadow: 0 8px 25px rgba(15,23,42,0.05);
+    .time-slot {
         text-align: center;
-        transition: .3s;
-    }
-
-        .schedule-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 14px 30px rgba(15,23,42,0.08);
-        }
-
-    .day {
-        font-size: 18px;
-        font-weight: 700;
-        color: #0E7490;
-    }
-
-    .time {
-        margin: 12px 0;
-        color: #64748b;
-        font-size: 14px;
-    }
-
-    .slots {
-        font-size: 13px;
-        color: #16a34a;
-        margin-bottom: 12px;
-        font-weight: 600;
-    }
-
-    /* BUTTON */
-    .btn-select {
-        display: inline-block;
-        padding: 10px 16px;
-        background: #B36995;
-        color: white;
-        border-radius: 12px;
+        padding: 12px 18px;
+        border-radius: 14px;
         text-decoration: none;
-        font-size: 14px;
-        transition: .3s;
-        font-weight: 600;
+        background: #ECFEFF;
+        color: #0E7490;
+        font-weight: 700;
+        border: 1px solid #BAE6FD;
+        transition: .25s;
     }
 
-        .btn-select:hover {
-            background: #64748B;
+        .time-slot:hover {
+            background: #0E7490;
             color: white;
+            transform: translateY(-2px);
         }
+
+        .time-slot.booked {
+            background: #f1f5f9;
+            color: #94a3b8;
+            border: 1px solid #e2e8f0;
+            cursor: not-allowed;
+        }
+
+    .empty-slots {
+        padding: 20px;
+        text-align: center;
+        background: #fef2f2;
+        color: #dc2626;
+        border-radius: 16px;
+        font-weight: 600;
+    }
 
     /* RESPONSIVE */
-    @@media(max-width: 992px) {
+    @@media(max-width: 1200px) {
+        .calendar-times {
+            grid-template-columns: repeat(5, 1fr);
+        }
+    }
+
+    @@media(max-width: 768px) {
+        .calendar-times {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .dates-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
         .booking-layout {
             flex-direction: column;
         }
@@ -117,15 +173,11 @@
             width: 100%;
             position: static;
         }
-
-        .schedule-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
     }
 
-    @@media(max-width: 600px) {
-        .schedule-grid {
-            grid-template-columns: 1fr;
+    @@media (max-width: 500px) {
+        .calendar-times {
+            grid-template-columns: repeat(2, 1fr);
         }
     }
 
@@ -133,53 +185,125 @@
 
 <div class="booking-layout">
 
-    <!-- Stepper -->
+    <!-- RIGHT SIDEBAR -->
     <div class="booking-sidebar">
         @await Html.PartialAsync("_BookingStepper", 3)
     </div>
 
-    <!-- Content -->
+    <!-- MAIN CONTENT -->
     <div class="booking-content">
 
-        <div class="page-title">
-            <h2>اختيار الموعد</h2>
-            <p>د. @doctor.User.Name - @doctor.Specialization</p>
+        <h2 class="mb-2">اختيار الموعد</h2>
+
+        <p class="text-muted">
+            د. @doctor.User.Name
+        </p>
+
+        <!-- Calendar -->
+        <div class="dates-grid">
+
+            @{
+                var availableDates = new List<DateTime>();
+
+                for (int i = 0; i < 14; i++)
+                {
+                    var date = DateTime.Today.AddDays(i);
+
+                    var arabicDay = date.DayOfWeek switch
+                    {
+                        DayOfWeek.Saturday => "السبت",
+                        DayOfWeek.Sunday => "الأحد",
+                        DayOfWeek.Monday => "الاثنين",
+                        DayOfWeek.Tuesday => "الثلاثاء",
+                        DayOfWeek.Wednesday => "الأربعاء",
+                        DayOfWeek.Thursday => "الخميس",
+                        DayOfWeek.Friday => "الجمعة",
+                        _ => ""
+                    };
+
+                    if (Model.AvailableDays.Contains(arabicDay))
+                    {
+                        availableDates.Add(date);
+                    }
+                }
+            }
+
+            @foreach (var date in availableDates)
+            {
+                <a asp-action="SelectTime"
+                       asp-route-doctorId="@Model.DoctorId"
+                       asp-route-serviceId="@Model.ServiceId"
+                       asp-route-selectedDate="@date.ToString("yyyy-MM-dd", culture)"
+                       class="date-card @(Model.SelectedDate.Date == date.Date ? "active" : "")">
+
+                    <span class="date-day">
+                        @date.ToString("dddd", culture)
+                    </span>
+
+                    <strong class="date-number">
+                        @date.ToString("dd MMM", culture)
+                    </strong>
+
+                </a>
+            }
+
         </div>
 
-        <div class="schedule-grid">
+        <!-- Calendar Schedule -->
+        <div class="calendar-box">
 
-            @foreach (var s in Model)
+            <div class="calendar-header">
+
+                <div>
+                    <h4>
+                        @Model.SelectedDate.ToString("dddd", culture)
+                    </h4>
+
+                    <span>
+                        @Model.SelectedDate.ToString("dd MMMM yyyy", culture)
+                    </span>
+                </div>
+
+            </div>
+
+            @if (Model.Slots.Any())
             {
-                <div class="schedule-card">
+                <div class="calendar-times">
 
-                    <div class="day">
-                        @s.DayOfWeek
-                    </div>
+                    @foreach (var slot in Model.Slots)
+                    {
+                        if (!slot.IsBooked)
+                        {
+                            <a asp-action="ConfirmBooking"
+                                   asp-route-serviceId="@Model.ServiceId"
+                                   asp-route-doctorId="@Model.DoctorId"
+                                   asp-route-scheduleId="@slot.ScheduleId"
+                                   asp-route-date="@Model.SelectedDate"
+                                   asp-route-time="@slot.Time"
+                                   class="time-slot">
 
-                    <div class="time">
-                        @s.StartTime.ToString(@"hh\:mm") - @s.EndTime.ToString(@"hh\:mm")
-                    </div>
+                                @slot.Time.ToString(@"hh\:mm")
 
-                    <div class="slots">
-                        متاح للحجز
-                    </div>
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="time-slot booked" disabled>
+                                @slot.Time.ToString(@"hh\:mm")
+                            </button>
+                        }
+                    }
 
-                    
-                    <a asp-action="ConfirmBooking"
-                           asp-route-serviceId="@serviceId"
-                           asp-route-doctorId="@doctor.Id"
-                           asp-route-scheduleId="@s.Id"
-                           asp-route-date="@DateTime.Today"
-                           asp-route-time="@s.StartTime"
-                           class="btn-select">
-                        اختيار
-                    </a>
-
+                </div>
+            }
+            else
+            {
+                <div class="empty-slots">
+                    لا توجد مواعيد متاحة لهذا اليوم
                 </div>
             }
 
         </div>
 
     </div>
-
 </div>
