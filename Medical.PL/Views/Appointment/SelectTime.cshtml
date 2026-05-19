@@ -206,7 +206,7 @@
             @{
                 var availableDates = new List<DateTime>();
 
-                for (int i = 0; i <8 ; i++)
+                for (int i = 0; i <9 ; i++)
                 {
                     var date = DateTime.Today.AddDays(i);
 
@@ -284,6 +284,8 @@
                                    class="time-slot">
 
                                 @slot.Time.ToString(@"hh\:mm")
+
+                   
 
                             </a>
                         }

@@ -453,22 +453,72 @@ namespace Medical.PL.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> SelectTime(int doctorId, int serviceId)
+       
+        public async Task<IActionResult> SelectTime(int doctorId, int serviceId, DateTime? selectedDate)
         {
             var doctor = await _unitOfWork.Doctors
-                .GetByIdWithIncludesAsync(doctorId, d => d.User);
+                .GetByIdWithIncludesAsync(
+                    doctorId,
+                    d => d.User
+                );
 
-            if (doctor == null) return NotFound();
+            if (doctor == null)
+                return NotFound();
+
+            var date = selectedDate ?? DateTime.Today;
+
+            var arabicDay = GetArabicDayName(date.DayOfWeek);
 
             var schedules = await _unitOfWork.DoctorSchedules
-                .GetAllWithIncludesAsync(s => s.Doctor);
+                .GetAllAsync();
 
-            var model = schedules
+            var schedule = schedules.FirstOrDefault(s =>
+                s.DoctorId == doctorId &&
+                s.DayOfWeek == arabicDay);
+
+            var model = new SelectTimeVM
+            {
+                DoctorId = doctorId,
+                ServiceId = serviceId,
+                SelectedDate = date
+            };
+            model.AvailableDays = schedules
                 .Where(s => s.DoctorId == doctorId)
+                .Select(s => s.DayOfWeek)
+                .Distinct()
                 .ToList();
 
+            if (schedule != null)
+            {
+                var appointments = await _unitOfWork.Appointments
+                    .FindAsync(a =>
+                        a.DoctorId == doctorId &&
+                        a.AppointmentDate == date.Date
+                    );
+
+                var bookedTimes = appointments
+                    .Select(a => a.AppointmentTime)
+                    .ToList();
+
+                // مدة الكشف
+                int slotDuration = 30;
+
+                for (
+                    var time = schedule.StartTime;
+                    time < schedule.EndTime;
+                    time = time.Add(TimeSpan.FromMinutes(slotDuration))
+                )
+                {
+                    model.Slots.Add(new TimeSlotVM
+                    {
+                        ScheduleId = schedule.Id,
+                        Time = time,
+                        IsBooked = bookedTimes.Contains(time)
+                    });
+                }
+            }
+
             ViewBag.Doctor = doctor;
-            ViewBag.ServiceId = serviceId;
 
             return View(model);
         }
@@ -573,7 +623,6 @@ namespace Medical.PL.Controllers
             await _unitOfWork.Appointments.AddAsync(appointment);
             await _unitOfWork.CompleteAsync();
             _toast.AddSuccessToastMessage("تم الحجز بنجاح");
-            TempData["Success"] = "تم الحجز بنجاح11";
             return RedirectToAction("LandingPage", "Home");
         }
         
