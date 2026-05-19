@@ -1,21 +1,18 @@
-@model Medical.PL.ViewModels.MedicalReportViewModel
+@model Medical.PL.ViewModels.EditPrescriptionViewModel
 
 @{
-    ViewData["Title"] = "التقرير الطبي";
+    ViewData["Title"] = "تعديل الوصفة الطبية";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/doctor-form.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/doctor-profile.css" asp-append-version="true" />
     <style>
-        /* ── Info grid (appointment header) ── */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 14px;
             margin-bottom: 32px;
         }
-
         @@media (max-width: 900px) { .info-grid { grid-template-columns: repeat(2, 1fr); } }
         @@media (max-width: 540px)  { .info-grid { grid-template-columns: 1fr; } }
 
@@ -28,212 +25,114 @@
             flex-direction: column;
             gap: 5px;
         }
-
-        .info-label {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #64748b;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
+        .info-label { font-size: 0.78rem; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 6px; }
         .info-label i { color: #0891b2; font-size: 0.75rem; }
+        .info-value  { font-size: 0.95rem; font-weight: 800; color: #0f172a; }
 
-        .info-value {
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
-        /* ── Rx table ── */
         .rx-wrap { overflow-x: auto; }
-
-        .rx-tbl {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
+        .rx-tbl { width: 100%; border-collapse: collapse; }
         .rx-tbl thead th {
-            padding: 12px 14px;
-            text-align: right;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            background: #f8fafc;
-            border: 1px solid #eef2f7;
-            white-space: nowrap;
+            padding: 12px 14px; text-align: right; font-size: 0.78rem; font-weight: 700;
+            color: #64748b; text-transform: uppercase; letter-spacing: 0.4px;
+            background: #f8fafc; border: 1px solid #eef2f7; white-space: nowrap;
         }
-
-        .rx-tbl tbody td {
-            padding: 10px 12px;
-            border: 1px solid #eef2f7;
-            vertical-align: top;
-        }
-
+        .rx-tbl tbody td { padding: 10px 12px; border: 1px solid #eef2f7; vertical-align: top; }
         .rx-tbl tbody tr:hover td { background: #fafbfc; }
+        .rx-tbl .fc { padding: 10px 14px; font-size: 0.88rem; border-radius: 10px; }
 
-        .rx-tbl .fc {
-            padding: 10px 14px;
-            font-size: 0.88rem;
-            border-radius: 10px;
-        }
-
-        .rx-tbl select.fc {
-            background-position: left 12px center;
-            padding-left: 34px;
-        }
-
-        /* ── Remove row button ── */
         .btn-rm {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border: none;
-            border-radius: 10px;
-            background: #fef2f2;
-            color: #b91c1c;
-            font-size: 0.82rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 34px; height: 34px; border: none; border-radius: 10px;
+            background: #fef2f2; color: #b91c1c; font-size: 0.82rem; cursor: pointer; transition: background 0.2s;
         }
-
         .btn-rm:hover { background: #fee2e2; }
 
-        /* ── Add row button ── */
         .btn-add-row {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
-            background: transparent;
-            color: #64748b;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.88rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; border: 2px dashed #cbd5e1; border-radius: 12px;
+            background: transparent; color: #64748b;
+            font-family: 'Cairo', sans-serif; font-size: 0.88rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
         }
-
-        .btn-add-row:hover {
-            border-color: #0891b2;
-            color: #0891b2;
-            background: #f0f9ff;
-        }
-
-        /* ── Print overrides ── */
-        .print-only { display: none; }
-
-        @@media print {
-            .mc-navbar, .mc-footer, .form-actions,
-            .btn-save, .btn-back, .btn-add-row, .btn-rm,
-            .text-danger, textarea, select, input[type="text"],
-            input[type="number"], .no-print { display: none !important; }
-
-            .print-only { display: block; }
-
-            .form-card, .info-item {
-                box-shadow: none !important;
-                border-color: #cbd5e1 !important;
-            }
-        }
+        .btn-add-row:hover { border-color: #0891b2; color: #0891b2; background: #f0f9ff; }
     </style>
 }
 
-<!-- ── Page header ── -->
 <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
     <div>
-        <h1><i class="fas fa-file-medical"></i> التقرير الطبي والروشتة</h1>
-        <p>تسجيل التشخيص وإصدار الوصفة الطبية للمريض.</p>
+        <h1><i class="fas fa-pen-to-square"></i> تعديل الوصفة الطبية</h1>
+        <p>تعديل الأدوية والملاحظات الخاصة بالوصفة.</p>
     </div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;" class="no-print">
-        <a asp-controller="Appointment" asp-action="Details" asp-route-id="@Model.AppointmentId" class="btn-back">
-            <i class="fas fa-arrow-right"></i> رجوع للحجز
-        </a>
-        <button type="button" class="btn-save" style="background:linear-gradient(135deg,#475569,#64748b);" onclick="window.print()">
-            <i class="fas fa-print"></i> طباعة
-        </button>
-    </div>
+    <a asp-action="Prescriptions" asp-route-id="@Model.DoctorId" class="btn-back">
+        <i class="fas fa-arrow-right"></i> رجوع للوصفات
+    </a>
 </div>
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success" style="margin: 0 48px 16px;" role="alert">
+    <div class="alert alert-success" style="margin: 0 48px 16px; border-radius:14px;">
         <i class="fas fa-circle-check"></i> @TempData["SuccessMessage"]
     </div>
 }
 
-<!-- ── Appointment info card ── -->
+<!-- Prescription info header -->
 <div class="form-card" style="margin-bottom:20px;">
-    <div class="section-title"><i class="fas fa-info-circle"></i> بيانات الحجز</div>
+    <div class="section-title"><i class="fas fa-info-circle"></i> بيانات الوصفة</div>
     <div class="info-grid">
-        <div class="info-item">
-            <span class="info-label"><i class="fas fa-user"></i> المريض</span>
-            <span class="info-value">@Model.PatientName</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label"><i class="fas fa-phone"></i> رقم الهاتف</span>
-            <span class="info-value">@(string.IsNullOrWhiteSpace(Model.PatientPhone) ? "غير مسجل" : Model.PatientPhone)</span>
-        </div>
         <div class="info-item">
             <span class="info-label"><i class="fas fa-user-doctor"></i> الطبيب</span>
             <span class="info-value">د. @Model.DoctorName</span>
         </div>
         <div class="info-item">
-            <span class="info-label"><i class="fas fa-stethoscope"></i> التخصص</span>
-            <span class="info-value">@Model.DoctorSpecialization</span>
+            <span class="info-label"><i class="fas fa-user"></i> المريض</span>
+            <span class="info-value">@Model.PatientName</span>
         </div>
+        @if (Model.AppointmentDate.HasValue)
+        {
+            <div class="info-item">
+                <span class="info-label"><i class="fas fa-calendar-day"></i> تاريخ الكشف</span>
+                <span class="info-value">@Model.AppointmentDate.Value.ToString("yyyy/MM/dd")</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label"><i class="fas fa-clock"></i> وقت الكشف</span>
+                <span class="info-value">@Model.AppointmentTime?.ToString(@"hh\:mm")</span>
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.ServiceName))
+        {
+            <div class="info-item">
+                <span class="info-label"><i class="fas fa-concierge-bell"></i> الخدمة</span>
+                <span class="info-value">@Model.ServiceName</span>
+            </div>
+        }
         <div class="info-item">
-            <span class="info-label"><i class="fas fa-concierge-bell"></i> الخدمة</span>
-            <span class="info-value">@Model.ServiceName</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label"><i class="fas fa-calendar-day"></i> تاريخ الكشف</span>
-            <span class="info-value">@Model.AppointmentDate.ToString("yyyy/MM/dd")</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label"><i class="fas fa-clock"></i> وقت الكشف</span>
-            <span class="info-value">@Model.AppointmentTime.ToString(@"hh\:mm")</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label"><i class="fas fa-hashtag"></i> رقم الحجز</span>
-            <span class="info-value">#@Model.AppointmentId</span>
+            <span class="info-label"><i class="fas fa-hashtag"></i> رقم الوصفة</span>
+            <span class="info-value">Ps-@(Model.PrescriptionId.ToString("D4"))</span>
         </div>
     </div>
 </div>
 
-<!-- ── Prescription form card ── -->
+<!-- Edit form -->
 <div class="form-card">
-    <form asp-action="MedicalReport" asp-route-id="@Model.AppointmentId" method="post" id="rxForm">
+    <form asp-action="EditPrescription" asp-route-id="@Model.PrescriptionId" method="post" id="rxForm">
         @Html.AntiForgeryToken()
-        <input asp-for="AppointmentId" type="hidden" />
+        <input asp-for="PrescriptionId" type="hidden" />
         <input asp-for="DoctorId" type="hidden" />
-        <input asp-for="PatientId" type="hidden" />
 
         <div asp-validation-summary="ModelOnly" class="validation-msg"></div>
         <span asp-validation-for="Items" class="text-danger d-block mb-3" style="font-size:0.85rem;"></span>
 
         <!-- Notes -->
         <div class="section-title"><i class="fas fa-notes-medical"></i> التشخيص والملاحظات</div>
-        <div class="fg fg-full" style="margin-bottom:32px;">
+        <div class="fg" style="margin-bottom:32px;">
             <div class="fg-item fg-full">
                 <label asp-for="Notes"><i class="fas fa-align-right"></i> ملاحظات التقرير الطبي</label>
-                <textarea asp-for="Notes" class="fc ta" rows="4" placeholder="اكتب التشخيص أو ملاحظات التقرير الطبي هنا..."></textarea>
-                <div class="print-only" style="border:1px solid #e2e8f0; border-radius:10px; padding:14px; margin-top:8px; color:#334155; line-height:1.9;">
-                    @(string.IsNullOrWhiteSpace(Model.Notes) ? "لا توجد ملاحظات" : Model.Notes)
-                </div>
+                <textarea asp-for="Notes" class="fc ta" rows="4" placeholder="اكتب التشخيص أو الملاحظات هنا..."></textarea>
             </div>
         </div>
 
-        <!-- Prescription table -->
-        <div class="section-title"><i class="fas fa-prescription-bottle-medical"></i> الروشتة الطبية</div>
+        <!-- Medicines table -->
+        <div class="section-title"><i class="fas fa-pills"></i> الروشتة الطبية</div>
 
         <div class="rx-wrap">
             <table class="rx-tbl" id="rxTable">
@@ -245,7 +144,7 @@
                         <th style="min-width:90px;">الكمية</th>
                         <th style="min-width:130px;">المدة</th>
                         <th style="min-width:160px;">التعليمات</th>
-                        <th style="width:46px;" class="no-print"></th>
+                        <th style="width:46px;"></th>
                     </tr>
                 </thead>
                 <tbody id="rxBody">
@@ -274,7 +173,7 @@
                             <td>
                                 <input asp-for="Items[@i].Instructions" class="fc" placeholder="تعليمات إضافية (اختياري)" />
                             </td>
-                            <td class="no-print" style="text-align:center;">
+                            <td style="text-align:center;">
                                 <button type="button" class="btn-rm" onclick="removeRow(this)" title="حذف">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -285,26 +184,23 @@
             </table>
         </div>
 
-        <!-- Add row button -->
-        <div style="margin-top:14px;" class="no-print">
+        <div style="margin-top:14px;">
             <button type="button" class="btn-add-row" onclick="addRow()">
                 <i class="fas fa-plus"></i> إضافة دواء آخر
             </button>
         </div>
 
-        <!-- Form actions -->
         <div class="form-actions">
             <button type="submit" class="btn-save">
-                <i class="fas fa-save"></i> حفظ التقرير
+                <i class="fas fa-save"></i> حفظ التعديلات
             </button>
-            <a asp-controller="Appointment" asp-action="Details" asp-route-id="@Model.AppointmentId" class="btn-back">
+            <a asp-action="Prescriptions" asp-route-id="@Model.DoctorId" class="btn-back">
                 <i class="fas fa-arrow-right"></i> رجوع
             </a>
         </div>
     </form>
 </div>
 
-<!-- Hidden row template (rendered once, used by JS) -->
 <template id="rowTemplate">
     <tr class="rx-row">
         <td style="color:#94a3b8; font-weight:800; font-size:0.82rem; text-align:center;" class="row-num"></td>
@@ -321,7 +217,7 @@
         <td><input name="Items[__i__].Quantity" class="fc" min="1" type="number" /></td>
         <td><input name="Items[__i__].Duration" class="fc" placeholder="مثال: 5 أيام" /></td>
         <td><input name="Items[__i__].Instructions" class="fc" placeholder="تعليمات إضافية (اختياري)" /></td>
-        <td class="no-print" style="text-align:center;">
+        <td style="text-align:center;">
             <button type="button" class="btn-rm" onclick="removeRow(this)" title="حذف">
                 <i class="fas fa-trash"></i>
             </button>
@@ -334,17 +230,11 @@
     <script>
         function reindex() {
             document.querySelectorAll('#rxBody .rx-row').forEach(function (tr, idx) {
-                // update row number display
                 const numCell = tr.querySelector('.row-num');
                 if (numCell) numCell.textContent = idx + 1;
                 else tr.cells[0].textContent = idx + 1;
-
-                // update name/id attributes
                 tr.querySelectorAll('[name]').forEach(function (el) {
                     el.name = el.name.replace(/Items\[\d+\]/, 'Items[' + idx + ']');
-                });
-                tr.querySelectorAll('[id]').forEach(function (el) {
-                    el.id = el.id.replace(/Items_\d+__/, 'Items_' + idx + '__');
                 });
             });
         }
@@ -355,14 +245,12 @@
             const html = tmpl.innerHTML.replace(/__i__/g, idx);
             const tbody = document.getElementById('rxBody');
             tbody.insertAdjacentHTML('beforeend', html);
-            // set number on newly added row
-            const newRow = tbody.lastElementChild;
-            newRow.querySelector('.row-num').textContent = idx + 1;
+            tbody.lastElementChild.querySelector('.row-num').textContent = idx + 1;
         }
 
         function removeRow(btn) {
             const rows = document.querySelectorAll('#rxBody .rx-row');
-            if (rows.length <= 1) return; // keep at least 1
+            if (rows.length <= 1) return;
             btn.closest('tr').remove();
             reindex();
         }

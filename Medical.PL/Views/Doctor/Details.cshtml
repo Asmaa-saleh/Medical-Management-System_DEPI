@@ -16,6 +16,17 @@
     </div>
 
     <div class="profile-actions-top">
+        @if (Model.IsActive)
+        {
+            <a asp-action="WritePrescription" asp-route-id="@Model.Id" class="btn-primary-soft" style="background:#ecfdf5; color:#065f46;">
+                <i class="fas fa-plus"></i>
+                وصفة جديدة
+            </a>
+        }
+        <a asp-action="Prescriptions" asp-route-id="@Model.Id" class="btn-primary-soft">
+            <i class="fas fa-file-prescription"></i>
+            الوصفات الطبية
+        </a>
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-primary-soft">
             <i class="fas fa-pen"></i>
             تعديل
@@ -26,6 +37,13 @@
         </a>
     </div>
 </div>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" style="margin: 0 48px 16px; border-radius:14px;">
+        <i class="fas fa-circle-exclamation"></i> @TempData["ErrorMessage"]
+    </div>
+}
 
 <div class="profile-card">
     <div class="profile-top">

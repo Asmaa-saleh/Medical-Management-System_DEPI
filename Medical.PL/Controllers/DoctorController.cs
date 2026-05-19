@@ -236,6 +236,265 @@ namespace Medical.PL.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> WritePrescription(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var doctor = await _context.Doctors
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
+            if (doctor == null) return NotFound();
+
+            if (!doctor.IsActive)
+            {
+                TempData["ErrorMessage"] = "لا يمكن إصدار وصفة طبية من طبيب غير نشط.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            await PopulateBookedAppointmentsDropdownAsync(id.Value);
+            await PopulateMedicinesDropdownAsync();
+            ViewData["ActivePage"] = "Doctors";
+
+            return View(new WritePrescriptionViewModel
+            {
+                DoctorId = doctor.Id,
+                DoctorName = doctor.User?.Name,
+                Items = new List<MedicalReportPrescriptionItemViewModel> { new() }
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> WritePrescription(int id, WritePrescriptionViewModel vm)
+        {
+            if (id != vm.DoctorId) return NotFound();
+
+            var doctor = await _context.Doctors
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
+            if (doctor == null) return NotFound();
+
+            if (!doctor.IsActive)
+            {
+                TempData["ErrorMessage"] = "لا يمكن إصدار وصفة طبية من طبيب غير نشط.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var appointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .FirstOrDefaultAsync(a => a.Id == vm.AppointmentId
+                                       && a.DoctorId == id
+                                       && a.Status == "Booked");
+
+            if (appointment == null)
+                ModelState.AddModelError(nameof(vm.AppointmentId), "الحجز غير صالح أو لم يعد متاحاً.");
+
+            ValidatePrescriptionItems(vm.Items);
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateBookedAppointmentsDropdownAsync(id);
+                await PopulateMedicinesDropdownAsync();
+                vm.DoctorName = doctor.User?.Name;
+                if (vm.Items.Count == 0) vm.Items.Add(new());
+                ViewData["ActivePage"] = "Doctors";
+                return View(vm);
+            }
+
+            var prescription = new Prescription
+            {
+                AppointmentId = appointment!.Id,
+                DoctorId = id,
+                PatientId = appointment.PatientId,
+                Notes = vm.Notes
+            };
+
+            foreach (var item in vm.Items.Where(i => i.MedicineId.HasValue))
+            {
+                prescription.Items.Add(new PrescriptionItem
+                {
+                    MedicineId = item.MedicineId!.Value,
+                    Dosage = item.Dosage!.Trim(),
+                    Quantity = item.Quantity!.Value,
+                    Duration = item.Duration!.Trim(),
+                    Instructions = string.IsNullOrWhiteSpace(item.Instructions) ? null : item.Instructions.Trim()
+                });
+            }
+
+            appointment.Status = "Completed";
+            _context.Prescriptions.Add(prescription);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "تم حفظ الوصفة الطبية وتغيير حالة الكشف إلى 'تم الكشف' بنجاح";
+            return RedirectToAction(nameof(Prescriptions), new { id = vm.DoctorId });
+        }
+
+        public async Task<IActionResult> Prescriptions(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var doctor = await _context.Doctors
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
+            if (doctor == null) return NotFound();
+
+            var prescriptions = await _context.Prescriptions
+                .Include(p => p.Appointment)
+                .Include(p => p.Patient).ThenInclude(p => p.User)
+                .Include(p => p.Items).ThenInclude(i => i.Medicine)
+                .Where(p => p.DoctorId == id)
+                .OrderBy(p => p.Appointment.AppointmentDate)
+                .ToListAsync();
+
+            ViewBag.DoctorName = doctor.User?.Name;
+            ViewBag.DoctorId = doctor.Id;
+            ViewBag.DoctorIsActive = doctor.IsActive;
+            ViewData["ActivePage"] = "Doctors";
+            return View(prescriptions);
+        }
+
+        public async Task<IActionResult> EditPrescription(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var prescription = await _context.Prescriptions
+                .Include(p => p.Doctor).ThenInclude(d => d.User)
+                .Include(p => p.Patient).ThenInclude(p => p.User)
+                .Include(p => p.Appointment).ThenInclude(a => a!.Service)
+                .Include(p => p.Items).ThenInclude(i => i.Medicine)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (prescription == null) return NotFound();
+
+            await PopulateMedicinesDropdownAsync();
+            ViewData["ActivePage"] = "Doctors";
+
+            var vm = new EditPrescriptionViewModel
+            {
+                PrescriptionId = prescription.Id,
+                DoctorId = prescription.DoctorId,
+                DoctorName = prescription.Doctor?.User?.Name,
+                PatientName = prescription.Patient?.User?.Name,
+                AppointmentDate = prescription.Appointment?.AppointmentDate,
+                AppointmentTime = prescription.Appointment?.AppointmentTime,
+                ServiceName = prescription.Appointment?.Service?.Name,
+                Notes = prescription.Notes,
+                Items = prescription.Items.Select(i => new MedicalReportPrescriptionItemViewModel
+                {
+                    MedicineId = i.MedicineId,
+                    Dosage = i.Dosage,
+                    Quantity = i.Quantity,
+                    Duration = i.Duration,
+                    Instructions = i.Instructions
+                }).ToList()
+            };
+
+            if (vm.Items.Count == 0)
+                vm.Items.Add(new MedicalReportPrescriptionItemViewModel());
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPrescription(int id, EditPrescriptionViewModel vm)
+        {
+            if (id != vm.PrescriptionId) return NotFound();
+
+            var prescription = await _context.Prescriptions
+                .Include(p => p.Items)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (prescription == null) return NotFound();
+
+            ValidatePrescriptionItems(vm.Items);
+
+            if (!ModelState.IsValid)
+            {
+                var full = await _context.Prescriptions
+                    .Include(p => p.Doctor).ThenInclude(d => d.User)
+                    .Include(p => p.Patient).ThenInclude(p => p.User)
+                    .Include(p => p.Appointment).ThenInclude(a => a!.Service)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                vm.DoctorName = full?.Doctor?.User?.Name;
+                vm.PatientName = full?.Patient?.User?.Name;
+                vm.AppointmentDate = full?.Appointment?.AppointmentDate;
+                vm.AppointmentTime = full?.Appointment?.AppointmentTime;
+                vm.ServiceName = full?.Appointment?.Service?.Name;
+
+                await PopulateMedicinesDropdownAsync();
+                if (vm.Items.Count == 0) vm.Items.Add(new MedicalReportPrescriptionItemViewModel());
+                ViewData["ActivePage"] = "Doctors";
+                return View(vm);
+            }
+
+            _context.PrescriptionItems.RemoveRange(prescription.Items);
+            prescription.Notes = vm.Notes;
+
+            foreach (var item in vm.Items.Where(i => i.MedicineId.HasValue))
+            {
+                prescription.Items.Add(new PrescriptionItem
+                {
+                    MedicineId = item.MedicineId!.Value,
+                    Dosage = item.Dosage!.Trim(),
+                    Quantity = item.Quantity!.Value,
+                    Duration = item.Duration!.Trim(),
+                    Instructions = string.IsNullOrWhiteSpace(item.Instructions) ? null : item.Instructions.Trim()
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "تم تعديل الوصفة الطبية بنجاح";
+            return RedirectToAction(nameof(Prescriptions), new { id = vm.DoctorId });
+        }
+
+        public async Task<IActionResult> DeletePrescription(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var prescription = await _context.Prescriptions
+                .Include(p => p.Patient).ThenInclude(p => p.User)
+                .Include(p => p.Appointment)
+                .Include(p => p.Items)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (prescription == null) return NotFound();
+
+            ViewData["ActivePage"] = "Doctors";
+            return View(prescription);
+        }
+
+        [HttpPost, ActionName("DeletePrescription")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePrescriptionConfirmed(int id)
+        {
+            var prescription = await _context.Prescriptions
+                .Include(p => p.Items)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (prescription == null) return NotFound();
+
+            var doctorId = prescription.DoctorId;
+
+            var appointment = await _context.Appointments
+                .FirstOrDefaultAsync(a => a.Id == prescription.AppointmentId);
+
+            if (appointment != null)
+                appointment.Status = "Booked";
+
+            _context.PrescriptionItems.RemoveRange(prescription.Items);
+            _context.Prescriptions.Remove(prescription);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "تم حذف الوصفة الطبية بنجاح";
+            return RedirectToAction(nameof(Prescriptions), new { id = doctorId });
+        }
+
         public async Task<IActionResult> MedicalReport(int? id)
         {
             if (id == null) return NotFound();
@@ -342,6 +601,24 @@ namespace Medical.PL.Controllers
             }
         }
 
+        private async Task PopulateBookedAppointmentsDropdownAsync(int doctorId)
+        {
+            var appointments = await _context.Appointments
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .Include(a => a.Service)
+                .Where(a => a.DoctorId == doctorId && a.Status == "Booked")
+                .OrderBy(a => a.AppointmentDate).ThenBy(a => a.AppointmentTime)
+                .ToListAsync();
+
+            var items = appointments.Select(a => new
+            {
+                a.Id,
+                Text = $"{a.Patient.User.Name} — {a.AppointmentDate:yyyy/MM/dd} {a.AppointmentTime:hh\\:mm} — {a.Service.Name}"
+            }).ToList();
+
+            ViewBag.Appointments = new SelectList(items, "Id", "Text");
+        }
+
         private async Task PopulateMedicinesDropdownAsync()
         {
             ViewBag.Medicines = new SelectList(
@@ -406,10 +683,8 @@ namespace Medical.PL.Controllers
 
         private static void EnsurePrescriptionRows(MedicalReportViewModel vm)
         {
-            while (vm.Items.Count < 5)
-            {
+            if (vm.Items.Count == 0)
                 vm.Items.Add(new MedicalReportPrescriptionItemViewModel());
-            }
         }
 
         private void ValidatePrescriptionItems(List<MedicalReportPrescriptionItemViewModel> items)

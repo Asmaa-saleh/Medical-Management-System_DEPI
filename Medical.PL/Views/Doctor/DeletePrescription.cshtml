@@ -1,0 +1,77 @@
+@model Medical.PL.Data.Models.Prescription
+
+@{
+    ViewData["Title"] = "حذف الوصفة الطبية";
+    ViewData["ActivePage"] = "Doctors";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/doctor-profile.css" asp-append-version="true" />
+}
+
+<div class="profile-header">
+    <div>
+        <h1><i class="fas fa-trash" style="color:#dc2626;"></i> حذف الوصفة الطبية</h1>
+        <p>تأكيد حذف الوصفة — لا يمكن التراجع عن هذا الإجراء.</p>
+    </div>
+    <div class="profile-actions-top">
+        <a asp-action="Prescriptions" asp-route-id="@Model.DoctorId" class="btn-light-soft">
+            <i class="fas fa-arrow-right"></i> رجوع
+        </a>
+    </div>
+</div>
+
+<div class="profile-card">
+    <!-- Warning -->
+    <div class="warn-box">
+        <i class="fas fa-triangle-exclamation"></i>
+        <div>
+            <strong>تحذير: سيتم حذف الوصفة بشكل نهائي</strong>
+            <p>سيتم حذف الوصفة رقم <strong>Ps-@(Model.Id.ToString("D4"))</strong> وجميع الأدوية المرتبطة بها (@Model.Items.Count دواء). لا يمكن استعادتها بعد الحذف.</p>
+        </div>
+    </div>
+
+    <!-- Prescription summary -->
+    <div class="profile-grid">
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-user"></i> المريض</span>
+            <span class="profile-value">@(Model.Patient?.User?.Name ?? "—")</span>
+        </div>
+        @if (Model.Appointment != null)
+        {
+            <div class="profile-item">
+                <span class="profile-label"><i class="fas fa-calendar-day"></i> تاريخ الكشف</span>
+                <span class="profile-value">@Model.Appointment.AppointmentDate.ToString("yyyy/MM/dd")</span>
+            </div>
+            <div class="profile-item">
+                <span class="profile-label"><i class="fas fa-clock"></i> وقت الكشف</span>
+                <span class="profile-value">@Model.Appointment.AppointmentTime.ToString(@"hh\:mm")</span>
+            </div>
+        }
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-pills"></i> عدد الأدوية</span>
+            <span class="profile-value">@Model.Items.Count دواء</span>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+    {
+        <div class="profile-bio">
+            <span class="profile-label"><i class="fas fa-sticky-note"></i> ملاحظات</span>
+            <p>@Model.Notes</p>
+        </div>
+    }
+
+    <!-- Confirm delete form -->
+    <div class="profile-actions">
+        <form asp-action="DeletePrescription" asp-route-id="@Model.Id" method="post" style="display:inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-danger-soft" style="padding:14px 32px; border-radius:14px; font-size:0.95rem; font-family:'Cairo',sans-serif; cursor:pointer;">
+                <i class="fas fa-trash"></i> تأكيد الحذف
+            </button>
+        </form>
+        <a asp-action="Prescriptions" asp-route-id="@Model.DoctorId" class="btn-light-soft" style="padding:14px 32px; border-radius:14px; font-size:0.95rem;">
+            <i class="fas fa-xmark"></i> إلغاء
+        </a>
+    </div>
+</div>
