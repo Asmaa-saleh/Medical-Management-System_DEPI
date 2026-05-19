@@ -152,6 +152,9 @@ namespace Medical.PL.Controllers
                 return RedirectToAction(nameof(SignIn));
             }
 
+            if (await _userManager.IsInRoleAsync(user, "Doctor"))
+                return RedirectToAction("MyProfile", "Doctor");
+
             return RedirectToAction("Details", "User", new { id = user.Id });
         }
 

@@ -1,6 +1,7 @@
 using Medical.PL.Data.Context;
 using Medical.PL.Data.Models;
 using Medical.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,6 +26,32 @@ namespace Medical.PL.Controllers
             _env = env;
             _userManager = userManager;
             _roleManager = roleManager;
+        }
+
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> MyProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("SignIn", "Account");
+
+            var doctor = await _context.Doctors
+                .Include(d => d.User)
+                .Include(d => d.Department)
+                .FirstOrDefaultAsync(d => d.UserId == user.Id);
+
+            if (doctor == null) return NotFound();
+
+            var appointments = await _context.Appointments
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .Include(a => a.Service)
+                .Include(a => a.Prescription)
+                .Where(a => a.DoctorId == doctor.Id)
+                .OrderBy(a => a.AppointmentDate).ThenBy(a => a.AppointmentTime)
+                .ToListAsync();
+
+            ViewBag.Appointments = appointments;
+            ViewData["ActivePage"] = "DoctorProfile";
+            return View(doctor);
         }
 
         public async Task<IActionResult> Index()
@@ -327,7 +354,7 @@ namespace Medical.PL.Controllers
             _context.Prescriptions.Add(prescription);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "تم حفظ الوصفة الطبية وتغيير حالة الكشف إلى 'تم الكشف' بنجاح";
+            TempData["SuccessMessage"] = "تم حفظ الوصفة الطبية";
             return RedirectToAction(nameof(Prescriptions), new { id = vm.DoctorId });
         }
 
@@ -453,7 +480,7 @@ namespace Medical.PL.Controllers
             return RedirectToAction(nameof(Prescriptions), new { id = vm.DoctorId });
         }
 
-        public async Task<IActionResult> DeletePrescription(int? id)
+        public async Task<IActionResult> DeletePrescription(int? id, string? from = null)
         {
             if (id == null) return NotFound();
 
@@ -466,12 +493,13 @@ namespace Medical.PL.Controllers
             if (prescription == null) return NotFound();
 
             ViewData["ActivePage"] = "Doctors";
+            ViewData["From"] = from;
             return View(prescription);
         }
 
         [HttpPost, ActionName("DeletePrescription")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeletePrescriptionConfirmed(int id)
+        public async Task<IActionResult> DeletePrescriptionConfirmed(int id, string? from = null)
         {
             var prescription = await _context.Prescriptions
                 .Include(p => p.Items)
@@ -491,11 +519,15 @@ namespace Medical.PL.Controllers
             _context.Prescriptions.Remove(prescription);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "تم حذف الوصفة الطبية بنجاح";
+            TempData["SuccessMessage"] = "تم حذف الوصفة الطبية";
+
+            if (from == "profile")
+                return RedirectToAction(nameof(MyProfile));
+
             return RedirectToAction(nameof(Prescriptions), new { id = doctorId });
         }
 
-        public async Task<IActionResult> MedicalReport(int? id)
+        public async Task<IActionResult> MedicalReport(int? id, string? from = null)
         {
             if (id == null) return NotFound();
 
@@ -504,12 +536,13 @@ namespace Medical.PL.Controllers
 
             await PopulateMedicinesDropdownAsync();
             ViewData["ActivePage"] = "Doctors";
+            ViewData["From"] = from;
             return View(MapToMedicalReportViewModel(appointment));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MedicalReport(int id, MedicalReportViewModel vm)
+        public async Task<IActionResult> MedicalReport(int id, MedicalReportViewModel vm, string? from = null)
         {
             if (id != vm.AppointmentId) return NotFound();
 
@@ -522,6 +555,7 @@ namespace Medical.PL.Controllers
             {
                 await PopulateMedicinesDropdownAsync();
                 ViewData["ActivePage"] = "Doctors";
+                ViewData["From"] = from;
                 FillReportHeader(vm, appointment);
                 EnsurePrescriptionRows(vm);
                 return View(vm);
@@ -564,6 +598,10 @@ namespace Medical.PL.Controllers
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "تم حفظ التقرير الطبي والروشتة بنجاح";
+
+            if (from == "profile")
+                return RedirectToAction(nameof(MyProfile));
+
             return RedirectToAction(nameof(MedicalReport), new { id = appointment.Id });
         }
 

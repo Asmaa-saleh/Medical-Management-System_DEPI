@@ -1,0 +1,298 @@
+@model Medical.PL.Data.Models.Doctor
+@using Medical.PL.Data.Models
+
+@{
+    ViewData["Title"] = "ملفي الشخصي";
+    ViewData["ActivePage"] = "DoctorProfile";
+    var appointments  = ViewBag.Appointments as List<Appointment> ?? new List<Appointment>();
+    var totalCount    = appointments.Count;
+    var bookedCount   = appointments.Count(a => a.Status == "Booked");
+    var completedCount = appointments.Count(a => a.Status == "Completed");
+}
+
+@functions {
+    static string StatusText(string s) => s switch
+    {
+        "Booked"    => "محجوز",
+        "Completed" => "تم الكشف",
+        "Cancelled" => "ملغي",
+        _           => s
+    };
+
+    static string StatusClass(string s) => s switch
+    {
+        "Completed" => "badge-completed",
+        "Cancelled" => "badge-cancelled",
+        _           => "badge-booked"
+    };
+
+    static string StatusIcon(string s) => s switch
+    {
+        "Completed" => "fa-circle-check",
+        "Cancelled" => "fa-circle-xmark",
+        _           => "fa-clock"
+    };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/doctor-profile.css"   asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/appointment-index.css" asp-append-version="true" />
+    <style>
+        /* ── stats row (same horizontal margin as .profile-card) ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 0 48px 24px;
+        }
+
+        @@media (max-width: 768px) { .stats-row { margin: 0 20px 20px; grid-template-columns: 1fr; } }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid #eef2f7;
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.04);
+        }
+
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+
+        .stat-icon.blue  { background: #eff6ff; color: #2563eb; }
+        .stat-icon.green { background: #f0fdf4; color: #16a34a; }
+        .stat-icon.amber { background: #fffbeb; color: #d97706; }
+
+        .stat-label { font-size: 0.78rem; font-weight: 700; color: #64748b; }
+        .stat-value { font-size: 1.6rem; font-weight: 900; color: #0f172a; line-height: 1.1; }
+
+        /* ── appointments table ── */
+        .appt-table-wrap { overflow-x: auto; }
+
+        .appt-table { width: 100%; border-collapse: collapse; }
+
+        .appt-table thead th {
+            padding: 12px 16px; text-align: right; font-size: 0.78rem;
+            font-weight: 700; color: #64748b; background: #f8fafc;
+            border-bottom: 2px solid #eef2f7; white-space: nowrap;
+        }
+
+        .appt-table tbody td {
+            padding: 14px 16px; border-bottom: 1px solid #f1f5f9;
+            font-size: 0.9rem; color: #334155; vertical-align: middle;
+        }
+
+        .appt-table tbody tr:hover td { background: #fafbfc; }
+
+        /* status badges */
+        .badge-status {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+        }
+        .badge-booked    { background: #eff6ff; color: #2563eb; }
+        .badge-completed { background: #f0fdf4; color: #16a34a; }
+        .badge-cancelled { background: #fef2f2; color: #b91c1c; }
+
+        /* action buttons */
+        .btn-action {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 14px; border-radius: 10px; font-size: 0.82rem;
+            font-weight: 700; text-decoration: none; transition: opacity .15s; white-space: nowrap;
+        }
+        .btn-action:hover { opacity: .85; text-decoration: none; }
+        .btn-action.teal { background: #ecfdf5; color: #065f46; }
+        .btn-action.blue { background: #eff6ff; color: #1d4ed8; }
+
+        /* empty state */
+        .empty-state { text-align: center; padding: 48px 24px; color: #94a3b8; }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+        .empty-state p { font-size: 0.95rem; font-weight: 600; margin: 0; }
+    </style>
+}
+
+<!-- ── Page header ── -->
+<div class="profile-header">
+    <div>
+        <h1><i class="fas fa-user"></i> ملفي الشخصي</h1>
+        <p>عرض بياناتك الشخصية وجميع حجوزاتك.</p>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" style="margin: 0 48px 16px; border-radius:14px; display:flex; align-items:center; gap:10px;">
+        <i class="fas fa-circle-check"></i> @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- ── Doctor info card ── -->
+<div class="profile-card" style="margin-bottom:24px;">
+    <div class="profile-top">
+        @if (!string.IsNullOrWhiteSpace(Model.Image))
+        {
+            <img src="@Model.Image" alt="صورة الطبيب" class="profile-avatar-img" />
+        }
+        else
+        {
+            <div class="profile-avatar">
+                @(Model.User?.Name?.Length > 0 ? Model.User.Name[0].ToString().ToUpper() : "د")
+            </div>
+        }
+        <div class="profile-meta">
+            <h2>د. @Model.User?.Name</h2>
+            <p>@Model.Specialization — @Model.Department?.Name</p>
+            <span class="status-badge @(Model.IsActive ? "sb-active" : "sb-inactive")">
+                <i class="fas @(Model.IsActive ? "fa-circle-check" : "fa-circle-minus")"></i>
+                @(Model.IsActive ? "نشط" : "غير نشط")
+            </span>
+        </div>
+    </div>
+
+    <div class="profile-grid">
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-envelope"></i> البريد الإلكتروني</span>
+            <span class="profile-value">@Model.User?.Email</span>
+        </div>
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-phone"></i> رقم الهاتف</span>
+            <span class="profile-value">@Model.User?.PhoneNumber</span>
+        </div>
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-hospital"></i> القسم</span>
+            <span class="profile-value">@Model.Department?.Name</span>
+        </div>
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-stethoscope"></i> التخصص</span>
+            <span class="profile-value">@Model.Specialization</span>
+        </div>
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-briefcase-medical"></i> سنوات الخبرة</span>
+            <span class="profile-value">@Model.ExperienceYears سنة</span>
+        </div>
+        <div class="profile-item">
+            <span class="profile-label"><i class="fas fa-calendar-days"></i> تاريخ الميلاد</span>
+            <span class="profile-value">@Model.User?.DateOfBirth.ToString("dd/MM/yyyy")</span>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Bio))
+    {
+        <div class="profile-bio">
+            <span class="profile-label"><i class="fas fa-align-right"></i> النبذة</span>
+            <p>@Model.Bio</p>
+        </div>
+    }
+</div>
+
+<!-- ── Stats row ── -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
+        <div>
+            <div class="stat-label">إجمالي الحجوزات</div>
+            <div class="stat-value">@totalCount</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon amber"><i class="fas fa-clock"></i></div>
+        <div>
+            <div class="stat-label">محجوز</div>
+            <div class="stat-value">@bookedCount</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-circle-check"></i></div>
+        <div>
+            <div class="stat-label">تم الكشف</div>
+            <div class="stat-value">@completedCount</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Appointments table ── -->
+<div class="profile-card">
+    <div class="profile-top" style="margin-bottom:20px;">
+        <h3 style="margin:0; font-size:1.1rem; font-weight:800; color:#0f172a;">
+            <i class="fas fa-list-check" style="color:#0891b2;"></i> حجوزاتي
+        </h3>
+    </div>
+
+    @if (!appointments.Any())
+    {
+        <div class="empty-state">
+            <i class="fas fa-calendar-xmark"></i>
+            <p>لا توجد حجوزات مسجلة حتى الآن.</p>
+        </div>
+    }
+    else
+    {
+        <div class="appt-table-wrap">
+            <table class="appt-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>المريض</th>
+                        <th>الخدمة</th>
+                        <th>التاريخ</th>
+                        <th>الوقت</th>
+                        <th>رقم الدور</th>
+                        <th>الحالة</th>
+                        <th>الروشتة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var appt in appointments)
+                    {
+                        <tr>
+                            <td style="color:#94a3b8; font-weight:800;">@appt.Id</td>
+                            <td style="font-weight:700;">@appt.Patient?.User?.Name</td>
+                            <td>@appt.Service?.Name</td>
+                            <td><span class="badge b-blue">@appt.AppointmentDate.ToString("yyyy/MM/dd")</span></td>
+                            <td><span class="badge b-blue">@appt.AppointmentTime.ToString(@"hh\:mm")</span></td>
+                            <td><span class="badge b-purple">#@appt.QueueNumber</span></td>
+                            <td>
+                                <span class="badge-status @StatusClass(appt.Status)">
+                                    <i class="fas @StatusIcon(appt.Status)"></i> @StatusText(appt.Status)
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                                @if (appt.Status == "Booked")
+                                {
+                                    <a asp-controller="Doctor" asp-action="MedicalReport" asp-route-id="@appt.Id"
+                                       asp-route-from="profile" class="btn-action teal">
+                                        <i class="fas fa-file-prescription"></i> إضافة روشتة
+                                    </a>
+                                }
+                                else if (appt.Prescription != null)
+                                {
+                                    <a asp-controller="Doctor" asp-action="MedicalReport" asp-route-id="@appt.Id"
+                                       asp-route-from="profile" class="btn-action blue">
+                                        <i class="fas fa-eye"></i> عرض الروشتة
+                                    </a>
+                                    <a asp-controller="Doctor" asp-action="DeletePrescription"
+                                       asp-route-id="@appt.Prescription.Id"
+                                       asp-route-from="profile"
+                                       class="btn-action" style="background:#fef2f2; color:#b91c1c;">
+                                        <i class="fas fa-trash"></i> حذف
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span style="color:#cbd5e1;">—</span>
+                                }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

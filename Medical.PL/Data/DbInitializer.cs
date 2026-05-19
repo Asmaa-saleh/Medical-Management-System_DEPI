@@ -286,35 +286,28 @@ namespace Medical.PL.Data
 
                     foreach (var doc in doctorsData)
                     {
-                        //var user = new User
-                        //{
-                        //    Name = doc.Name,
-                        //    DateOfBirth = new DateTime(
-                        //        random.Next(1960, 1995),
-                        //        random.Next(1, 13),
-                        //        random.Next(1, 28)
-                        //    ),
-                        //    Email = doc.Email,
-                        //    PhoneNumber = doc.Phone,
-                        //    Gender = doc.Gender
-                        //};
+                        var existingDoc = await userManager.FindByEmailAsync(doc.Email);
+                        if (existingDoc != null) continue;
+
                         var user = new User
                         {
                             UserName = doc.Email,
                             Name = doc.Name,
                             DateOfBirth = new DateTime(
-                            random.Next(1960, 1995),
-                            random.Next(1, 13),
-                            random.Next(1, 28)
-                        ),
+                                random.Next(1960, 1995),
+                                random.Next(1, 13),
+                                random.Next(1, 28)
+                            ),
                             Email = doc.Email,
                             PhoneNumber = doc.Phone,
                             Gender = doc.Gender,
                             EmailConfirmed = true
                         };
 
-                        context.Users.Add(user);
-                        context.SaveChanges();
+                        var result = await userManager.CreateAsync(user, "Doctor123@");
+                        if (!result.Succeeded) continue;
+
+                        await userManager.AddToRoleAsync(user, "Doctor");
 
                         context.Doctors.Add(new Doctor
                         {
@@ -325,7 +318,7 @@ namespace Medical.PL.Data
                             IsActive = true
                         });
 
-                        context.SaveChanges();
+                        await context.SaveChangesAsync();
                     }
                 }
 

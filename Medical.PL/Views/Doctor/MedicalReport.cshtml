@@ -147,6 +147,10 @@
     </style>
 }
 
+@{
+    var fromProfile = ViewData["From"]?.ToString() == "profile";
+}
+
 <!-- ── Page header ── -->
 <div class="form-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
     <div>
@@ -154,16 +158,25 @@
         <p>تسجيل التشخيص وإصدار الوصفة الطبية للمريض.</p>
     </div>
     <div style="display:flex; gap:10px; flex-wrap:wrap;" class="no-print">
-        <a asp-controller="Appointment" asp-action="Details" asp-route-id="@Model.AppointmentId" class="btn-back">
-            <i class="fas fa-arrow-right"></i> رجوع للحجز
-        </a>
+        @if (fromProfile)
+        {
+            <a asp-controller="Doctor" asp-action="MyProfile" class="btn-back">
+                <i class="fas fa-arrow-right"></i> رجوع للملف
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Appointment" asp-action="Details" asp-route-id="@Model.AppointmentId" class="btn-back">
+                <i class="fas fa-arrow-right"></i> رجوع للحجز
+            </a>
+        }
         <button type="button" class="btn-save" style="background:linear-gradient(135deg,#475569,#64748b);" onclick="window.print()">
             <i class="fas fa-print"></i> طباعة
         </button>
     </div>
 </div>
 
-@if (TempData["SuccessMessage"] != null)
+@if (!fromProfile && TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success" style="margin: 0 48px 16px;" role="alert">
         <i class="fas fa-circle-check"></i> @TempData["SuccessMessage"]
@@ -211,7 +224,7 @@
 
 <!-- ── Prescription form card ── -->
 <div class="form-card">
-    <form asp-action="MedicalReport" asp-route-id="@Model.AppointmentId" method="post" id="rxForm">
+    <form asp-action="MedicalReport" asp-route-id="@Model.AppointmentId" asp-route-from="@ViewData["From"]" method="post" id="rxForm">
         @Html.AntiForgeryToken()
         <input asp-for="AppointmentId" type="hidden" />
         <input asp-for="DoctorId" type="hidden" />
@@ -297,9 +310,18 @@
             <button type="submit" class="btn-save">
                 <i class="fas fa-save"></i> حفظ التقرير
             </button>
-            <a asp-controller="Appointment" asp-action="Details" asp-route-id="@Model.AppointmentId" class="btn-back">
-                <i class="fas fa-arrow-right"></i> رجوع
-            </a>
+            @if (fromProfile)
+            {
+                <a asp-controller="Doctor" asp-action="MyProfile" class="btn-back">
+                    <i class="fas fa-arrow-right"></i> رجوع
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Appointment" asp-action="Details" asp-route-id="@Model.AppointmentId" class="btn-back">
+                    <i class="fas fa-arrow-right"></i> رجوع
+                </a>
+            }
         </div>
     </form>
 </div>
