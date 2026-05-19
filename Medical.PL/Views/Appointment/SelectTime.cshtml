@@ -17,6 +17,7 @@
         display: flex;
         gap: 24px;
         align-items: flex-start;
+        margin-top: 100px;
     }
 
     .booking-sidebar {
@@ -205,7 +206,7 @@
             @{
                 var availableDates = new List<DateTime>();
 
-                for (int i = 0; i < 14; i++)
+                for (int i = 0; i <8 ; i++)
                 {
                     var date = DateTime.Today.AddDays(i);
 

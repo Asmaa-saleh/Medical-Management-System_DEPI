@@ -2,19 +2,76 @@
 using Medical.PL.Data.Enum;
 using Medical.PL.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Medical.PL.Data
 {
     public class DbInitializer
     {
-        public static void Seed(IApplicationBuilder applicationBuilder)
+        public static async Task Seed(IApplicationBuilder applicationBuilder)
         {
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
+                var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
                 context.Database.EnsureCreated();
-                
+
+                // ── Roles ─────────────────────────────────────────────
+                string[] roles = { "Admin", "Doctor", "Patient", "Receptionist" };
+
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(
+                            new IdentityRole<int>(role)
+                        );
+                    }
+                }
+
+                // ── Admin User ───────────────────────────────────────
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+                var admins = new List<(string Name, string Email, string Password, string Gender, string Phone)>
+                {
+                    ("System Admin", "admin1@medicare.com", "Admin123@", "ذكر", "01000000001"),
+                    ("Super Admin", "admin2@medicare.com", "Admin123@", "أنثى", "01000000002")
+                };
+
+                foreach (var item in admins)
+                {
+                    var existingUser = await userManager.FindByEmailAsync(item.Email);
+
+                    if (existingUser == null)
+                    {
+                        var admin = new User
+                        {
+                            UserName = item.Email,
+                            Name = item.Name,
+                            Email = item.Email,
+                            PhoneNumber = item.Phone,
+                            Gender = item.Gender,
+                            DateOfBirth = new DateTime(1990, 1, 1),
+                            EmailConfirmed = true
+                        };
+
+                        var result = await userManager.CreateAsync(admin, item.Password);
+
+                        if (result.Succeeded)
+                        {
+                            await userManager.AddToRoleAsync(admin, "Admin");
+                        }
+                    }
+                }
+
+
+
+
+
+
+
+
                 if (!context.Medicines.Any())
                 {
                     var medicines = new List<Medicine>
@@ -229,17 +286,31 @@ namespace Medical.PL.Data
 
                     foreach (var doc in doctorsData)
                     {
+                        //var user = new User
+                        //{
+                        //    Name = doc.Name,
+                        //    DateOfBirth = new DateTime(
+                        //        random.Next(1960, 1995),
+                        //        random.Next(1, 13),
+                        //        random.Next(1, 28)
+                        //    ),
+                        //    Email = doc.Email,
+                        //    PhoneNumber = doc.Phone,
+                        //    Gender = doc.Gender
+                        //};
                         var user = new User
                         {
+                            UserName = doc.Email,
                             Name = doc.Name,
                             DateOfBirth = new DateTime(
-                                random.Next(1960, 1995),
-                                random.Next(1, 13),
-                                random.Next(1, 28)
-                            ),
+                            random.Next(1960, 1995),
+                            random.Next(1, 13),
+                            random.Next(1, 28)
+                        ),
                             Email = doc.Email,
                             PhoneNumber = doc.Phone,
-                            Gender = doc.Gender
+                            Gender = doc.Gender,
+                            EmailConfirmed = true
                         };
 
                         context.Users.Add(user);
@@ -257,21 +328,6 @@ namespace Medical.PL.Data
                         context.SaveChanges();
                     }
                 }
-
-                // ── Service ────────────────────────────────────────────────────────────
-                //if (!context.Services.Any())
-                //{
-                //    var dept = context.Departments.First();
-
-                //    context.Services.Add(new Service
-                //    {
-                //        Name = "General Consultation",
-                //        Description = "Standard outpatient consultation",
-                //        Price = 200m,
-                //        DepartmentId = dept.Id
-                //    });
-                //    context.SaveChanges();
-                //}
 
                 // ── Doctor Schedule ────────────────────────────────────────────────────
                 if (!context.DoctorSchedules.Any())
@@ -293,21 +349,42 @@ namespace Medical.PL.Data
                 // ── Patients ───────────────────────────────────────────────────────────
                 if (!context.Patients.Any())
                 {
+                    //var userSara = new User
+                    //{
+                    //    Name = "Sara Mohamed",
+                    //    DateOfBirth = new DateTime(2019, 5, 20),
+                    //    Email = "sara.mohamed@email.com",
+                    //    PhoneNumber = "01098765432",
+                    //    Gender = "أنثى"
+                    //};
+                    //var userKarim = new User
+                    //{
+                    //    Name = "Karim Ibrahim",
+                    //    DateOfBirth = new DateTime(2023, 11, 30),
+                    //    Email = "karim.ibrahim@email.com",
+                    //    PhoneNumber = "01112223344",
+                    //    Gender = "ذكر"
+                    //};
                     var userSara = new User
                     {
+                        UserName = "sara.mohamed@email.com",
                         Name = "Sara Mohamed",
                         DateOfBirth = new DateTime(2019, 5, 20),
                         Email = "sara.mohamed@email.com",
                         PhoneNumber = "01098765432",
-                        Gender = "أنثى"
+                        Gender = "أنثى",
+                        EmailConfirmed = true
                     };
+
                     var userKarim = new User
                     {
+                        UserName = "karim.ibrahim@email.com",
                         Name = "Karim Ibrahim",
                         DateOfBirth = new DateTime(2023, 11, 30),
                         Email = "karim.ibrahim@email.com",
                         PhoneNumber = "01112223344",
-                        Gender = "ذكر"
+                        Gender = "ذكر",
+                        EmailConfirmed = true
                     };
 
                     context.Users.AddRange(userSara, userKarim);

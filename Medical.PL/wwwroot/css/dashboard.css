@@ -68,7 +68,7 @@ a {
 .mc-logo {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     font-size: 1.65rem;
     font-weight: 900;
     color: #FFFFFF;
@@ -97,7 +97,7 @@ a {
     list-style: none;
     margin: 0;
     padding: 0;
-    margin-right: auto;
+    margin-right: 10px;
     direction: rtl;
     flex-wrap: wrap;
 }

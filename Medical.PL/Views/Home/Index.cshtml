@@ -11,18 +11,18 @@
             <h1>مرحباً بك في<em> MediCare </em></h1>
             <p>إدارة شاملة للعيادة — المواعيد، المرضى، الأطباء، الأقسام، الخدمات والأدوية كلها في مكان واحد.</p>
 
-            <div class="dash-hero-actions">
+            @* <div class="dash-hero-actions">
                 @if (User.Identity?.IsAuthenticated ?? false)
                 {
                     <a asp-controller="Account" asp-action="Profile" class="dash-hero-btn dhb-light">
                         <i class="fas fa-user"></i>
-                        الملف الشخصي
+                        
                     </a>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="dash-hero-form">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="dash-hero-btn dhb-danger">
                             <i class="fas fa-right-from-bracket"></i>
-                            تسجيل الخروج
+                            
                         </button>
                     </form>
                 }
@@ -37,7 +37,7 @@
                         تسجيل
                     </a>
                 }
-            </div>
+            </div> *@
         </div>
         <div class="hero-visual" data-aos="fade-right" data-aos-duration="1000" data-aos-delay="200">
             <div class="hero-ring"></div>
