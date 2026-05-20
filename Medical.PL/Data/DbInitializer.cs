@@ -315,7 +315,7 @@ namespace Medical.PL.Data
                     DepartmentId = departments[random.Next(departments.Count)].Id,
                     Specialization = doc.Specialization,
                     ExperienceYears = doc.Experience,
-                    Bio = doc.Bio,
+                    // Bio = doc.Bio,
                     IsActive = true
                 });
                         await context.SaveChangesAsync();
