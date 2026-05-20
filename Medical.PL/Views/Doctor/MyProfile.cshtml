@@ -113,7 +113,21 @@
         .btn-action:hover { opacity: .85; text-decoration: none; }
         .btn-action.teal { background: #ecfdf5; color: #065f46; }
         .btn-action.blue { background: #eff6ff; color: #1d4ed8; }
-
+        .stats-row {display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 0 48px 24px;}
+@@media (max-width: 768px) { .stats-row { margin: 0 20px 20px; grid-template-columns: 1fr; } }.stat-card {background: #fff;
+    border: 1px solid #eef2f7;
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);}.stat-icon {width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;}.stat-icon.blue  { background: #eff6ff; color: #2563eb; }.stat-icon.green { background: #f0fdf4; color: #16a34a; }.stat-icon.amber { background: #fffbeb; color: #d97706; }.stat-label { font-size: 0.78rem; font-weight: 700; color: #64748b; }.stat-value { font-size: 1.6rem; font-weight: 900; color: #0f172a; line-height: 1.1; }
+ 
         /* empty state */
         .empty-state { text-align: center; padding: 48px 24px; color: #94a3b8; }
         .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
