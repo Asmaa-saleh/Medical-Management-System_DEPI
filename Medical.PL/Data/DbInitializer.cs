@@ -253,72 +253,136 @@ namespace Medical.PL.Data
                     context.SaveChanges();
                 }
 
+                // // ── Doctor ─────────────────────────────────────────────────────────────
+                //if (!context.Doctors.Any())
+                //{
+                //     var departments = context.Departments.ToList();
+
+                //     var doctorsData = new[]
+                //     {
+                //         new { Name = "Walid Amr", Email = "dr.walid.amr@medicare.com", Phone = "01012395678", Gender = "ذكر", Specialization = "Pediatrics", Experience = 15 },
+                //         new { Name = "Ahmed Hassan", Email = "dr.ahmed.hassan@medicare.com", Phone = "01023456789", Gender = "ذكر", Specialization = "Cardiology", Experience = 12 },
+                //         new { Name = "Mona Ali", Email = "dr.mona.ali@medicare.com", Phone = "01034567890", Gender = "أنثى", Specialization = "Dermatology", Experience = 8 },
+                //         new { Name = "Khaled Mostafa", Email = "dr.khaled.mostafa@medicare.com", Phone = "01045678901", Gender = "ذكر", Specialization = "Orthopedics", Experience = 10 },
+                //         new { Name = "Sara Ibrahim", Email = "dr.sara.ibrahim@medicare.com", Phone = "01056789012", Gender = "أنثى", Specialization = "Neurology", Experience = 9 },
+                //         new { Name = "Omar Adel", Email = "dr.omar.adel@medicare.com", Phone = "01067890123", Gender = "ذكر", Specialization = "ENT", Experience = 7 },
+                //         new { Name = "Nouran Magdy", Email = "dr.nouran.magdy@medicare.com", Phone = "01078901234", Gender = "أنثى", Specialization = "Gynecology", Experience = 11 },
+                //         new { Name = "Youssef Samy", Email = "dr.youssef.samy@medicare.com", Phone = "01089012345", Gender = "ذكر", Specialization = "Oncology", Experience = 14 },
+                //         new { Name = "Heba Fathy", Email = "dr.heba.fathy@medicare.com", Phone = "01112345678", Gender = "أنثى", Specialization = "Psychiatry", Experience = 6 },
+                //         new { Name = "Tamer Nabil", Email = "dr.tamer.nabil@medicare.com", Phone = "01090123456", Gender = "ذكر", Specialization = "Radiology", Experience = 13 },
+                //         new { Name = "Laila Mahmoud", Email = "dr.laila.mahmoud@medicare.com", Phone = "01145678901", Gender = "أنثى", Specialization = "Ophthalmology", Experience = 5 },
+                //         new { Name = "Mahmoud Gamal", Email = "dr.mahmoud.gamal@medicare.com", Phone = "01178901234", Gender = "ذكر", Specialization = "Urology", Experience = 9 },
+                //         new { Name = "Aya Reda", Email = "dr.aya.reda@medicare.com", Phone = "01001234567", Gender = "أنثى", Specialization = "Endocrinology", Experience = 7 },
+                //         new { Name = "Karim Hany", Email = "dr.karim.hany@medicare.com", Phone = "01167890123", Gender = "ذكر", Specialization = "Nephrology", Experience = 10 },
+                //         new { Name = "Reem Tarek", Email = "dr.reem.tarek@medicare.com", Phone = "01156789012", Gender = "أنثى", Specialization = "Gastroenterology", Experience = 8 },
+                //         new { Name = "Hossam Ezz", Email = "dr.hossam.ezz@medicare.com", Phone = "01190123456", Gender = "ذكر", Specialization = "Pulmonology", Experience = 12 },
+                //         new { Name = "Dina Sameh", Email = "dr.dina.sameh@medicare.com", Phone = "01189012345", Gender = "أنثى", Specialization = "Hematology", Experience = 6 },
+                //         new { Name = "Amr Salah", Email = "dr.amr.salah@medicare.com", Phone = "01123456789", Gender = "ذكر", Specialization = "General Surgery", Experience = 16 },
+                //         new { Name = "Farah Yasser", Email = "dr.farah.yasser@medicare.com", Phone = "01199999999", Gender = "أنثى", Specialization = "Rheumatology", Experience = 5 },
+                //         new { Name = "Sherif Kamal", Email = "dr.sherif.kamal@medicare.com", Phone = "01134567890", Gender = "ذكر", Specialization = "Anesthesiology", Experience = 14 }
+                //     };
+
+                //     var random = new Random();
+
+                //     foreach (var doc in doctorsData)
+                //     {
+                //         var existingDoc = await userManager.FindByEmailAsync(doc.Email);
+                //         if (existingDoc != null) continue;
+
+                //         var user = new User
+                //         {
+                //             UserName = doc.Email,
+                //             Name = doc.Name,
+                //             DateOfBirth = new DateTime(
+                //                 random.Next(1960, 1995),
+                //                 random.Next(1, 13),
+                //                 random.Next(1, 28)
+                //             ),
+                //             Email = doc.Email,
+                //             PhoneNumber = doc.Phone,
+                //             Gender = doc.Gender,
+                //             EmailConfirmed = true
+                //         };
+
+                //         var result = await userManager.CreateAsync(user, "Doctor123@");
+                //         if (!result.Succeeded) continue;
+
+                //         await userManager.AddToRoleAsync(user, "Doctor");
+
+                //         context.Doctors.Add(new Doctor
+                //         {
+                //             UserId = user.Id,
+                //             DepartmentId = departments[random.Next(departments.Count)].Id,
+                //             Specialization = doc.Specialization,
+                //             ExperienceYears = doc.Experience,
+                //             IsActive = true
+                //         });
+
+                //         await context.SaveChangesAsync();
+                //     }
+                // }
+
+
                 // ── Doctor ─────────────────────────────────────────────────────────────
-               if (!context.Doctors.Any())
-               {
+                if (!context.Doctors.Any())
+                {
                     var departments = context.Departments.ToList();
 
-                    var doctorsData = new[]
+                    // إذا لم تكن هناك أقسام مضافة بعد، نأخذ قسم افتراضي أو نمنع الخطأ
+                    if (departments.Any())
                     {
-                        new { Name = "Walid Amr", Email = "dr.walid.amr@medicare.com", Phone = "01012395678", Gender = "ذكر", Specialization = "Pediatrics", Experience = 15 },
-                        new { Name = "Ahmed Hassan", Email = "dr.ahmed.hassan@medicare.com", Phone = "01023456789", Gender = "ذكر", Specialization = "Cardiology", Experience = 12 },
-                        new { Name = "Mona Ali", Email = "dr.mona.ali@medicare.com", Phone = "01034567890", Gender = "أنثى", Specialization = "Dermatology", Experience = 8 },
-                        new { Name = "Khaled Mostafa", Email = "dr.khaled.mostafa@medicare.com", Phone = "01045678901", Gender = "ذكر", Specialization = "Orthopedics", Experience = 10 },
-                        new { Name = "Sara Ibrahim", Email = "dr.sara.ibrahim@medicare.com", Phone = "01056789012", Gender = "أنثى", Specialization = "Neurology", Experience = 9 },
-                        new { Name = "Omar Adel", Email = "dr.omar.adel@medicare.com", Phone = "01067890123", Gender = "ذكر", Specialization = "ENT", Experience = 7 },
-                        new { Name = "Nouran Magdy", Email = "dr.nouran.magdy@medicare.com", Phone = "01078901234", Gender = "أنثى", Specialization = "Gynecology", Experience = 11 },
-                        new { Name = "Youssef Samy", Email = "dr.youssef.samy@medicare.com", Phone = "01089012345", Gender = "ذكر", Specialization = "Oncology", Experience = 14 },
-                        new { Name = "Heba Fathy", Email = "dr.heba.fathy@medicare.com", Phone = "01112345678", Gender = "أنثى", Specialization = "Psychiatry", Experience = 6 },
-                        new { Name = "Tamer Nabil", Email = "dr.tamer.nabil@medicare.com", Phone = "01090123456", Gender = "ذكر", Specialization = "Radiology", Experience = 13 },
-                        new { Name = "Laila Mahmoud", Email = "dr.laila.mahmoud@medicare.com", Phone = "01145678901", Gender = "أنثى", Specialization = "Ophthalmology", Experience = 5 },
-                        new { Name = "Mahmoud Gamal", Email = "dr.mahmoud.gamal@medicare.com", Phone = "01178901234", Gender = "ذكر", Specialization = "Urology", Experience = 9 },
-                        new { Name = "Aya Reda", Email = "dr.aya.reda@medicare.com", Phone = "01001234567", Gender = "أنثى", Specialization = "Endocrinology", Experience = 7 },
-                        new { Name = "Karim Hany", Email = "dr.karim.hany@medicare.com", Phone = "01167890123", Gender = "ذكر", Specialization = "Nephrology", Experience = 10 },
-                        new { Name = "Reem Tarek", Email = "dr.reem.tarek@medicare.com", Phone = "01156789012", Gender = "أنثى", Specialization = "Gastroenterology", Experience = 8 },
-                        new { Name = "Hossam Ezz", Email = "dr.hossam.ezz@medicare.com", Phone = "01190123456", Gender = "ذكر", Specialization = "Pulmonology", Experience = 12 },
-                        new { Name = "Dina Sameh", Email = "dr.dina.sameh@medicare.com", Phone = "01189012345", Gender = "أنثى", Specialization = "Hematology", Experience = 6 },
-                        new { Name = "Amr Salah", Email = "dr.amr.salah@medicare.com", Phone = "01123456789", Gender = "ذكر", Specialization = "General Surgery", Experience = 16 },
-                        new { Name = "Farah Yasser", Email = "dr.farah.yasser@medicare.com", Phone = "01199999999", Gender = "أنثى", Specialization = "Rheumatology", Experience = 5 },
-                        new { Name = "Sherif Kamal", Email = "dr.sherif.kamal@medicare.com", Phone = "01134567890", Gender = "ذكر", Specialization = "Anesthesiology", Experience = 14 }
-                    };
-
-                    var random = new Random();
-
-                    foreach (var doc in doctorsData)
-                    {
-                        var existingDoc = await userManager.FindByEmailAsync(doc.Email);
-                        if (existingDoc != null) continue;
-
-                        var user = new User
+                        var doctorsData = new[]
                         {
-                            UserName = doc.Email,
-                            Name = doc.Name,
-                            DateOfBirth = new DateTime(
-                                random.Next(1960, 1995),
-                                random.Next(1, 13),
-                                random.Next(1, 28)
-                            ),
-                            Email = doc.Email,
-                            PhoneNumber = doc.Phone,
-                            Gender = doc.Gender,
-                            EmailConfirmed = true
-                        };
+            new { Name = "Walid Amr", Email = "walidamr@medicare.com", Phone = "01012395678", Gender = "ذكر", Specialization = "Pediatrics", Experience = 15 },
+            new { Name = "Ahmed Hassan", Email = "dr.ahmed.hassan@medicare.com", Phone = "01023456789", Gender = "ذكر", Specialization = "Cardiology", Experience = 12 },
+            new { Name = "Mona Ali", Email = "dr.mona.ali@medicare.com", Phone = "01034567890", Gender = "أنثى", Specialization = "Dermatology", Experience = 8 },
+            new { Name = "Khaled Mostafa", Email = "dr.khaled.mostafa@medicare.com", Phone = "01045678901", Gender = "ذكر", Specialization = "Orthopedics", Experience = 10 },
+            new { Name = "Sara Ibrahim", Email = "dr.sara.ibrahim@medicare.com", Phone = "01056789012", Gender = "أنثى", Specialization = "Neurology", Experience = 9 }
+        };
 
-                        var result = await userManager.CreateAsync(user, "Doctor123@");
-                        if (!result.Succeeded) continue;
+                        var random = new Random();
 
-                        await userManager.AddToRoleAsync(user, "Doctor");
-
-                        context.Doctors.Add(new Doctor
+                        foreach (var doc in doctorsData)
                         {
-                            UserId = user.Id,
-                            DepartmentId = departments[random.Next(departments.Count)].Id,
-                            Specialization = doc.Specialization,
-                            ExperienceYears = doc.Experience,
-                            IsActive = true
-                        });
+                            var existingDoc = await userManager.FindByEmailAsync(doc.Email);
 
-                        await context.SaveChangesAsync();
+                            if (existingDoc == null)
+                            {
+                                var user = new User
+                                {
+                                    UserName = doc.Email,
+                                    Name = doc.Name,
+                                    Email = doc.Email,
+                                    PhoneNumber = doc.Phone,
+                                    Gender = doc.Gender,
+                                    DateOfBirth = new DateTime(random.Next(1975, 1995), random.Next(1, 13), random.Next(1, 28)),
+                                    EmailConfirmed = false
+                                };
+
+                                // إنشاء حساب المستخدم بكلمة المرور الافتراضية للدكاترة
+                                var result = await userManager.CreateAsync(user, "Doctor123@");
+
+                                if (result.Succeeded)
+                                {
+                                    // إسناد صلاحية دكتور للمستخدم
+                                    await userManager.AddToRoleAsync(user, "Doctor");
+
+                                    // إضافة الطبيب إلى جدول الـ Doctors وربطه بحساب الـ User الجديد
+                                    var doctorEntity = new Doctor
+                                    {
+                                        UserId = user.Id, // الـ Id هنا بيسمع تلقائياً بعد نجاح CreateAsync
+                                        DepartmentId = departments[random.Next(departments.Count)].Id, // اختيار قسم عشوائي من اللي عندك
+                                        Specialization = doc.Specialization,
+                                        ExperienceYears = doc.Experience,
+                                        IsActive = true
+                                    };
+
+                                    context.Doctors.Add(doctorEntity);
+                                    // حفظ التغييرات فوراً لكل دكتور لضمان عدم حدوث تعارض في الـ Scopes
+                                    await context.SaveChangesAsync();
+                                }
+                            }
+                        }
                     }
                 }
 

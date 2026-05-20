@@ -122,7 +122,8 @@ namespace Medical.PL.Controllers
                 PhoneNumber = vm.PhoneNumber.Trim(),
                 DateOfBirth = vm.DateOfBirth,
                 Gender = vm.Gender,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                EmailConfirmed = true
             };
 
             var userResult = await _userManager.CreateAsync(user, vm.Password!);
@@ -134,7 +135,14 @@ namespace Medical.PL.Controllers
                 return View(vm);
             }
 
-            await AddDoctorRoleIfExistsAsync(user);
+            // ensure "Doctor" role exists then assign user to it
+            var roleName = "Doctor";
+            if (!await _roleManager.RoleExistsAsync(roleName))
+            {
+                await _roleManager.CreateAsync(new IdentityRole<int>(roleName));
+            }
+
+await _userManager.AddToRoleAsync(user, roleName);
 
             var doctor = new Doctor
             {

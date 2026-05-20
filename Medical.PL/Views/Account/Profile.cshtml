@@ -1,58 +1,148 @@
-@model UserViewModel
+@model Medical.PL.ViewModels.ProfileMedicalVM
 
 @{
     ViewData["Title"] = "ملفي الشخصي";
+    Layout = "~/Views/Shared/_LandingPageLayout.cshtml";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/user.css" asp-append-version="true" />
+    <style>
+        /* keep content below fixed landing navbar */
+        .profile-container { padding-top: 120px; padding-bottom: 40px; max-width: 1200px; margin: 0 auto; }
+        @@media (max-width: 768px) { .profile-container { padding-top: 90px; margin: 0 16px; } }
+        .user-table-card { margin: 20px 0 40px; }
+        .section-title { margin: 18px 48px 8px; font-weight: 900; color: #0F172A; }
+    </style>
 }
 
-<div class="user-header">
-    <div class="user-title">
-        <span class="user-title-icon"><i class="fas fa-user"></i></span>
-        <div>
-            <h1>ملفي الشخصي</h1>
-            <p>@Model.Name</p>
+<div class="profile-container">
+    <div class="user-header">
+        <div class="user-title">
+            <span class="user-title-icon"><i class="fas fa-user"></i></span>
+            <div>
+                <h1>ملفي الشخصي</h1>
+                <p>@Model.Name</p>
+            </div>
+        </div>
+        <div class="user-form-actions">
+            <a asp-action="EditProfile" class="user-btn user-btn-primary">
+                <i class="fas fa-edit"></i>
+                تعديل
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="user-btn user-btn-light">
+                <i class="fas fa-arrow-right"></i>
+                رجوع
+            </a>
         </div>
     </div>
-    <div class="user-form-actions">
-        <a asp-action="EditProfile" class="user-btn user-btn-primary">
-            <i class="fas fa-edit"></i>
-            تعديل
-        </a>
-        <a asp-controller="Home" asp-action="Index" class="user-btn user-btn-light">
-            <i class="fas fa-arrow-right"></i>
-            رجوع
-        </a>
-    </div>
-</div>
 
-<div class="user-details-card">
-    <div class="user-details-grid">
-        <div class="user-detail-item">
-            <span>الاسم</span>
-            <strong>@Model.Name</strong>
+    <div class="user-details-card">
+        <div class="user-details-grid">
+            <div class="user-detail-item">
+                <span>الاسم</span>
+                <strong>@Model.Name</strong>
+            </div>
+            <div class="user-detail-item">
+                <span>البريد الإلكتروني</span>
+                <strong>@Model.Email</strong>
+            </div>
+            <div class="user-detail-item">
+                <span>رقم الهاتف</span>
+                <strong>@Model.PhoneNumber</strong>
+            </div>
+            <div class="user-detail-item">
+                <span>تاريخ الميلاد</span>
+                <strong>@Model.DateOfBirth.ToString("yyyy-MM-dd")</strong>
+            </div>
+            <div class="user-detail-item">
+                <span>النوع</span>
+                <strong>@Model.Gender</strong>
+            </div>
+            <div class="user-detail-item">
+                <span>تاريخ الإنشاء</span>
+                <strong>@Model.CreatedAt.ToString("yyyy-MM-dd")</strong>
+            </div>
         </div>
-        <div class="user-detail-item">
-            <span>البريد الإلكتروني</span>
-            <strong>@Model.Email</strong>
-        </div>
-        <div class="user-detail-item">
-            <span>رقم الهاتف</span>
-            <strong>@Model.PhoneNumber</strong>
-        </div>
-        <div class="user-detail-item">
-            <span>تاريخ الميلاد</span>
-            <strong>@Model.DateOfBirth.ToString("yyyy-MM-dd")</strong>
-        </div>
-        <div class="user-detail-item">
-            <span>النوع</span>
-            <strong>@Model.Gender</strong>
-        </div>
-        <div class="user-detail-item">
-            <span>تاريخ الإنشاء</span>
-            <strong>@Model.CreatedAt.ToString("yyyy-MM-dd")</strong>
-        </div>
+    </div>
+
+    <h3 class="section-title">المواعيد</h3>
+    <div class="user-table-card">
+        @if (Model.Appointments != null && Model.Appointments.Any())
+        {
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>الوقت</th>
+                        <th>الطبيب</th>
+                        <th>الخدمة</th>
+                        <th>الحالة</th>
+                        <th>ملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ap in Model.Appointments)
+                    {
+                        <tr>
+                            <td>@ap.AppointmentDate.ToString("yyyy-MM-dd")</td>
+                            <td>@ap.AppointmentTime.ToString(@"hh\:mm")</td>
+                            <td>@(ap.Doctor?.User?.Name ?? "-")</td>
+                            <td>@(ap.Service?.Name ?? "-")</td>
+                            <td>@ap.Status</td>
+                            <td>@(string.IsNullOrWhiteSpace(ap.Notes) ? "-" : ap.Notes)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="user-empty">
+                <i class="fas fa-calendar-times"></i>
+                <p>لا توجد مواعيد مسجلة.</p>
+            </div>
+        }
+    </div>
+
+    <h3 class="section-title">الروشتات</h3>
+    <div class="user-table-card">
+        @if (Model.Prescriptions != null && Model.Prescriptions.Any())
+        {
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>رقم الروشتة</th>
+                        <th>تاريخ الحجز</th>
+                        <th>الطبيب</th>
+                        <th>عدد الأصناف</th>
+                        <th>ملاحظات</th>
+                        <th>عرض</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pr in Model.Prescriptions)
+                    {
+                        <tr>
+                            <td>@pr.Id</td>
+                            <td>@(pr.Appointment?.AppointmentDate.ToString("yyyy-MM-dd") ?? "-")</td>
+                            <td>@(pr.Doctor?.User?.Name ?? "-")</td>
+                            <td>@(pr.Items?.Count() ?? 0)</td>
+                            <td>@(string.IsNullOrWhiteSpace(pr.Notes) ? "-" : pr.Notes)</td>
+                            <td>
+                                <a asp-controller="Patients" asp-action="PrescriptionDetails" asp-route-id="@pr.Id" class="user-action user-action-view" title="عرض"> <i class="fas fa-eye"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="user-empty">
+                <i class="fas fa-prescription-bottle-alt"></i>
+                <p>لا توجد روشتات.</p>
+            </div>
+        }
     </div>
 </div>

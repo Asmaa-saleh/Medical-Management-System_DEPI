@@ -69,7 +69,7 @@ namespace Medical.PL.Controllers
                     return LocalRedirect(model.ReturnUrl);
                 }
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("LandingPage", "Home");
             }
 
             ModelState.AddModelError(string.Empty, "بيانات الدخول غير صحيحة");
@@ -155,7 +155,34 @@ namespace Medical.PL.Controllers
             if (await _userManager.IsInRoleAsync(user, "Doctor"))
                 return RedirectToAction("MyProfile", "Doctor");
 
-            return View(MapToProfileViewModel(user));
+            // map base user info
+            var vm = new ProfileMedicalVM
+            {
+                UserId = user.Id,
+                Name = user.Name,
+                Email = user.Email ?? string.Empty,
+                PhoneNumber = user.PhoneNumber ?? string.Empty,
+                DateOfBirth = user.DateOfBirth,
+                Gender = user.Gender,
+                CreatedAt = user.CreatedAt
+            };
+
+            // try to get Patient record and related data
+            var patients = await _unitOfWork.Patients.FindAsync(p => p.UserId == user.Id);
+            var patient = patients.FirstOrDefault();
+            if (patient != null)
+            {
+                var allAppointments = await _unitOfWork.Appointments.GetAllWithIncludesAsync(a => a.Doctor, a => a.Doctor.User, a => a.Service);
+                var appointments = allAppointments.Where(a => a.PatientId == patient.Id);
+
+                var allPrescriptions = await _unitOfWork.Prescriptions.GetAllWithIncludesAsync(pr => pr.Doctor, pr => pr.Doctor.User, pr => pr.Appointment, pr => pr.Items);
+                var prescriptions = allPrescriptions.Where(pr => pr.PatientId == patient.Id);
+
+                vm.Appointments = appointments.OrderByDescending(a => a.AppointmentDate).ToList();
+                vm.Prescriptions = prescriptions.OrderByDescending(p => p.Id).ToList();
+            }
+
+            return View(vm);
         }
 
         [Authorize]

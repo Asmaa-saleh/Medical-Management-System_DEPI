@@ -1,7 +1,9 @@
 ﻿using Medical.PL.Services;
 using Medical.PL.ViewModels;
+using Medical.PL.Data.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Medical.PL.Controllers
 {
@@ -9,11 +11,13 @@ namespace Medical.PL.Controllers
     public class PatientsController : Controller
     {
         private readonly IPatientService _patientService;
+        private readonly AppDbContext _context;
 
-        public PatientsController(IPatientService patientService)
-        {
-            _patientService = patientService;
-        }
+public PatientsController(IPatientService patientService, AppDbContext context)
+{
+    _patientService = patientService;
+    _context = context;
+}
 
 
         [Authorize(Roles = "Admin")]
@@ -118,6 +122,31 @@ namespace Medical.PL.Controllers
             ViewBag.PatientId = patientId;
 
             return View(prescriptions);
+        }
+
+        public async Task<IActionResult> PrescriptionDetails(int id)
+        {
+            // show a single prescription with limited fields for patient view and print option
+            var prescription = await _context.Prescriptions
+                .Include(p => p.Doctor).ThenInclude(d => d.User)
+                .Include(p => p.Doctor).ThenInclude(d => d.Department)
+                .Include(p => p.Patient).ThenInclude(pt => pt.User)
+                .Include(p => p.Appointment).ThenInclude(a => a.Service)
+                .Include(p => p.Items).ThenInclude(i => i.Medicine)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (prescription == null)
+                return NotFound();
+
+            // ensure only the owner patient or admin/doctor can view (basic check)
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            // allow if current user is the patient owner or in Admin role or is the doctor who wrote it
+            if (prescription.Patient?.User != null && prescription.Patient.User.Id != userId && !User.IsInRole("Admin") && prescription.Doctor?.User?.Id != userId)
+            {
+                return Forbid();
+            }
+
+            return View(prescription);
         }
     }
 }

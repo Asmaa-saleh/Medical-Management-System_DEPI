@@ -4,11 +4,16 @@
 @{
     ViewData["Title"] = "ملفي الشخصي";
     ViewData["ActivePage"] = "DoctorProfile";
+    Layout = "~/Views/Shared/_LandingPageLayout.cshtml";
     var appointments  = ViewBag.Appointments as List<Appointment> ?? new List<Appointment>();
     var totalCount    = appointments.Count;
     var bookedCount   = appointments.Count(a => a.Status == "Booked");
     var completedCount = appointments.Count(a => a.Status == "Completed");
 }
+<br/>
+<br />
+<br/>
+<br />
 
 @functions {
     static string StatusText(string s) => s switch

@@ -1,0 +1,143 @@
+@model Medical.PL.Data.Models.Prescription
+
+@{
+    ViewData["Title"] = "تفاصيل الروشتة";
+    Layout = "~/Views/Shared/_LandingPageLayout.cshtml";
+
+
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/patient-prescriptions.css" asp-append-version="true" />
+    <style>
+        .rx-print-card { max-width: 900px; margin: 40px auto; padding: 28px; background:#fff; border-radius:8px; border:1px solid #EEF2F6; }
+        .rx-print-header { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+        .rx-clinic { font-weight:900; color:#0F172A; font-size:1.25rem; }
+        .rx-meta { display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; }
+        .rx-meta div { color:#64748B; }
+        .rx-section { margin-top:18px; }
+        .rx-section h4 { margin:0 0 8px; color:#0F172A; font-weight:900; }
+        .rx-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+        .rx-table { width:100%; border-collapse:collapse; margin-top:8px; }
+        .rx-table th, .rx-table td { padding:10px 12px; border:1px solid #F1F5F9; text-align:right; }
+        .rx-print-actions { margin-top:16px; display:flex; gap:12px; justify-content:flex-end; }
+        .btn-print { padding:10px 18px; background:linear-gradient(135deg,#0891B2,#06B6D4); color:#fff; border-radius:8px; text-decoration:none; }
+        @@media print {
+            /* hide everything */
+            body * { visibility: hidden !important; }
+            /* show only the prescription card */
+            .rx-print-card, .rx-print-card * { visibility: visible !important; }
+            .rx-print-card { position: absolute !important; left: 0; top: 0; width: 100% !important; }
+            /* hide buttons */
+            .btn-print, .btn-back { display: none !important; }
+        }
+    </style>
+}
+<br />
+<br />
+<br />
+<br />
+<br />
+
+
+
+<div class="rx-print-card">
+    <div class="rx-print-header">
+        <div>
+            <div class="rx-clinic">MediCare - الوصفة الطبية</div>
+            <div class="rx-meta">
+                <div>رقم الوصفة: <strong>Ps-@Model.Id</strong></div>
+                <div>تاريخ الإصدار: <strong>@(Model.Appointment?.AppointmentDate.ToString("yyyy-MM-dd") ?? "-")</strong></div>
+            </div>
+        </div>
+        <div class="rx-print-actions">
+            <a class="btn-print" href="javascript:window.print()"><i class="fas fa-print" style="margin-left:8px;"></i> طباعة</a>
+            <a asp-action="Prescriptions" asp-route-id="@(Model.Patient?.Id ?? 0)" class="btn-back" style="padding:10px 16px; border-radius:8px; background:#F8FAFC; color:#0F172A; text-decoration:none;">عودة</a>
+        </div>
+    </div>
+    <br />
+
+    <br />
+
+    
+
+    <div class="rx-section">
+        <h4>بيانات المريض</h4>
+        <div class="rx-grid">
+            <div>الاسم: <strong>@(Model.Patient?.User?.Name ?? "-")</strong></div>
+            <div>الهاتف: <strong>@(Model.Patient?.User?.PhoneNumber ?? "-")</strong></div>
+            <div>تاريخ الميلاد: <strong>@(Model.Patient?.User?.DateOfBirth.ToString("yyyy-MM-dd") ?? "-")</strong></div>
+            <div></div>
+        </div>
+    </div>
+    <br/>
+    <br />
+
+    
+
+    <div class="rx-section">
+        <h4>بيانات الطبيب والقسم</h4>
+        <div class="rx-grid">
+            <div>الطبيب: <strong>@(Model.Doctor?.User?.Name ?? "-")</strong></div>
+            <div>القسم: <strong>@(Model.Doctor?.Department?.Name ?? "-")</strong></div>
+            <div>الخدمة: <strong>@(Model.Appointment?.Service?.Name ?? "-")</strong></div>
+            <div>وقت الموعد: <strong>@(Model.Appointment?.AppointmentTime.ToString(@"hh\:mm") ?? "-")</strong></div>
+        </div>
+    </div>
+    <br />
+
+    <br/>
+
+    <div class="rx-section">
+        <h4>تفاصيل الروشتة</h4>
+        @if (Model.Items != null && Model.Items.Any())
+        {
+            <table class="rx-table">
+                <thead>
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>الدواء</th>
+                        <th>الجرعة</th>
+                        <th style="width:80px;">الكمية</th>
+                        <th style="width:100px;">المدة</th>
+                        <th>التعليمات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var idx = 1; }
+                    @foreach (var it in Model.Items)
+                    {
+                        <tr>
+                            <td>@idx</td>
+                            <td>@(it.Medicine?.Name ?? "-")</td>
+                            <td>@(it.Dosage ?? "-")</td>
+                            <td style="font-weight:700;">@(it.Quantity)</td>
+                            <td>@(it.Duration ?? "-")</td>
+                            <td>@(it.Instructions ?? "-")</td>
+                        </tr>
+                        idx++;
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>لا توجد أصناف في هذه الروشتة.</p>
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+    {
+        <div class="rx-section">
+            <h4>ملاحظات الطبيب</h4>
+            <div>@Model.Notes</div>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <script>
+        // nothing special needed; print uses window.print()
+    </script>
+}
