@@ -1,6 +1,7 @@
-using System.Diagnostics;
 using Medical.PL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Medical.PL.Controllers
 {
@@ -13,6 +14,8 @@ namespace Medical.PL.Controllers
             _logger = logger;
         }
 
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View();

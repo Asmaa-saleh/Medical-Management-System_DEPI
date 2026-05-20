@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Medical.PL.Controllers
 {
+
+    [Authorize]
     public class DoctorController : Controller
     {
         private readonly AppDbContext _context;
@@ -81,6 +83,8 @@ namespace Medical.PL.Controllers
             return View(doctor);
         }
 
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             PopulateDropdowns();
@@ -93,6 +97,8 @@ namespace Medical.PL.Controllers
             });
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DoctorViewModel vm)
@@ -148,6 +154,8 @@ namespace Medical.PL.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -180,6 +188,8 @@ namespace Medical.PL.Controllers
             return View(vm);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, DoctorViewModel vm)
@@ -234,6 +244,8 @@ namespace Medical.PL.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -249,6 +261,8 @@ namespace Medical.PL.Controllers
             return View(doctor);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

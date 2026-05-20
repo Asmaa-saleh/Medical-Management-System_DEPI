@@ -122,7 +122,7 @@ namespace Medical.PL.Controllers
 
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _toast.AddSuccessToastMessage("تم إنشاء الحساب بنجاح");
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("LandingPage", "Home");
             }
 
             foreach (var error in result.Errors)
@@ -155,12 +155,88 @@ namespace Medical.PL.Controllers
             if (await _userManager.IsInRoleAsync(user, "Doctor"))
                 return RedirectToAction("MyProfile", "Doctor");
 
-            return RedirectToAction("Details", "User", new { id = user.Id });
+            return View(MapToProfileViewModel(user));
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> EditProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction(nameof(SignIn));
+            }
+
+            if (await _userManager.IsInRoleAsync(user, "Doctor"))
+                return RedirectToAction("MyProfile", "Doctor");
+
+            return View(MapToProfileViewModel(user));
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(UserViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction(nameof(SignIn));
+            }
+
+            if (user.Id != model.Id)
+            {
+                return Forbid();
+            }
+
+            ModelState.Remove(nameof(model.Password));
+            ModelState.Remove(nameof(model.ConfirmPassword));
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            user.Name = model.Name.Trim();
+            user.UserName = model.Email.Trim();
+            user.Email = model.Email.Trim();
+            user.PhoneNumber = model.PhoneNumber.Trim();
+            user.DateOfBirth = model.DateOfBirth;
+            user.Gender = model.Gender;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                _toast.AddSuccessToastMessage("تم تحديث الملف الشخصي بنجاح");
+                return RedirectToAction(nameof(Profile));
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(model);
         }
 
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+        private static UserViewModel MapToProfileViewModel(User user)
+        {
+            return new UserViewModel
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email ?? string.Empty,
+                PhoneNumber = user.PhoneNumber ?? string.Empty,
+                DateOfBirth = user.DateOfBirth,
+                Gender = user.Gender,
+                CreatedAt = user.CreatedAt
+            };
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using Medical.PL.Services;
 using Medical.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Medical.PL.Controllers
 {
+    [Authorize]
     public class PatientsController : Controller
     {
         private readonly IPatientService _patientService;
@@ -13,6 +15,8 @@ namespace Medical.PL.Controllers
             _patientService = patientService;
         }
 
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var patients = await _patientService.GetAllAsync();

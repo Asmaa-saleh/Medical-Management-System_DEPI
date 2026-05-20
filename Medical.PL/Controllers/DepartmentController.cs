@@ -1,10 +1,13 @@
 ﻿using Medical.PL.Data.Models;
 using Medical.PL.Interfaces;
 using Medical.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Medical.PL.Controllers
 {
+    [Authorize]
+
     public class DepartmentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -43,8 +46,12 @@ namespace Medical.PL.Controllers
             return View(viewModel);
         }
 
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Create() => View();
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DepartmentViewModel departmentVM)
@@ -62,6 +69,7 @@ namespace Medical.PL.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var department = await _unitOfWork.Departments.GetByIdAsync(id);
@@ -76,6 +84,8 @@ namespace Medical.PL.Controllers
             return View(viewModel);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, DepartmentViewModel departmentVM)
@@ -94,6 +104,8 @@ namespace Medical.PL.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var department = await _unitOfWork.Departments.GetByIdAsync(id);
@@ -108,6 +120,8 @@ namespace Medical.PL.Controllers
             return View(viewModel);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -121,6 +135,8 @@ namespace Medical.PL.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Restore(int id)

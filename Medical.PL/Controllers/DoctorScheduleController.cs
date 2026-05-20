@@ -1,10 +1,13 @@
 ﻿using Medical.PL.Data.Models;
 using Medical.PL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Medical.PL.Controllers
 {
+    [Authorize]
+
     public class DoctorScheduleController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

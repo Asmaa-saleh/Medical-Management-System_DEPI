@@ -1,10 +1,12 @@
 ﻿using Medical.PL.Data.Models;
 using Medical.PL.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NToastNotify;
 
 namespace Medical.PL.Controllers
 {
+    [Authorize]
     public class MedicineController : Controller
     {
         private readonly IMedicineService _service;
@@ -21,11 +23,15 @@ namespace Medical.PL.Controllers
             var medicines = await _service.SearchAsync(searchTerm);
             return View(medicines);
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(Medicine medicine)
         {
@@ -40,6 +46,8 @@ namespace Medical.PL.Controllers
             return View(medicine);
         }
 
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var medicine = await _service.GetByIdAsync(id);
@@ -49,6 +57,8 @@ namespace Medical.PL.Controllers
             }
             return View(medicine);
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Edit(Medicine medicine)
         {
@@ -72,7 +82,7 @@ namespace Medical.PL.Controllers
             return View(medicine);
         }
 
-        
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {

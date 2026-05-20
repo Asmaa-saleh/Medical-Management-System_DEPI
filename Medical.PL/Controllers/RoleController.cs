@@ -1,5 +1,6 @@
 using Medical.PL.Data.Models;
 using Medical.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,9 @@ using NToastNotify;
 
 namespace Medical.PL.Controllers
 {
+    [Authorize(Roles = "Admin")]
+
+
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole<int>> _roleManager;

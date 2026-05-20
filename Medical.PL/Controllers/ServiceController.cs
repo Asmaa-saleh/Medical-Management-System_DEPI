@@ -1,11 +1,13 @@
 using Medical.PL.Data.Models;
 using Medical.PL.Interfaces;
 using Medical.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Medical.PL.Controllers
 {
+    [Authorize]
     public class ServiceController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -1,0 +1,58 @@
+@model UserViewModel
+
+@{
+    ViewData["Title"] = "ملفي الشخصي";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/user.css" asp-append-version="true" />
+}
+
+<div class="user-header">
+    <div class="user-title">
+        <span class="user-title-icon"><i class="fas fa-user"></i></span>
+        <div>
+            <h1>ملفي الشخصي</h1>
+            <p>@Model.Name</p>
+        </div>
+    </div>
+    <div class="user-form-actions">
+        <a asp-action="EditProfile" class="user-btn user-btn-primary">
+            <i class="fas fa-edit"></i>
+            تعديل
+        </a>
+        <a asp-controller="Home" asp-action="Index" class="user-btn user-btn-light">
+            <i class="fas fa-arrow-right"></i>
+            رجوع
+        </a>
+    </div>
+</div>
+
+<div class="user-details-card">
+    <div class="user-details-grid">
+        <div class="user-detail-item">
+            <span>الاسم</span>
+            <strong>@Model.Name</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>البريد الإلكتروني</span>
+            <strong>@Model.Email</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>رقم الهاتف</span>
+            <strong>@Model.PhoneNumber</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>تاريخ الميلاد</span>
+            <strong>@Model.DateOfBirth.ToString("yyyy-MM-dd")</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>النوع</span>
+            <strong>@Model.Gender</strong>
+        </div>
+        <div class="user-detail-item">
+            <span>تاريخ الإنشاء</span>
+            <strong>@Model.CreatedAt.ToString("yyyy-MM-dd")</strong>
+        </div>
+    </div>
+</div>
