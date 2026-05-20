@@ -387,21 +387,54 @@ namespace Medical.PL.Data
                 }
 
                 // ── Doctor Schedule ────────────────────────────────────────────────────
-                if (!context.DoctorSchedules.Any())
-                {
-                    var doctor = context.Doctors.First();
+                
+if (!context.DoctorSchedules.Any())
+{
+    var doctors = context.Doctors.ToList();
 
-                    context.DoctorSchedules.Add(new DoctorSchedule
-                    {
-                        DoctorId = doctor.Id,
-                        DayOfWeek = "الأحد",
-                        StartTime = new TimeSpan(9, 0, 0),
-                        EndTime = new TimeSpan(17, 0, 0),
-                        MaxPatients = 20,
-                        MaxOnlineBooking = 10
-                    });
-                    context.SaveChanges();
-                }
+    var days = new[]
+    {
+        "الأحد",
+        "الإثنين",
+        "الثلاثاء",
+        "الأربعاء",
+        "الخميس"
+    };
+
+    var random = new Random();
+
+    foreach (var doctor in doctors)
+    {
+        var selectedDays = days
+            .OrderBy(x => random.Next())
+            .Take(3)
+            .ToList();
+
+        foreach (var day in selectedDays)
+        {
+            bool morningShift = random.Next(0, 2) == 0;
+
+            context.DoctorSchedules.Add(new DoctorSchedule
+            {
+                DoctorId = doctor.Id,
+                DayOfWeek = day,
+
+                StartTime = morningShift
+                    ? new TimeSpan(9, 0, 0)
+                    : new TimeSpan(14, 0, 0),
+
+                EndTime = morningShift
+                    ? new TimeSpan(15, 0, 0)
+                    : new TimeSpan(20, 0, 0),
+
+                MaxPatients = random.Next(15, 31),
+                MaxOnlineBooking = random.Next(5, 16)
+            });
+        }
+    }
+
+    await context.SaveChangesAsync();
+}
 
                 // ── Patients ───────────────────────────────────────────────────────────
                 if (!context.Patients.Any())
